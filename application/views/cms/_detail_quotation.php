@@ -27,7 +27,7 @@
 	<div style="margin-top: 10px;"></div>
 	<ul class="nav nav-tabs">
 		<li class="active"><a data-toggle="tab" href="#general_info_tab">General Info</a></li>
-		<li><a data-toggle="tab" href="#std_part_part">Part & Jasa</a></li>
+		<li><a data-toggle="tab" href="#std_part_tab">Part & Jasa</a></li>
 		<li><a data-toggle="tab" href="#labour_tab">Labour</a></li>
 	</ul>
 
@@ -104,7 +104,7 @@
                                 <label for="project_type" class="col-sm-3 control-label">Project Type</label>
                                 <div class="col-sm-9">
                                     <select class="form-control" id="project_type" name="project_type">
-                                        <option value="" selected>Pilih Lot</option>
+                                        <option value="" selected>Project Type</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
@@ -115,20 +115,22 @@
                                 <label for="difficulty" class="col-sm-3 control-label">Difficulty</label>
                                 <div class="col-sm-9">
                                     <select class="form-control" id="difficulty" name="difficulty">
-                                        <option value="" selected>Pilih Lot</option>
+                                        <option value="" selected>Pilih Difficulty</option>
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                     </select>
                                 </div>
                             </div>                                   
+                            <button class="btn btn-success pull-right">Simpan</button>
+                            <input type="hidden" id="id_header" name="id_header" action="1" value="" />
                         </div>
                     </form>
                 </div>                
             </section>
 		</div>
 
-		<div id="std_part_part" class="tab-pane fade">
+		<div id="std_part_tab" class="tab-pane fade">
 			<section class="">
 				<div id="demo-toolbar" class="btn-group" role="group" aria-label="...">
 				<button id="addBtn" type="button" class="btn btn-default">Add Section</button>
@@ -447,6 +449,15 @@
         $('#demo').bootstrapTreeTable('appendData',data);
         console.log(allData);
     }
+
+    /* General Function */
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        var target = $(e.target).attr("href").substr(1) // activated tab
+        if(target != 'general_info_tab'){
+            // var action = $("#")
+            // if()
+        }
+    });
 </script>
 </body>
 </html>
