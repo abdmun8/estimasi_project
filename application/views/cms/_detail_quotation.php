@@ -176,11 +176,11 @@
         expandColumn : 1,            // 在哪一列上面显示展开按钮
         height:500,
         columns: [
-        // {
-            // checkbox: true
+        {
+            checkbox: true
             // field: 'selectItem',
             // radio: fals,
-         // },
+         },
          {
             title: 'Section & Object',
             field: 'menuName',
@@ -253,7 +253,9 @@
             formatter: function(value,row, index) {
                 var actions = [];
                 actions.push('<a class="btn btn-success btn-xs btnEdit" onclick="console.log('+row+')" href="#'+row.id+'"><i class="fa fa-edit"></i>Edit</a> ');
-                actions.push('<a class="btn btn-info btn-xs " onclick="addData()" href="#'+row.id+'"><i class="fa fa-plus"></i>Tambah Sub</a> ');
+                if(row.tipeItem !== 'item'){
+                    actions.push('<a class="btn btn-info btn-xs " onclick="addData()" href="#'+row.id+'"><i class="fa fa-plus"></i>Sub</a> ');
+                }
                 actions.push('<a class="btn btn-danger btn-xs " onclick="addData('+row+')" href="#'+row.id+'" ><i class="fa fa-remove"></i>Hapus</a>');
                 return actions.join('');
             }
