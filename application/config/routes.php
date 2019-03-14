@@ -76,9 +76,9 @@ $route['pick/(:any)'] = 'Retriever/records/$1/null/null/yes'; // read/retrieve l
 $route['pick/(:any)/(:any)/(:any)'] = 'Retriever/records/$1/$2/$3/yes'; // read/retrieve list with param for 
 
 /* Routing HR Controller*/
-$route['hr/data_kandidat'] = 'HR_Controller/getDataKandidat'; // get data kandidat
-$route['hr/karyawan'] = 'HR_Controller/getKaryawan'; // get data kandidat
-$route['hr/save_data_karyawan'] = 'HR_Controller/saveDataKaryawan'; // get data kandidat
+$route['quotation'] = 'Quotation/index'; // get data kandidat
+
+/**/
 
 
 

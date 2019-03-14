@@ -9,11 +9,12 @@
     <link rel="shortcut icon" href="">
     <!-- Bootstrap 3.3.5 -->
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/css/bootstrap.min.css">
+    <!-- Bootstrap tree table -->
     <!-- Theme style -->
     <!-- <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/select2/css/select2.min.css"> -->
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/selectize/css/selectize.bootstrap3.css">
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/AdminLTE-2.4.9/css/AdminLTE.min.css">
-    <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/AdminLTE-2.4.9/css/skins/skin-blue.min.css">
+    <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/AdminLTE-2.4.9/css/skins/skin-black.min.css">
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/swal/sweet-alert.css">
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/css/custom.css">
@@ -22,17 +23,17 @@
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/css/fileinput.min.css">
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/js/plugins/iCheck/all.css">
 
-    <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
-
     <!-- daterange picker -->
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/bootstrap-daterangepicker/daterangepicker.css">
+
+
     <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
         <script>var base_url = '<?php echo base_url();?>';</script>
     </head>
-    <body class="hold-transition skin-blue sidebar-mini sidebar-collapse">
+    <body class="hold-transition skin-black sidebar-mini sidebar-collapse">
         <div class="wrapper">
           <header class="main-header">
             <a href="<?php echo base_url('view');?>" class="logo">
@@ -110,13 +111,16 @@
 </div><!-- ./wrapper -->
 
 <!-- jQuery 2.1.4 -->
-<!-- <script src="<?php echo base_url();?>assets/cms/js/jQuery-2.1.4.min.js"></script> -->
-<script src="<?php echo base_url();?>assets/cms/js/jquery-3.3.1.min.js"></script>
+<script src="<?php echo base_url();?>assets/cms/js/jQuery-2.1.4.min.js"></script>
+<!-- <script src="<?php echo base_url();?>assets/cms/js/jquery-3.3.1.min.js"></script> -->
+<!-- <script src="<?php echo base_url();?>assets/cms/bootstrap-treetable/libs/jquery.min.js"></script> -->
 <!-- Bootstrap 3.3.5 -->
 <script src="<?php echo base_url();?>assets/cms/js/bootstrap.min.js"></script>
+<!-- Bootstrap tree table -->
+<!-- <script src="<?php echo base_url();?>assets/cms/bootstrap-treetable/libs/v3/bootstrap.min.js"></script> -->
+
 <script src="<?php echo base_url();?>assets/cms/js/plugins/slimScroll/jquery.slimscroll.min.js"></script>
 <script src="<?php echo base_url();?>assets/cms/js/plugins/fastclick/fastclick.min.js"></script>
-<script src="<?php echo base_url();?>assets/cms/js/app.min.js"></script>
 
 <script src="<?php echo base_url();?>assets/cms/moment/min/moment.min.js"></script>
 
@@ -142,9 +146,8 @@
 <script src="<?php echo base_url();?>assets/cms/input-mask/jquery.inputmask.date.extensions.js"></script>
 <script src="<?php echo base_url();?>assets/cms/input-mask/jquery.inputmask.extensions.js"></script>
 
-<!-- x-editable -->
-<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 
+<script src="<?php echo base_url();?>assets/cms/js/app.min.js"></script>
 <script>
     let statemenu="dashboard";
     $(document).ready(function(){

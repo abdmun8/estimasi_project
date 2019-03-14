@@ -1,3 +1,4 @@
+
 <?php
 //default value
 $id = null;
@@ -18,18 +19,18 @@ if ($param != null) {
                 <i class="fa fa-table"></i>
             </a>
         </li>
-        <li class="">
+        <!-- <li class="">
             <a data-toggle="tab" href="#data-form-tab" title="Form View">
                 <i class="fa fa-edit"></i>
             </a>
-        </li>
+        </li> -->
         <li class="pull-left header"><i class="fa fa-file-text"></i>Quotation</li>
         <div id="loading"></div>
     </ul>
     <div class="tab-content">
         <div id="bidang-table-tab" class="tab-pane fade active in">
             <div style="padding-bottom:10px;">
-                <button type="button" class="btn btn-success btn-sm" onclick="newForm();">Tambah Data</button>
+                <button type="button" class="btn btn-success btn-sm" onclick="openWindow(base_url + 'quotation');">Tambah Data</button>
                 <li class="dropdown btn btn-default btn-float pull-right btn-sm">
                     <a style="color:#000" class="dropdown-toggle" data-toggle="dropdown" href="#">
                       Export File <span class="caret"></span>
@@ -39,21 +40,25 @@ if ($param != null) {
                     </ul>
                 </li>
             </div>
-            <table id="table-data" class="table table-bordered table-striped table-hover table-condensed">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Username</th>
-                        <th>Nama</th>
-                        <th>Email</th>
-                        <th>Jabatan</th>
-                        <th>Departement</th>
-                        <th>Active</th>
-                        <th>Opsi</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+            <div class="table-responsive">
+                <table id="table-data" class="table table-bordered table-striped table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Inquiry No</th>
+                            <th>Project name</th>
+                            <th>Qty</th>
+                            <th>Customer</th>
+                            <th>PIC Marketing</th>
+                            <th>Start Date</th>
+                            <th>Finish Date</th>
+                            <th>Duration</th>
+                            <th>Opsi</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
         <div id="data-form-tab" class="tab-pane fade">
             <!-- Custom Tabs -->
@@ -165,86 +170,13 @@ if ($param != null) {
                     <div class="tab-pane" id="tab_2">
                         <section class="content">
                             <div class="row">
-                                <!-- content -->
-                                <div class="col-md-12">
-                                    <div style="padding-bottom:10px;">
-                                        <button type="button" class="btn btn-default btn-sm" onclick="">Print</button>
-                                        <button type="button" class="btn btn-success btn-sm pull-right" onclick="">Tambah Item</button>
-
-                                        <button style="margin-right: 10px;" type="button" class="btn btn-default btn-sm pull-right" onclick="">Enable/ Disable Edit</button>
-                                        
-                                    </div>
-                                </div>
-                                <div class="col-md-12 table-responsive">
-                                    <!-- <table id="users" class="table table-hover table-bordered">
-                                        <tr class="active">
-                                          <th>No</th>
-                                          <th>Section & Object</th>
-                                          <th>Name</th>
-                                          <th>Item Code</th>
-                                          <th>Name</th>
-                                          <th>Spec</th>
-                                          <th>Merk</th>
-                                          <th>Satuan</th>
-                                          <th>Harga</th>
-                                          <th>Qty</th>
-                                          <th>Total</th>
-                                          <th>Kategori</th>
-                                        </tr>
-                                        <?php for ($i=1; $i < 10; $i++) : ?> 
-                                            <tr>
-                                              <td><?=$i?></td>
-                                              <td><a href="#" class="username">superuser</a></td>
-                                              <td>11-7-2014</td>
-                                              <td><span class="label label-success">Approved</span></td>
-                                              <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-                                              <td>John Doe</td>
-                                              <td>John Doe</td>
-                                              <td>John Doe</td>
-                                              <td>John Doe</td>
-                                              <td>John Doe</td>
-                                              <td>John Doe</td>
-                                              <td>John Doe</td>
-                                            </tr>
-                                        <?php endfor ?>
-                                        <tr>
-                                              <td><?=$i?></td>
-                                              <td><a href="#" id="username" data-type="text" data-placement="right" data-title="Enter username">superuser</a></td>
-                                              <td>11-7-2014</td>
-                                              <td><span class="label label-success">Approved</span></td>
-                                              <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
-                                              <td>John Doe</td>
-                                              <td>John Doe</td>
-                                              <td>John Doe</td>
-                                              <td>John Doe</td>
-                                              <td>John Doe</td>
-                                              <td>John Doe</td>
-                                              <td>John Doe</td>
-                                            </tr>                                                         
-                                    </table> -->
-                                <!-- /.content -->
-                                <table id="users" class="table table-bordered table-condensed">
-        <tr><th>#</th><th>name</th><th>age</th></tr>
-        <tr>
-            <td>1</td>
-            <td><a href="#" data-pk="1">Mike</a></td>
-            <td>21</td>       
-        </tr>
-        
-        <tr>
-            <td>2</td>
-            <td><a href="#" data-pk="2">John</a></td>
-            <td>28</td>       
-        </tr>        
-        
-        <tr>
-            <td>3</td>
-            <td><a href="#" data-pk="3">Mary</a></td>
-            <td>24</td>       
-        </tr>        
-        
-    </table> 
-                                </div>
+                            <!-- content -->
+                                <!-- Header -->
+                                
+                                <!-- ./Header -->
+                                <!-- Table -->
+                                <!-- ./ Table -->
+                            <!-- /.content -->
                         </section>
                     </div>
                     <!-- /.tab-pane -->
@@ -265,11 +197,14 @@ if ($param != null) {
         </div>
     </div>
 </div>
-
 <script>
+
+
+
+
     $(document).ready(function () {
         // CKEDITOR.replace('alamat-input');
-        // getBidang();
+        // getDataTable();
         <?php
         if($param != null) {
             echo 'getData("'. $param .'");';
@@ -292,22 +227,20 @@ if ($param != null) {
         sel = $("#lot_general").selectize();
         lot_general = sel[0].selectize;
 
-        /* Editable */
-        $('#users a').editable({
-            type: 'text',
-            name: 'username',
-            // url: '/post',
-            title: 'Enter username'
-        });
+        /* dt*/
+        
+       
       
     });
+
+
     function newForm() {
         loadContent(base_url + "view/_users", function () {
             setActiveTab("data-form-tab");
         });
     }
 
-    function getBidang() {
+    function getDataTable() {
         if ($.fn.dataTable.isDataTable('#table-data')) {
             tableData = $('#table-data').DataTable();
         } else {
@@ -327,13 +260,13 @@ if ($param != null) {
                 "deferRender": true,
                 "order": [[0, "asc"]],
                 "fnDrawCallback": function (oSettings) {
-                    utilsBidang();
+                    utilsDataTable();
                 }
             });
         }
     }
 
-    function utilsBidang() {
+    function utilsDataTable() {
         $("#table-data .editBtn").on("click",function() {
             loadContent(base_url + 'view/_users/' + $(this).attr('href').substring(1));
         });
@@ -448,5 +381,18 @@ if ($param != null) {
         var end = $("#finish_date").val();
         var diff = calcDiffDateToMonth(start,end);
         $("#duration").val(diff + ' MONTH');
+    }
+
+    function openWindow(url){
+        var params = [
+            'height='+screen.height,
+            'width='+screen.width,
+            'fullscreen=yes' // only works in IE, but here for completeness
+        ].join(',');
+             // and any other options from
+             // https://developer.mozilla.org/en/DOM/window.open
+
+        var popup = window.open(url, 'popup_window', params); 
+        popup.moveTo(0,0);
     }
 </script>
