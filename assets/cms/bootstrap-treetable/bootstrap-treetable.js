@@ -94,7 +94,7 @@
         $container.append($treetable);
         $treetable.append($bodyBox);
         $bodyBox.append(self.$el);
-        self.$el.addClass("table treetable-table");
+        self.$el.addClass("table treetable-table table-sm");
         if (self.options.striped) {
             self.$el.addClass('table-striped');
         }
@@ -127,12 +127,12 @@
         self.$el.parent().parent().before($toolbar);
         // 是否显示刷新按钮
         if (self.options.showRefresh) {
-            var $refreshBtn = $('<button class="btn btn-default refresh_btn" type="button" aria-label="refresh" title="刷新"><i class="'+self.options.toolRefreshClass+'"></i></button>');
+            var $refreshBtn = $('<button class="btn btn-default refresh_btn" type="button" aria-label="refresh" title="Refresh"><i class="'+self.options.toolRefreshClass+'"></i></button>');
             $rightToolbar.append($refreshBtn);
         }
         // 是否显示列选项
         if (self.options.showColumns) {
-            var $columns_div = $('<div class="btn-group pull-right" title="列"><button type="button" aria-label="columns" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="'+self.options.toolColumnsClass+'"></i> <span class="caret"></span></button></div>');
+            var $columns_div = $('<div class="btn-group pull-right" title="Visibility Column"><button type="button" aria-label="columns" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="'+self.options.toolColumnsClass+'"></i> <span class="caret"></span></button></div>');
             var $columns_ul = $('<ul class="dropdown-menu dropdown-menu-right columns" role="menu"></ul>');
             // 固定列不能隐藏
             $.each(self.leftFixedColumns, function(i, column) {

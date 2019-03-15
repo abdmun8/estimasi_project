@@ -33,6 +33,9 @@ class Retriever extends CI_Controller {
 				case 'groups':
 					$query['table'] = 'v_groups';
 					break;
+				case 'header':
+					$query['table'] = 'header';
+					break;
 				case 'karyawan':
 					$query['table'] = 'v_karyawan';
 					if( $this->input->get('type') == 1){
@@ -78,6 +81,9 @@ class Retriever extends CI_Controller {
 						break;
 					case 'groups':
 						$query['table'] = 'v_groups';
+						break;
+					case 'header':
+						$query['table'] = 'header';
 						break;
 					case 'karyawan':
 						$query['table'] = 'v_karyawan';
@@ -241,6 +247,37 @@ class Retriever extends CI_Controller {
 				'group_leader' => $record->group_leader,
 				'nama_group_leader' => $record->nama_group_leader,
 				'active' => $record->active,
+				'aksi' => $linkBtn
+			);
+		}
+
+		return $data;
+	}
+
+	function _header($records, $picker = 'no') {
+		$data = array();
+		$no = 0;
+		foreach ($records as $record) {
+
+			$no++;
+
+			if ($picker == 'yes') {
+				$linkBtn = '<a href="#' . $record->id . '" class="btn btn-xs btn-info pickBtn" title="Pilih"><i class="fa fa-thumb-tack"></i> Pilih</a>';
+			} else if ($picker == 'no') {
+				$linkBtn = ' <a href="#' . $record->id . '" class="btn btn-xs btn-primary editBtn" title="Edit"><i class="fa fa-edit"></i> Edit</a>';
+				$linkBtn .= ' <a href="#' . $record->id . '" class="btn btn-xs btn-danger removeBtn" title="Hapus"><i class="fa fa-trash-o"></i> Hapus</a>';
+			}
+
+			$data[] = array(
+				'no' => $no,
+				'project_name' => $record->project_name,
+				'qty' => $record->qty,
+				'inquiry_no' => $record->inquiry_no,
+				'customer' => $record->customer,
+				'pic_marketing' => $record->pic_marketing,
+				'start_date' => $record->start_date,
+				'finish_date' => $record->finish_date,
+				'duration' => '',
 				'aksi' => $linkBtn
 			);
 		}

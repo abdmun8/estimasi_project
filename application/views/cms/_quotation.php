@@ -204,7 +204,7 @@ if ($param != null) {
 
     $(document).ready(function () {
         // CKEDITOR.replace('alamat-input');
-        // getDataTable();
+        getDataTable();
         <?php
         if($param != null) {
             echo 'getData("'. $param .'");';
@@ -245,15 +245,17 @@ if ($param != null) {
             tableData = $('#table-data').DataTable();
         } else {
             tableData = $('#table-data').DataTable({
-                "ajax": base_url + 'objects/users',
+                "ajax": base_url + 'objects/header',
                 "columns": [
                    {"data": "no"},
-                   {"data": "username"},
-                   {"data": "nama"},
-                   {"data": "email"},
-                   {"data": "jabatan"},
-                   {"data": "departemen"},
-                   {"data": "active"},
+                   {"data": "inquiry_no"},
+                   {"data": "project_name"},
+                   {"data": "qty"},
+                   {"data": "customer"},
+                   {"data": "pic_marketing"},
+                   {"data": "start_date"},
+                   {"data": "finish_date"},
+                   {"data": "duration"},
                    {"data": "aksi", "width": "15%"}
                ],
                 "ordering": true,
@@ -268,7 +270,8 @@ if ($param != null) {
 
     function utilsDataTable() {
         $("#table-data .editBtn").on("click",function() {
-            loadContent(base_url + 'view/_users/' + $(this).attr('href').substring(1));
+            openWindow(base_url + 'quotation/' + $(this).attr('href').substring(1));
+            // loadContent(base_url + 'view/_users/' + $(this).attr('href').substring(1));
         });
 
         $("#table-data .removeBtn").on("click",function() {
@@ -310,8 +313,7 @@ if ($param != null) {
 
     function getData(idx) {
         $.ajax({
-            url: base_url + 'object',
-            data: 'model-input=users&key-input=id&value-input=' + idx,
+            url: base_url + 'get_data_header/'+idx,
             dataType: 'json',
             type: 'POST',
             cache: false,
@@ -320,7 +322,15 @@ if ($param != null) {
                     loginAlert('Akses tidak sah');
                 } else {
 
-                    $("#username-input").val(json.data.object.username);
+                    $("#inquiry_no").val(json.data.object.inquiry_no);
+                    $("#project_name").val(json.data.object.project_name);
+                    $("#customer").val(json.data.object.customer);
+                    $("#qty_general").val(json.data.object.qty_general);
+                    $("#lot_general").val(json.data.object.lot_general);
+                    $("#pic_marketing").val(json.data.object.pic_marketing);
+                    $("#start_date").val(json.data.object.start_date);
+                    $("#finish_date").val(json.data.object.finish_date);
+                    $("#duration").val(json.data.object.duration);
                     $("#action-input").val('2');
                     $("#value-input").val(json.data.object.id);
                 }

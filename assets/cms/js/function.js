@@ -1,3 +1,7 @@
+function convertDateIndo(dt){
+    dt = dt.trim();
+    return dt.substr(8,2) +'-'+ dt.substr(5,2) +'-'+ dt.substr(0,4);
+}
 //loading...
 function loading(div_container, is_show ){
     $("#"+div_container).css({
@@ -93,6 +97,28 @@ function DisableInput (IDform) {
     });
     $("#"+IDform+" input[type=submit]").each(function() {
         $(this).attr('disabled', 'disabled');
+    });
+    return false;
+}
+
+function hideInput (IDform) {
+    $("#"+IDform+" input[type=text]").each(function() {
+        $(this).attr('hidden', true);
+    });
+    $("#"+IDform+" textarea").each(function() {
+        $(this).attr('hidden', true);
+    });
+    $("#"+IDform+" select").each(function() {
+        $(this).attr('hidden', true);
+    });
+    $("#"+IDform+" input[type=email]").each(function() {
+        $(this).attr('hidden', true);
+    });
+    $("#"+IDform+" input[type=number]").each(function() {
+        $(this).attr('hidden', true);
+    });
+    $("#"+IDform+" input[type=submit]").each(function() {
+        $(this).attr('hidden', true);
     });
     return false;
 }
@@ -281,3 +307,9 @@ function calcDiffDateToMonth(tgl1, tgl2){
     var months = (diffYears * 12 + diffMonths);
     return months;
 }
+
+function ucFirst(str){
+    const strCapitalized = str.charAt(0).toUpperCase() + str.slice(1);
+    return strCapitalized;
+}
+
