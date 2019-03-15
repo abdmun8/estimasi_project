@@ -53,7 +53,7 @@ if ($param != null) {
 			<section class="content padding20">
                 <div class="row">
                     <!-- left column -->
-                    <form class="form-horizontal" role="form">
+                    <form class="form-horizontal" role="form" id="form-general-info">
                         <div class="col-md-6">
                             <!-- Left Form -->                                    
                             <div class="form-group">
@@ -137,7 +137,7 @@ if ($param != null) {
                                     </select>
                                 </div>
                             </div>                                   
-                            <button class="btn btn-success pull-right">Simpan</button>
+                            <button class="btn btn-success pull-right" onclick="saving();">Simpan</button>
                             <input type="hidden" id="id_header" name="id_header" value="" />
                             <input type="hidden" id="action" name="action" value="1" />
                         </div>
@@ -252,39 +252,24 @@ if ($param != null) {
 <script src="<?php echo base_url();?>assets/cms/js/function.js"></script>
 <script type="text/javascript">
 
-    var id_header_tree = 0;
+    var id_header_tree = '';
     $(document).ready(function () {
         <?php
         if($param != null) {
             echo 'getDataHeader("'. $param .'");';
-            // echo 'id_header_tree='. $param.';';
         }
         ?>
 
     });
 
-/**
-    rootIdValue: null,//设置根节点id值----可指定根节点，默认为null,"",0,"0"
-    id : "id",               // 选取记录返回的值,用于设置父子关系
-    parentId : "parentId",       // 用于设置父子关系
-    type: 'get',                   // 请求方式（*）
-    url: "./data.json",             // 请求后台的URL（*）
-    ajaxParams : {},               // 请求数据的ajax的data属性
-    expandColumn : 0,            // 在哪一列上面显示展开按钮
-    expandAll : false,                // 是否全部展开
-    expandFirst : true, // 是否默认第一级展开--expandAll为false时生效
-    toolbar: null,//顶部工具条
-    height: 0,
-    expanderExpandedClass : 'glyphicon glyphicon-chevron-down',// 展开的按钮的图标
-    expanderCollapsedClass : 'glyphicon glyphicon-chevron-right',// 缩起的按钮的图标
-**/
+    <?php echo ($param != null) ? 'id_header_tree='. $param.';' : ''; ?>
     var treeTable = $('#demo').bootstrapTreeTable({
         toolbar: "#demo-toolbar",    //顶部工具条
         expandColumn : 1,            // 在哪一列上面显示展开按钮
         height:400,
         type: 'get',
         parentId: 'id_parent',
-        url: base_url + 'quotation/get_data_part/1',
+        url: base_url + 'quotation/get_data_part/'+ id_header_tree,
         columns: [
             {
                 checkbox: true
@@ -512,9 +497,9 @@ if ($param != null) {
     /* General Function */
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         var target = $(e.target).attr("href").substr(1) // activated tab
-        if(target != 'general_info_tab'){
-            // var action = $("#")
-            // if()
+        if(target != 'general_info_tab' && id_header_tree == ''){
+            genericAlert('Simpan General Info Terlebih dahulu!', 'error','Error');
+            setActiveTab("general_info_tab");
         }
     });
 
@@ -616,6 +601,38 @@ if ($param != null) {
         
         $(".modal-title-input").text(ucFirst(title_text));
         $('#modal-input-item').modal('show');
+    }
+
+    function saving() {
+        // CKupdate();
+        loading('loading',true);
+        setTimeout(function() {
+            $.ajax({
+                url: base_url + 'quotation/save_gen_info',
+                data: $("#form-general-info").serialize(),
+                dataType: 'json',
+                type: 'POST',
+                cache: false,
+                success: function(json) {
+                    loading('loading',false);
+                    if (json.data.code === 0) {
+                        if (json.data.message == '') {
+                            genericAlert('Penyimpanan data gagal!', 'error','Error');
+                        } else {
+                            genericAlert(json.data.message, 'warning','Peringatan');
+                        }
+                    } else {
+                        var page ='_users/';
+                        page += json.data.last_id;
+                        genericAlert('Penyimpanan data berhasil', 'success','Sukses');
+                        loadContent(base_url + 'view/' + page);
+                    }
+                }, error: function () {
+                    loading('loading',false);
+                    genericAlert('Terjadi kesalahan!', 'error','Error');
+                }
+            });
+        }, 100);
     }
 
     function saveItem() {
