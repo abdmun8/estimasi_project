@@ -31,14 +31,15 @@ if ($param != null) {
         <div id="bidang-table-tab" class="tab-pane fade active in">
             <div style="padding-bottom:10px;">
                 <button type="button" class="btn btn-success btn-sm" onclick="openWindow(base_url + 'quotation');">Tambah Data</button>
-                <li class="dropdown btn btn-default btn-float pull-right btn-sm">
+                <!-- <li class="dropdown btn btn-default btn-float pull-right btn-sm">
                     <a style="color:#000" class="dropdown-toggle" data-toggle="dropdown" href="#">
                       Export File <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
                         <li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="alert(1)">CSV</a></li>
                     </ul>
-                </li>
+                </li> -->
+                <button type="button" class="btn btn-default pull-right btn-sm" style="margin-right: 10px;" onclick="refreshTable()"><i class="fa fa-refresh" ></i> Refresh</button>
             </div>
             <div class="table-responsive">
                 <table id="table-data" class="table table-bordered table-striped table-hover table-condensed">
@@ -378,7 +379,7 @@ if ($param != null) {
     }
 
     function refreshTable(){
-        tableData.ajax.url(base_url + '/objects/users').load();
+        tableData.ajax.url(base_url + '/objects/header').load();
     }
 
     function CKupdate(){

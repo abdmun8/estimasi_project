@@ -1,3 +1,24 @@
+/*
+    convert date to ind / to itl
+    @date : date YYYY-MM-DD || DD-MM-YYYY
+*/
+function formatDate(date, to_indo = true){
+    var m,d,y,formatted;
+    if(to_indo == true){
+        y = date.substr(0, 4);
+        m = date.substr(5, 2);
+        d = date.substr(8, 2);
+        formatted = d +'-'+ m +'-'+ y;
+    }else{
+        y = date.substr(6, 4);
+        m = date.substr(3, 2);
+        d = date.substr(0, 2);
+        formatted = y +'-'+ m +'-'+ d;
+    }
+    return formatted;
+
+}
+
 function convertDateIndo(dt){
     dt = dt.trim();
     return dt.substr(8,2) +'-'+ dt.substr(5,2) +'-'+ dt.substr(0,4);

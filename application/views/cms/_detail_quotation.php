@@ -27,6 +27,8 @@ if ($param != null) {
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/AdminLTE-2.4.9/css/AdminLTE.min.css">
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/AdminLTE-2.4.9/css/skins/skin-black.min.css">
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/swal/sweet-alert.css">
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/bootstrap-daterangepicker/daterangepicker.css">
     <style type="text/css">
     	.padding20 {
     		padding: 20px;
@@ -137,7 +139,8 @@ if ($param != null) {
                                     </select>
                                 </div>
                             </div>                                   
-                            <button class="btn btn-success pull-right" onclick="saving();">Simpan</button>
+                            <button type="button" class="btn btn-success pull-right" onclick="saving();"><i class="fa fa-save"></i> Save</button>
+                            <button type="button" class="btn btn-default pull-right" onclick="newForm();" style="margin-right: 10px;"><i class="fa fa-plus"></i> New</button>
                             <input type="hidden" id="id_header" name="id_header" value="" />
                             <input type="hidden" id="action" name="action" value="1" />
                         </div>
@@ -150,7 +153,7 @@ if ($param != null) {
 			<section class="">
 				<div id="demo-toolbar" class="btn-group" role="group" aria-label="...">
 				<button id="addBtn" type="button" class="btn btn-default" onclick="showModalInput('section')">Add Section</button>
-				<button id="expandAllBtn" type="button" class="btn btn-default">Expand/Collapse All</button>
+                <button id="expandAllBtn" type="button" class="btn btn-default">Expand/Collapse All</button>
 			</div>
 			<table id="demo"></table>	
 			</section>
@@ -184,7 +187,7 @@ if ($param != null) {
                             </div>
                             <div class="form-group only_item">
                                 <label for="item_code-item">Item Code</label>
-                                <input type="text" class="form-control input-sm" id="item_code-item" name="item_code-item" placeholder="Item Code">
+                                <input type="text" class="form-control input-sm" id="item_code-item" name="item_code-item" placeholder="Item Code" data-provide="typeahead">
                             </div> 
                             <div class="form-group only_item">
                                 <label for="spec-item">Spec</label>
@@ -201,7 +204,9 @@ if ($param != null) {
                             
                             
                             <input type="hidden" id="tipe_item-item" name="tipe_item-item" value="section" />
+                            <input type="hidden" id="item_code" name="item_code" />
                             <input type="hidden" id="id_parent-item" name="id_parent-item" value="0" />
+                            <input type="hidden" id="id_header-item" name="id_header-item" value="0" />
                             <input type="hidden" id="action-item" name="action-item" value="1" />
                             <input type="hidden" id="id-item" name="id-item" value="1" />
                         </div>
@@ -250,6 +255,10 @@ if ($param != null) {
 <script src="<?php echo base_url();?>assets/cms/swal/sweet-alert.js"></script>
 <script src="<?php echo base_url();?>assets/cms/js/jquery.blockUI.js"></script>
 <script src="<?php echo base_url();?>assets/cms/js/function.js"></script>
+<script src="<?php echo base_url();?>assets/cms/js/jquery.mask.min.js"></script>
+<script src="<?php echo base_url();?>assets/cms/moment/min/moment.min.js"></script>
+<script src="<?php echo base_url();?>assets/cms/bootstrap-daterangepicker/daterangepicker.js"></script>
+<script src="<?php echo base_url();?>assets/cms/typehead.js/bootstrap3-typeahead.js"></script>
 <script type="text/javascript">
 
     var id_header_tree = '';
@@ -257,15 +266,46 @@ if ($param != null) {
         <?php
         if($param != null) {
             echo 'getDataHeader("'. $param .'");';
+            echo '$("#action").val(2);';
+            echo '$("#id_header").val("'. $param .'");';
         }
         ?>
+
+        $('.total_harga').mask('000.000.000.000.000', {reverse: true});
+        $('#harga-item').mask('000.000.000.000.000', {reverse: true});
+
+        $('.select_date').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true,
+            minYear: 2018,
+            maxYear: parseInt(moment().format('YYYY'),10),
+            locale: {
+                format: 'DD-MM-YYYY'
+            }
+        });
+        $.get( base_url + "quotation/get_item_code", function(data){
+            $("#item_code-item").typeahead({ 
+                source: data,
+                minLength: 3,
+                order: "asc",
+                afterSelect: function(o){
+                    console.log(o)
+                    $("#item_code").val(o.stcd);
+                    $("#spec-item").val(o.spek);
+                    $("#merk-item").val(o.maker);
+                    $("#satuan-item").val(o.uom);
+                    $("#item_name-item").val(o.nama);
+                }
+            });
+        },'json');
 
     });
 
     <?php echo ($param != null) ? 'id_header_tree='. $param.';' : ''; ?>
     var treeTable = $('#demo').bootstrapTreeTable({
         toolbar: "#demo-toolbar",    //顶部工具条
-        expandColumn : 1,            // 在哪一列上面显示展开按钮
+        expandColumn : 1,    
+        expandAll: true,
         height:400,
         type: 'get',
         parentId: 'id_parent',
@@ -353,20 +393,37 @@ if ($param != null) {
                 field: 'harga',
                 title: 'Harga',
                 width: '100',
-                align: "left",
+                align: "right",
                 visible: true,
+                formatter: function(value,row, index) {
+                    if( row.tipe_item != 'item' ){
+                        return '';
+                    }else{
+                        return '<span class="total_harga">'+value+'</span>';
+                    }
+                }
             },
             {
                 field: 'qty',
                 title: 'Qty',
                 width: '100',
-                align: "center",
+                align: "right",
+                formatter: function(value,row, index) {
+                    if( row.tipe_item != 'item' ){
+                        return '';
+                    }else{
+                        return value;
+                    }
+                }
             },
             {
-                field: 'qty',
+                field: 'total',
                 title: 'Total',
                 width: '150',
-                align: "center",
+                align: "right",
+                formatter: function(value,row, index) {
+                    return '<span class="total_harga">'+value+'</span>';
+                }
             },
             {
                 field: 'kategori',
@@ -382,7 +439,6 @@ if ($param != null) {
         },
         onLoadSuccess: function(data) {
             // console.log("onLoadSuccess");
-            // $('#demo').bootstrapTreeTable('registerRefreshBtnClickEvent');
             return false;
         },
         onLoadError: function(status) {
@@ -425,6 +481,14 @@ if ($param != null) {
         _expandFlag_all = _expandFlag_all?false:true;
     });
 
+    // $("#refreshall").click(function(){
+    //     $('#demo').bootstrapTreeTable('refresh');
+    // })
+
+    function newForm(){
+        window.open( base_url + 'quotation', '_self');
+    }
+
     function getDataHeader(idx) {
         $.ajax({
             url: base_url + 'quotation/get_data_header/'+idx,
@@ -440,7 +504,7 @@ if ($param != null) {
                     $("#project_name").val(json.data.object.project_name);
                     $("#customer").val(json.data.object.customer);
                     $("#qty_general").val(json.data.object.qty);
-                    $("#lot_general").val(json.data.object.lot_general);
+                    $("#lot_general").val(json.data.object.lot);
                     $("#pic_marketing").val(json.data.object.pic_marketing);
                     $("#start_date").val(convertDateIndo(json.data.object.start_date));
                     $("#finish_date").val(convertDateIndo(json.data.object.finish_date));
@@ -449,6 +513,7 @@ if ($param != null) {
                     $("#duration").val(json.data.object.duration);
                     $("#action-input").val('2');
                     $("#value-input").val(json.data.object.id);
+                    $("#id_header-item").val(json.data.object.id);
                     calcDate();
                 }
             }
@@ -500,6 +565,8 @@ if ($param != null) {
         if(target != 'general_info_tab' && id_header_tree == ''){
             genericAlert('Simpan General Info Terlebih dahulu!', 'error','Error');
             setActiveTab("general_info_tab");
+        }else{
+            $('#demo').bootstrapTreeTable('refresh');
         }
     });
 
@@ -555,7 +622,7 @@ if ($param != null) {
 
         if(action == 'edit'){
             $.ajax({
-                url: base_url + 'quotation/get_data_part/'+id,
+                url: base_url + 'quotation/get_data_part/'+id_header_tree+'/'+id,
                 dataType: 'json',
                 type: 'POST',
                 cache: false,
@@ -606,26 +673,30 @@ if ($param != null) {
     function saving() {
         // CKupdate();
         loading('loading',true);
+        var form = $("#form-general-info").serialize();
+        var data = form +'&start_date-general='+ formatDate( $("#start_date").val(), false) +'&finish_date-general='+ formatDate( $("#finish_date").val(), false);
         setTimeout(function() {
             $.ajax({
                 url: base_url + 'quotation/save_gen_info',
-                data: $("#form-general-info").serialize(),
+                data: data,
                 dataType: 'json',
                 type: 'POST',
                 cache: false,
                 success: function(json) {
                     loading('loading',false);
                     if (json.data.code === 0) {
+                        // console.log(typeof json.data.message);
+                        // return;
                         if (json.data.message == '') {
                             genericAlert('Penyimpanan data gagal!', 'error','Error');
                         } else {
                             genericAlert(json.data.message, 'warning','Peringatan');
                         }
                     } else {
-                        var page ='_users/';
-                        page += json.data.last_id;
                         genericAlert('Penyimpanan data berhasil', 'success','Sukses');
-                        loadContent(base_url + 'view/' + page);
+                        setTimeout(function(){
+                            window.open(base_url + 'quotation/' + json.last_id, '_self');
+                        },1000);
                     }
                 }, error: function () {
                     loading('loading',false);
@@ -635,12 +706,33 @@ if ($param != null) {
         }, 100);
     }
 
+    // function count
+
     function saveItem() {
         loading('loading',true);
+        var harga = $("#harga-item").cleanVal();
+        var qty = $("#qty-item").val();
+        if(harga == '' || parseInt(harga) == 0){
+            $("#harga-item").parent().addClass('has-error');
+            alert('Input Harga!');
+            return;
+        }else{
+            $("#harga-item").parent().removeClass('has-error');
+        }
+
+        if(qty == '' || parseInt(qty) == 0){
+            $("#qty-item").parent().addClass('has-error');
+            alert('Input Qty!');
+            return;
+        }else{
+            $("#qty-item").parent().removeClass('has-error');
+        }
+
+        var data = $("#form-input-item").serialize() +'&harga-item-clean='+harga;
         setTimeout(function() {
             $.ajax({
                 url: base_url + 'quotation/save_item',
-                data: $("#form-input-item").serialize(),
+                data: data,
                 dataType: 'json',
                 type: 'POST',
                 cache: false,
@@ -657,7 +749,8 @@ if ($param != null) {
                         // page += json.data.last_id;
                         genericAlert('Penyimpanan data berhasil', 'success','Sukses');
                         $('#modal-input-item').modal('hide');
-                        // loadContent(base_url + 'view/' + page);
+                        $('#demo').bootstrapTreeTable('refresh');
+                        
                     }
                 }, error: function () {
                     loading('loading',false);
@@ -665,6 +758,23 @@ if ($param != null) {
                 }
             });
         }, 100);
+    }
+
+    function formatDate(date, to_indo = true){
+        var m,d,y,formatted;
+        if(to_indo == true){
+            y = date.substr(0, 4);
+            m = date.substr(5, 2);
+            d = date.substr(8, 2);
+            formatted = d +'-'+ m +'-'+ y;
+        }else{
+            y = date.substr(6, 4);
+            m = date.substr(3, 2);
+            d = date.substr(0, 2);
+            formatted = y +'-'+ m +'-'+ d;
+        }
+        return formatted;
+
     }
 
 </script>

@@ -31,7 +31,8 @@ class Quotation extends CI_Controller {
         $object = [];
         $message = '';
         if($id != NULL){
-            $object = $this->model->getRecord(['table'=>'header',['where'=>['id'=>$id]]]);
+            // $object 
+            $object = $this->model->getRecord(['table'=>'header','where'=>['id'=>$id]]);
         }else{
             $object = $this->model->getList(['table'=>'header']);
         }
@@ -51,29 +52,112 @@ class Quotation extends CI_Controller {
 
     public function getDataPart($id_header = NULL, $id_part = NULL){
         $object = [];
+        $data = [];
         if($id_header != NULL){
             if($id_part == NULL){
-                $object = $this->model->getList(['table' => 'part_jasa', 'where' => ['id_header' => $id_header]]);                
+                $object = $this->db->get_where('part_jasa', ['id_header' => $id_header])->result_array();
+                $data = $this->countTotal($object);
             }else{
-                $object = $this->model->getRecord(['table'=>'part_jasa','where'=>['id_header' => $id_header, 'id' => $id_part]]);
+                $data = $this->db->get_where('part_jasa', ['id_header' => $id_header, 'id' => $id_part])->row_array();
+                $data['harga'] = intval($data['harga']);
             }
         }
 
-        echo json_encode($object);
+        echo json_encode($data);
+    }
+
+    private function countTotal($array){
+        $data_item = [];
+        $data_sub_obj = [];
+        $temp_sub_obj = [];
+        $data_obj = [];
+        $temp_obj = [];
+        $data_section = [];
+        $temp_section = [];
+        $new_data = [];
+
+        foreach ($array as $key => $item) {
+            $item['total'] = 0;
+            if($item['tipe_item'] == 'item'){
+                $item['total'] = ($item['qty'] * $item['harga']);
+                $item['harga'] = intval($item['harga']);
+                $data_item[] = $item;
+            }
+
+            if($item['tipe_item'] == 'sub_object'){
+                $temp_sub_obj[] = $item;
+            }
+
+            if($item['tipe_item'] == 'object'){
+                $temp_obj[] = $item;
+            }
+
+            if($item['tipe_item'] == 'section'){
+                $temp_section[] = $item;
+            }
+        }
+    
+        foreach ($temp_sub_obj as $key => $so) {
+            $so['total'] = 0; 
+            foreach ($data_item as $key => $item) {
+                if($so['tipe_item'] == 'sub_object'){
+                    if($item['id_parent'] == $so['id']){
+                        $so['total'] += $item['total'];
+                    }
+                }
+            }
+            $data_sub_obj[] = $so;    
+        }
+
+        
+
+        foreach ($temp_obj as $key => $object) {
+            $object['total'] = 0; 
+            foreach ($data_sub_obj as $key => $so) {
+                if($object['tipe_item'] == 'object'){
+                    if($so['id_parent'] == $object['id']){
+                        $object['total'] += $so['total'];
+                    }
+                }
+            }
+            $data_obj[] = $object;
+        }
+
+        
+
+        foreach ($temp_section as $key => $section) {
+            $section['total'] = 0;
+            foreach ($data_obj as $key => $object) {
+                if($section['tipe_item'] == 'section'){
+                    if($object['id_parent'] == $section['id']){
+                        $section['total'] += $object['total'];
+                    }
+                }
+            }
+            $data_section[] = $section;
+        }        
+
+        $new_data = array_merge($data_item, $data_sub_obj, $data_obj, $data_section);
+        // print_r($new_data);
+        // die;
+        return $new_data;
+
     }
 
     public function saveGeneralInfo()
     {
+        // print_r($_POST);
+        // die;
         $code = 0;
         $message = '';
+        $last_id = NULL;
         $action = $this->input->post('action');
         $this->form_validation->set_rules($this->quotation->getRules($action));
 
         if ($this->form_validation->run() == FALSE) {
-
-            $delimiter = '<i class="fa fa-info-circle fa-fw" aria-hidden="true"></i>';
+            $delimiter = '- ';
             $this->form_validation->set_error_delimiters($delimiter, '');
-            $message = $this->form_validation->error_array();
+            $message = validation_errors();
 
         }else{
 
@@ -81,11 +165,13 @@ class Quotation extends CI_Controller {
                 
                 if( $this->quotation->insertGeneralInfo() == TRUE){
                     $code = 1;
+                    $last_id = $this->db->insert_id();
                 }
 
             }else{
                 if( $this->quotation->udpateGeneralInfo() == TRUE ){
                     $code = 1;
+                    $last_id = $this->input->post('id_header');
                 }
             }
         }        
@@ -93,7 +179,7 @@ class Quotation extends CI_Controller {
         echo json_encode(array('data' => array(
             'code' => $code,
             'message' => $message
-        )));
+        ),'last_id'=>$last_id));
     }
 
     public function saveItem(){
@@ -116,5 +202,11 @@ class Quotation extends CI_Controller {
             'code' => $code,
             'message' => $message
         )));
+    }
+
+    public function getItemCode(){
+        // echo 1;
+        $data = $this->db->select('stcd, CONCAT( TRIM(nama)," (",stcd,")" ) as name, spek, maker, uom, nama', false)->get('mstchd')->result();
+        echo json_encode($data);
     }
 }

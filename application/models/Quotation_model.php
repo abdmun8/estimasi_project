@@ -39,14 +39,14 @@ class Quotation_model extends Model {
         $data = [
             "inquiry_no" => $post['inquiry_no'],
             "project_name" => $post['project_name'],
-            "qty" => $post['qty'],
-            "lot" => $post['lot'],
+            "qty" => $post['qty_general'],
+            "lot" => $post['lot_general'],
             "customer" => $post['customer'],
             "pic_marketing" => $post['pic_marketing'],
-            "start_date" => $post['start_date'],
-            "finish_date" => $post['finish_date'],
+            "start_date" => $post['start_date-general'],
+            "finish_date" => $post['finish_date-general'],
             "project_type" => $post['project_type'],
-            "diffficulty" => $post['diffficulty']
+            "difficulty" => $post['difficulty']
         ];
 
         return $data;
@@ -56,8 +56,9 @@ class Quotation_model extends Model {
     {
         $post = $this->input->post();
         $data = [
+            "id_header" => $post['id_header-item'],
             "tipe_id" => $post['tipe_id-item'],
-            "item_code" => $post['item_code-item'],
+            "item_code" => $post['item_code'],
             "item_name" => $post['item_name-item'],
             "spec" => $post['spec-item'],
             "satuan" => $post['satuan-item'],
@@ -67,7 +68,7 @@ class Quotation_model extends Model {
             "tipe_name" => $post['tipe_name-item'],
             "tipe_name" => $post['tipe_name-item'],
             "merk" => $post['merk-item'],
-            "harga" => $post['harga-item'],
+            "harga" => $post['harga-item-clean'],
             "kategori" => $post['kategori-item']
         ];
 
@@ -92,9 +93,9 @@ class Quotation_model extends Model {
     {
         $this->input->post();
         $data = $this->getFieldHeader();
-        $this->db->update( 'header', $data, ['id'=>$this->input->post('id_header')]);
 
-        if( $this->db->affected_rows() > 0){            
+        $this->db->update( 'header', $data, ['id'=>$this->input->post('id_header')]);
+        if( $this->db->affected_rows() >= 0){            
             return TRUE;
         }
         return FALSE;

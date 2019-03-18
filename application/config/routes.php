@@ -85,6 +85,8 @@ $route['quotation/get_data_part/(:num)'] = 'Quotation/getDataPart/$1';
 $route['quotation/get_data_part/(:num)/(:num)'] = 'Quotation/getDataPart/$1/$2';
 $route['quotation/save_item'] = 'Quotation/saveitem';
 $route['quotation/save_gen_info'] = 'Quotation/saveGeneralInfo';
+$route['quotation/get_item_code'] = 'Quotation/getItemCode';
+
 
 
 /**/
