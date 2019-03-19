@@ -50,7 +50,8 @@ class Quotation extends CI_Controller {
     * 3 = Delete
     */
 
-    public function getDataPart($id_header = NULL, $id_part = NULL){
+    public function getDataPart($id_header = NULL, $id_part = NULL)
+    {
         $object = [];
         $data = [];
         if($id_header != NULL){
@@ -59,14 +60,33 @@ class Quotation extends CI_Controller {
                 $data = $this->countTotal($object);
             }else{
                 $data = $this->db->get_where('part_jasa', ['id_header' => $id_header, 'id' => $id_part])->row_array();
-                $data['harga'] = intval($data['harga']);
+                $data['harga'] = $data['harga'];
             }
         }
 
         echo json_encode($data);
     }
 
-    private function countTotal($array){
+    public function getDataLabour($id_header = NULL, $id_labour = NULL)
+    {
+        $object = [];
+        $data = [];
+        if($id_header != NULL){
+            if($id_labour == NULL){
+                $object = $this->db->get_where('v_labour', ['id_header' => $id_header])->result_array();
+                $data = $this->countTotal($object, 'labour');
+            }else{
+                $data = $this->db->get_where('v_labour', ['id_header' => $id_header, 'id' => $id_labour])->row_array();
+                $data['rate'] = $data['rate'];
+            }
+        }
+
+        echo json_encode($data);
+    }
+
+    private function countTotal($array, $tipe = 'part')
+    {
+        $col = [];
         $data_item = [];
         $data_sub_obj = [];
         $temp_sub_obj = [];
@@ -76,11 +96,18 @@ class Quotation extends CI_Controller {
         $temp_section = [];
         $new_data = [];
 
+        if($tipe == 'part'){
+            $col = ['qty', 'harga'];
+        }else{
+            $col = ['hour', 'rate'];
+        }
+
         foreach ($array as $key => $item) {
             $item['total'] = 0;
             if($item['tipe_item'] == 'item'){
-                $item['total'] = ($item['qty'] * $item['harga']);
-                $item['harga'] = intval($item['harga']);
+                $item['total'] = ($item[$col[0]] * $item[$col[1]]);
+                $item[$col[1]] = intval($item[$col[1]]);
+                $item[$col[0]] = intval($item[$col[0]]);
                 $data_item[] = $item;
             }
 
@@ -138,8 +165,6 @@ class Quotation extends CI_Controller {
         }        
 
         $new_data = array_merge($data_item, $data_sub_obj, $data_obj, $data_section);
-        // print_r($new_data);
-        // die;
         return $new_data;
 
     }
@@ -182,7 +207,8 @@ class Quotation extends CI_Controller {
         ),'last_id'=>$last_id));
     }
 
-    public function saveItem(){
+    public function saveItem()
+    {
         // print_r($this->input->post());die;
         $code = 0;
         $message = '';
@@ -191,6 +217,16 @@ class Quotation extends CI_Controller {
                 
                 if( $this->quotation->insertDetailPart() == TRUE){
                     $code = 1;
+                    if( $this->input->post('tipe_item-item') != 'item'){
+                        $this->db->insert('labour', 
+                            [
+                                'id_header' => $this->input->post('id_header-item'),
+                                'tipe_item' => $this->input->post('tipe_item-item'),
+                                'id_parent' => ($this->input->post('id_parent-item') == NULL) ? 0 : $this->input->post('id_parent-item'),
+                                'id_part_jasa' => $this->db->insert_id()
+                            ]
+                        );
+                    }
                 }
 
             }else{
@@ -204,9 +240,68 @@ class Quotation extends CI_Controller {
         )));
     }
 
-    public function getItemCode(){
-        // echo 1;
-        $data = $this->db->select('stcd, CONCAT( TRIM(nama)," (",stcd,")" ) as name, spek, maker, uom, nama', false)->get('mstchd')->result();
-        echo json_encode($data);
+    public function saveLabour()
+    {
+        // print_r($this->input->post());
+        // die;
+        $code = 0;
+        $message = '';
+        $action = $this->input->post('action-labour');
+        if($action == 1){
+                
+                if( $this->quotation->insertDetailLabour() == TRUE){
+                    $code = 1;
+                }
+
+            }else{
+                if( $this->quotation->udpateDetailLabour() == TRUE ){
+                    $code = 1;
+                }
+            }
+        echo json_encode(array('data' => array(
+            'code' => $code,
+            'message' => $message
+        )));
+    }
+
+    public function getItemCode()
+    {
+        $obj = $this->db->select('stcd, CONCAT( TRIM(nama)," (",stcd,")" ) as name, TRIM(spek) as spek, TRIM(maker) as maker, TRIM(uom) as uom, TRIM(nama) as nama, harga', false)->get('v_item')->result();
+        
+        echo json_encode($obj);
+    }
+
+    public function delItem(){
+        $code = 0;
+        $msg = '';
+        $post = $this->input->post();
+
+        $child = $this->db->get_where($post['table'], ['id_parent' => $post['id']])->num_rows();
+
+        if($child > 0){
+            $msg = 'Hapus sub terlebih dahulu';
+            echo json_encode(['data'=>['code'=>$code,'message'=>$msg]]);
+            return;
+        }
+
+        if($post['tipe_item'] != 'item' && $post['table'] == 'part_jasa'){
+            // $id_sec = 0;
+            // $id_obj = 0;
+            // $id_subobj = 0;
+            // if($post['tipe_item'] == 'section'){
+            //     $id_sec = $this->db->select('id')->where(['id' => $post['']])->get()->;
+
+            // }
+            // $this->db->delete('labour')
+            $id_del = $this->db->get_where('v_labour', ['tipe_item' == null]);
+            
+        }
+
+        $del = $this->db->delete($post['table'], ['id' => $post['id']]);
+        if($del){
+            $code = 1;
+        }
+
+        echo json_encode(['data'=>['code'=>$code,$msg=>$msg]]);
     }
 }

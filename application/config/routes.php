@@ -75,11 +75,15 @@ $route['objects/(:any)/(:any)/(:any)'] = 'Retriever/records/$1/$2/$3/no'; // rea
 $route['pick/(:any)'] = 'Retriever/records/$1/null/null/yes'; // read/retrieve list with param for picker
 $route['pick/(:any)/(:any)/(:any)'] = 'Retriever/records/$1/$2/$3/yes'; // read/retrieve list with param for 
 
-/* Routing Quotation Controller*/	
+/* Routing Quotation Controller*/
+
+/* header */	
 $route['quotation'] = 'Quotation/index'; 
 $route['quotation/(:num)'] = 'Quotation/index/$1';
 $route['quotation/get_data_header'] = 'Quotation/getDataHeader';
 $route['quotation/get_data_header/(:num)'] = 'Quotation/getDataHeader/$1';
+
+/* Part jasa*/
 $route['quotation/get_data_part'] = 'Quotation/getDataPart';
 $route['quotation/get_data_part/(:num)'] = 'Quotation/getDataPart/$1';
 $route['quotation/get_data_part/(:num)/(:num)'] = 'Quotation/getDataPart/$1/$2';
@@ -87,6 +91,12 @@ $route['quotation/save_item'] = 'Quotation/saveitem';
 $route['quotation/save_gen_info'] = 'Quotation/saveGeneralInfo';
 $route['quotation/get_item_code'] = 'Quotation/getItemCode';
 
+/* labour */
+$route['quotation/get_data_labour/(:num)'] = 'Quotation/getDataLabour/$1';
+$route['quotation/get_data_labour/(:num)/(:num)'] = 'Quotation/getDataLabour/$1/$2';
+$route['quotation/save_labour'] = 'Quotation/saveLabour';
+
+$route['quotation/del_item'] = 'Quotation/delItem';
 
 
 /**/

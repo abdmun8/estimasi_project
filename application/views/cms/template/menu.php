@@ -17,7 +17,7 @@
     </ul>
 </li>
 
-<li class="treeview menu" id="group-system">
+<!-- <li class="treeview menu" id="group-system">
     <a href="#">
         <i class="fa fa-cogs"></i>
         <span>System</span>
@@ -30,4 +30,4 @@
         <li><a href="#" onclick="loadContent(base_url + 'view/_user_groups'); return false;"><i class="fa fa-circle-o"></i> User Groups</a></li>
         <li><a href="#" onclick="loadContent(base_url + 'view/_group_access'); return false;"><i class="fa fa-circle-o"></i> Group Access</a></li>
     </ul>
-</li>
+</li> -->

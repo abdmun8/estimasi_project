@@ -75,6 +75,24 @@ class Quotation_model extends Model {
         return $data;
     }
 
+    public function getFieldLabour()
+    {
+        $post = $this->input->post();
+        $data = [
+            "id_labour" => $post['id_labour-labour'],
+            "aktivitas" => $post['aktivitas-labour'],
+            "sub_aktivitas" => $post['sub_aktivitas-labour'],
+            "tipe_item" => $post['tipe_item-labour'],
+            "id_parent" => $post['id_parent-labour'],
+            "id_header" => $post['id_header-labour'],
+            "hour" => $post['hour-labour'],
+            "rate" => $post['rate-labour-clean'],
+        ];
+
+        return $data;
+    }
+   
+
     // public
 
     public function insertGeneralInfo()
@@ -118,6 +136,30 @@ class Quotation_model extends Model {
         $this->input->post();
         $data = $this->getFieldPart();
         $this->db->update( 'part_jasa', $data, ['id'=>$this->input->post('id-item')]);
+
+        if( $this->db->affected_rows() > 0){            
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    public function insertDetailLabour()
+    {
+        $this->input->post();
+        $data = $this->getFieldLabour();
+        $this->db->insert( 'labour', $data );
+
+        if( $this->db->affected_rows() > 0){            
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    public function udpateDetailLabour()
+    {
+        $this->input->post();
+        $data = $this->getFieldLabour();
+        $this->db->update( 'labour', $data, ['id'=>$this->input->post('id-labour')]);
 
         if( $this->db->affected_rows() > 0){            
             return TRUE;
