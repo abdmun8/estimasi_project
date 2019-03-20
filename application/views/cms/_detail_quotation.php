@@ -29,6 +29,7 @@ if ($param != null) {
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/swal/sweet-alert.css">
     <!-- daterange picker -->
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/bootstrap-daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/animate.css/animate.css">
     <style type="text/css">
     	.padding20 {
     		padding: 20px;
@@ -87,13 +88,17 @@ if ($param != null) {
                             <div class="form-group">
                                 <label for="customer" class="col-sm-3 control-label">Customer</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" name="customer" id="customer" placeholder="Customer">
+                                    <!-- <input type="text" class="form-control" name="customer" id="customer" placeholder="Customer"> -->
+                                    <select class="form-control" id="customer" name="customer" style="width: 100%;">                                        
+                                    </select>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="pic_marketing" class="col-sm-3 control-label">PIC marketing</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" name="pic_marketing" id="pic_marketing" placeholder="PIC Marketing">
+                                    <!-- <input type="text" class="form-control" name="pic_marketing" id="pic_marketing" placeholder="PIC Marketing"> -->
+                                    <select class="form-control" id="pic_marketing" name="pic_marketing" style="width: 100%;">                                        
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -238,8 +243,10 @@ if ($param != null) {
                                 <input type="text" class="form-control input-sm" id="harga-item" name="harga-item" placeholder="Price">
                             </div> 
                             <div class="form-group only_item">
-                                <label for="kategori-item">Kategori</label>
-                                <input type="text" class="form-control input-sm" id="kategori-item" name="kategori-item" placeholder="Kategori">
+                                <label>Kategori</label>
+                                <select class="form-control select2 input-sm" id="kategori-item" name="kategori-item" style="width: 100%;">
+                                    <option value="" selected="">Pilih Kategori</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -327,20 +334,13 @@ if ($param != null) {
 <script src="<?php echo base_url();?>assets/cms/moment/min/moment.min.js"></script>
 <script src="<?php echo base_url();?>assets/cms/bootstrap-daterangepicker/daterangepicker.js"></script>
 <script src="<?php echo base_url();?>assets/cms/typehead.js/bootstrap3-typeahead.js"></script>
+<script src="<?php echo base_url();?>assets/cms/bootstrap-notify/bootstrap-notify.js"></script>
 <script type="text/javascript">
 
     var id_header_tree = '';
     var data_select = [];
     // var $selTipe = $("#tipe_item-item").select2();
-    $(document).ready(function () {
-        <?php
-        if($param != null) {
-            echo 'getDataHeader("'. $param .'");';
-            echo '$("#action").val(2);';
-            echo '$("#id_header").val("'. $param .'");';
-            echo '$("#id_header-labour").val("'. $param .'");';
-        }
-        ?>
+    $(document).ready(function () {        
 
         $('.total_harga').mask("#,##0", {reverse: true});
         $('#harga-item').mask("#,##0", {reverse: true});
@@ -356,6 +356,7 @@ if ($param != null) {
             }
         });
 
+        /* get item code */
         $.get( base_url + "quotation/get_item_code", function(data){
             $("#item_code-item").typeahead({ 
                 source: data,
@@ -370,7 +371,7 @@ if ($param != null) {
                     $("#harga-item").val(parseInt(o.harga));
                 }
             });
-        },'json');
+        }, 'json');
         
         $("#tipe_item-item").change(function(){
             if(this.value == 'item'){
@@ -380,10 +381,55 @@ if ($param != null) {
                 $(".only_item").hide();
                 $(".except_item").show();            
             }
-        })
-        
+        });
+
+
+        /* get kategori barang */
+        $.get( base_url+'quotation/get_kategori', function( data ) {
+            $("#kategori-item").select2({
+                placeholder: 'Pilih Kategori',
+                data: data
+            });
+        }, 'json');
+
+        /* get Customer */
+        $.get( base_url+'quotation/get_customer', function( data ) {
+            $("#customer").select2({
+                placeholder: 'Pilih Customer',
+                data: data
+            });
+        }, 'json');
+
+        /* get PIC */
+        $.get( base_url+'quotation/get_pic', function( data ) {
+            $("#pic_marketing").select2({
+                placeholder: 'Pilih PIC',
+                data: data
+            });
+        }, 'json');
+
+        <?php
+            if($param != null) {
+                echo 'getDataHeader("'. $param .'");';
+                echo '$("#action").val(2);';
+                echo '$("#id_header").val("'. $param .'");';
+                echo '$("#id_header-labour").val("'. $param .'");';
+            }
+        ?>
 
     });
+
+    function notify(type, msg, delay = 100){
+        $.notify({
+            // options
+            message: msg ,
+            icon: 'fa fa-info-circle',
+        },{
+            // settings
+            type: type,
+            delay: delay,
+        });
+    }
 
 
     /* 
@@ -452,7 +498,7 @@ if ($param != null) {
             {
                 field: 'item_name',
                 title: 'Item Name',
-                width: '150',
+                width: '300',
                 align: "left",
                 visible: true
             },
@@ -510,11 +556,14 @@ if ($param != null) {
                 width: '150',
                 align: "right",
                 formatter: function(value,row, index) {
+                    if(row.tipe_item != 'item'){
+                        return '<span class="total_harga text-bold">'+value+'</span>';
+                    }
                     return '<span class="total_harga">'+value+'</span>';
                 }
             },
             {
-                field: 'kategori',
+                field: 'nama_kategori',
                 title: 'Kategori',
                 width: '150',
                 align: "left",
@@ -747,9 +796,11 @@ if ($param != null) {
                     $("#inquiry_no").val(json.data.object.inquiry_no);
                     $("#project_name").val(json.data.object.project_name);
                     $("#customer").val(json.data.object.customer);
+                    $('#customer').trigger('change');
                     $("#qty_general").val(json.data.object.qty);
                     $("#lot_general").val(json.data.object.lot);
                     $("#pic_marketing").val(json.data.object.pic_marketing);
+                    $('#pic_marketing').trigger('change');
                     $("#start_date").val(convertDateIndo(json.data.object.start_date));
                     $("#finish_date").val(convertDateIndo(json.data.object.finish_date));
                     $("#project_type").val(json.data.object.project_type);
@@ -759,6 +810,7 @@ if ($param != null) {
                     $("#value-input").val(json.data.object.id);
                     $("#id_header-item").val(json.data.object.id);
                     calcDate();
+                    console.log($('#pic_marketing').val());
                 }
             }
         });
@@ -933,6 +985,7 @@ if ($param != null) {
                     $("#item_code-item").val(json.item_code);
                     $("#item_name-item").val(json.item_name);
                     $("#kategori-item").val(json.kategori);
+                    $('#kategori-item').trigger('change');
                     $("#merk-item").val(json.merk);
                     $("#qty-item").val(json.qty);
                     $("#satuan-item").val(json.satuan);
@@ -965,6 +1018,8 @@ if ($param != null) {
                 $("#tipe_item-item").val(title_self);
             }
             $("#action-item").val(1);
+            $("#kategori-item").val("");
+            $('#kategori-item').trigger('change');
         }
 
         title_text = title_text.replace('_',' ');
@@ -998,6 +1053,7 @@ if ($param != null) {
                         }
                     } else {
                         genericAlert('Penyimpanan data berhasil', 'success','Sukses');
+                        // notify('success', 'Penyimpanan data berhasil');
                         setTimeout(function(){
                             window.open(base_url + 'quotation/' + json.last_id, '_self');
                         },1000);
@@ -1068,7 +1124,8 @@ if ($param != null) {
                     } else {
                         // var page ='_users/';
                         // page += json.data.last_id;
-                        genericAlert('Penyimpanan data berhasil', 'success','Sukses');
+                        // genericAlert('Penyimpanan data berhasil', 'success','Sukses');
+                        notify('success', 'Penyimpanan data berhasil');
                         $('#modal-input-item').modal('hide');
                         $('#demo').bootstrapTreeTable('refresh');
                         
@@ -1119,7 +1176,8 @@ if ($param != null) {
                     } else {
                         // var page ='_users/';
                         // page += json.data.last_id;
-                        genericAlert('Penyimpanan data berhasil', 'success','Sukses');
+                        // genericAlert('Penyimpanan data berhasil', 'success','Sukses');
+                        notify('success', 'Penyimpanan data berhasil');
                         $('#modal-input-labour').modal('hide');
                         $('#labour_table').bootstrapTreeTable('refresh');
                         

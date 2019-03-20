@@ -82,6 +82,8 @@ $route['quotation'] = 'Quotation/index';
 $route['quotation/(:num)'] = 'Quotation/index/$1';
 $route['quotation/get_data_header'] = 'Quotation/getDataHeader';
 $route['quotation/get_data_header/(:num)'] = 'Quotation/getDataHeader/$1';
+$route['quotation/get_customer'] = 'Quotation/getCustomer';
+$route['quotation/get_pic'] = 'Quotation/getPIC';
 
 /* Part jasa*/
 $route['quotation/get_data_part'] = 'Quotation/getDataPart';
@@ -90,6 +92,8 @@ $route['quotation/get_data_part/(:num)/(:num)'] = 'Quotation/getDataPart/$1/$2';
 $route['quotation/save_item'] = 'Quotation/saveitem';
 $route['quotation/save_gen_info'] = 'Quotation/saveGeneralInfo';
 $route['quotation/get_item_code'] = 'Quotation/getItemCode';
+$route['quotation/get_kategori'] = 'Quotation/getKategori';
+
 
 /* labour */
 $route['quotation/get_data_labour/(:num)'] = 'Quotation/getDataLabour/$1';

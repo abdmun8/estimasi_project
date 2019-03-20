@@ -19,6 +19,20 @@ function formatDate(date, to_indo = true){
 
 }
 
+/* notify */
+
+function notify(type, msg){
+    $.notify({
+        // options
+        message: msg ,
+        icon: 'fa fa-info-circle',
+    },{
+        // settings
+        type: type,
+        delay: 100,
+    });
+}
+
 function convertDateIndo(dt){
     dt = dt.trim();
     return dt.substr(8,2) +'-'+ dt.substr(5,2) +'-'+ dt.substr(0,4);

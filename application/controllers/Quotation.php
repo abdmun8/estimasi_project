@@ -56,7 +56,23 @@ class Quotation extends CI_Controller {
         $data = [];
         if($id_header != NULL){
             if($id_part == NULL){
-                $object = $this->db->get_where('part_jasa', ['id_header' => $id_header])->result_array();
+                // $object = $this->db->get_where('part_jasa', ['id_header' => $id_header])->result_array();
+                $object = $this->db->query('SELECT 
+                            *,
+                            (SELECT 
+                                    tipe_item
+                                FROM
+                                    part_jasa p
+                                WHERE
+                                    p.id = j.id_parent) AS tipe_parent,
+                            k.desc AS nama_kategori
+                        FROM
+                            `part_jasa` j
+                                LEFT JOIN
+                            `akunbg` k ON j.kategori = k.accno
+                        WHERE
+                            j.id_header ="'.$id_header.'"')
+                    ->result_array();
                 $data = $this->countTotal($object);
             }else{
                 $data = $this->db->get_where('part_jasa', ['id_header' => $id_header, 'id' => $id_part])->row_array();
@@ -86,6 +102,8 @@ class Quotation extends CI_Controller {
 
     private function countTotal($array, $tipe = 'part')
     {
+        // print_r($array);
+        // die;
         $col = [];
         $data_item = [];
         $data_sub_obj = [];
@@ -96,6 +114,9 @@ class Quotation extends CI_Controller {
         $temp_section = [];
         $new_data = [];
 
+        $temp_parent_section = [];
+        $temp_parent_object = [];
+
         if($tipe == 'part'){
             $col = ['qty', 'harga'];
         }else{
@@ -105,9 +126,19 @@ class Quotation extends CI_Controller {
         foreach ($array as $key => $item) {
             $item['total'] = 0;
             if($item['tipe_item'] == 'item'){
+
                 $item['total'] = ($item[$col[0]] * $item[$col[1]]);
                 $item[$col[1]] = intval($item[$col[1]]);
                 $item[$col[0]] = intval($item[$col[0]]);
+
+                if($item['tipe_parent'] == 'section'){
+                    array_push($temp_parent_section, ['id_parent' => $item['id_parent'], 'total' => $item['total']]);
+                }
+
+                if($item['tipe_parent'] == 'object'){
+                    array_push($temp_parent_object, ['id_parent' => $item['id_parent'], 'total' => $item['total']]);
+                }
+                
                 $data_item[] = $item;
             }
 
@@ -123,7 +154,8 @@ class Quotation extends CI_Controller {
                 $temp_section[] = $item;
             }
         }
-    
+        
+        
         foreach ($temp_sub_obj as $key => $so) {
             $so['total'] = 0; 
             foreach ($data_item as $key => $item) {
@@ -150,11 +182,18 @@ class Quotation extends CI_Controller {
             $data_obj[] = $object;
         }
 
-        
+        $new_object = [];
+        foreach ($data_obj as $key => $object) {
+            $key = array_search($object['id'], array_column($temp_parent_object, 'id_parent'));
+            if($key !== false){
+                $object['total'] += $temp_parent_object[$key]['total'];
+            }
+            $new_object[] = $object;
+        }
 
         foreach ($temp_section as $key => $section) {
             $section['total'] = 0;
-            foreach ($data_obj as $key => $object) {
+            foreach ($new_object as $key => $object) {
                 if($section['tipe_item'] == 'section'){
                     if($object['id_parent'] == $section['id']){
                         $section['total'] += $object['total'];
@@ -162,9 +201,19 @@ class Quotation extends CI_Controller {
                 }
             }
             $data_section[] = $section;
-        }        
+        }    
 
-        $new_data = array_merge($data_item, $data_sub_obj, $data_obj, $data_section);
+        $new_section = [];    
+        foreach ($data_section as $key => $section) {
+            $key = array_search($section['id'], array_column($temp_parent_section, 'id_parent'));
+            if($key !== false){
+                $section['total'] += $temp_parent_section[$key]['total'];
+            }
+            $new_section[] = $section;
+        }
+        
+
+        $new_data = array_merge($data_item, $data_sub_obj, $new_object, $new_section);
         return $new_data;
 
     }
@@ -268,6 +317,21 @@ class Quotation extends CI_Controller {
     {
         $obj = $this->db->select('stcd, CONCAT( TRIM(nama)," (",stcd,")" ) as name, TRIM(spek) as spek, TRIM(maker) as maker, TRIM(uom) as uom, TRIM(nama) as nama, harga', false)->get('v_item')->result();
         
+        echo json_encode($obj);
+    }
+
+    public function getKategori(){
+        $obj = $this->db->select('accno as id, TRIM(`desc`) as text', false)->where_in('header', ['10000','20000'])->get('akunbg')->result();
+        echo json_encode($obj);
+    }
+
+    public function getCustomer(){
+        $obj = $this->db->select('custid as id, TRIM(`nama`) as text', false)->get('customer')->result();
+        echo json_encode($obj);
+    }
+
+    public function getPIC(){
+        $obj = $this->db->select('id_personalia as id, TRIM(`nama`) as text', false)->like('departemen','MKTG')->get('personal')->result();
         echo json_encode($obj);
     }
 
