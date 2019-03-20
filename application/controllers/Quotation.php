@@ -266,12 +266,27 @@ class Quotation extends CI_Controller {
                 
                 if( $this->quotation->insertDetailPart() == TRUE){
                     $code = 1;
+                    $tipe_item = '';
+                    $id_parent = 0;
+                    $id_temp = 0;
                     if( $this->input->post('tipe_item-item') != 'item'){
+                        if( $this->input->post('tipe_item-item') == 'section' ){
+                            $tipe_item = 'section';
+                        }elseif ( $this->input->post('tipe_item-item') == 'object' ) {
+                            $tipe_item = 'object';
+                            $id_temp = $this->db->get_where('part_jasa', ['id' => $this->db->insert_id()])->row()->id_parent;
+                            $id_parent = $this->db->get_where('labour', ['id_part_jasa' => $id_temp])->row()->id;
+                        }else{
+                            $tipe_item = 'sub_object';
+                            $id_temp = $this->db->get_where('part_jasa', ['id' => $this->db->insert_id()])->row()->id_parent;
+                            $id_parent = $this->db->get_where('labour', ['id_part_jasa' => $id_temp])->row()->id;
+                        }
+
                         $this->db->insert('labour', 
                             [
                                 'id_header' => $this->input->post('id_header-item'),
-                                'tipe_item' => $this->input->post('tipe_item-item'),
-                                'id_parent' => ($this->input->post('id_parent-item') == NULL) ? 0 : $this->input->post('id_parent-item'),
+                                'tipe_item' => $tipe_item,
+                                'id_parent' => $id_parent,
                                 'id_part_jasa' => $this->db->insert_id()
                             ]
                         );
