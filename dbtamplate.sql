@@ -105,6 +105,34 @@ INSERT INTO `customer` VALUES ('ABB','PT. ABB SAKTI INDUSTRI                    
 UNLOCK TABLES;
 
 --
+-- Table structure for table `default_labour`
+--
+
+DROP TABLE IF EXISTS `default_labour`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `default_labour` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `aktivitas` varchar(100) NOT NULL,
+  `sub_aktivitas` varchar(100) NOT NULL,
+  `rate` float(10,2) NOT NULL,
+  `budget_id` varchar(10) DEFAULT NULL,
+  PRIMARY KEY (`id`,`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `default_labour`
+--
+
+LOCK TABLES `default_labour` WRITE;
+/*!40000 ALTER TABLE `default_labour` DISABLE KEYS */;
+INSERT INTO `default_labour` VALUES (1,'ENGINEERING','Mechanic Design','Preparation',125000.00,'30001'),(2,'ENGINEERING','Mechanic Design','3D',125000.00,'30001'),(3,'ENGINEERING','Mechanic Design','Detil',125000.00,'30001'),(4,'ENGINEERING','Mechanic Design','Manual Book',125000.00,'30001'),(5,'ENGINEERING','Mechanic Design','Administrasi',125000.00,'30001'),(6,'ENGINEERING','Electric Design','Preparation',125000.00,'30002'),(7,'ENGINEERING','Electric Design','Desain',125000.00,'30002'),(8,'ENGINEERING','Electric Design','Programing',125000.00,'30002'),(9,'ENGINEERING','Electric Design','Installation',125000.00,'30002'),(10,'ENGINEERING','Electric Design','Commisioning',125000.00,'30002'),(11,'ENGINEERING','Electric Design','Administrasi',125000.00,'30002'),(12,'ENGINEERING','Control Project','Preparation',125000.00,'30011'),(13,'ENGINEERING','Control Project','Installation',125000.00,'30011'),(14,'ENGINEERING','Control Project','Commisioning',125000.00,'30011'),(15,'ENGINEERING','Control Project','Administrasi',125000.00,'30011'),(16,'PRODUCTION','Fabrication','Cutting',75000.00,'30003'),(17,'PRODUCTION','Fabrication','Welding',75000.00,'30003'),(18,'PRODUCTION','Machining','Machining',75000.00,'30004'),(19,'PRODUCTION','Painting','Painting',75000.00,'30010'),(20,'PRODUCTION','Assembly','Delivery',75000.00,'30008'),(21,'PRODUCTION','Installation','Installation',75000.00,'30009'),(22,'PRODUCTION','Installation','Commisioning',75000.00,'30009'),(23,'PRODUCTION','Installation','Delivery',75000.00,'30009'),(24,'PRODUCTION','Installation','Administrasi',75000.00,'30009');
+/*!40000 ALTER TABLE `default_labour` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `groups`
 --
 
@@ -174,7 +202,9 @@ CREATE TABLE `labour` (
   `id_parent` int(11) NOT NULL,
   `id_header` int(11) NOT NULL,
   `id_part_jasa` int(11) NOT NULL,
+  `tipe_id` varchar(100) NOT NULL,
   `tipe_item` varchar(20) NOT NULL,
+  `tipe_name` varchar(100) NOT NULL,
   `id_labour` varchar(11) NOT NULL,
   `aktivitas` varchar(100) NOT NULL,
   `sub_aktivitas` varchar(100) NOT NULL,
@@ -184,7 +214,7 @@ CREATE TABLE `labour` (
   KEY `id_part_jasa` (`id_part_jasa`),
   KEY `id_header` (`id_header`),
   KEY `id_part_jasa_2` (`id_part_jasa`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -193,7 +223,7 @@ CREATE TABLE `labour` (
 
 LOCK TABLES `labour` WRITE;
 /*!40000 ALTER TABLE `labour` DISABLE KEYS */;
-INSERT INTO `labour` VALUES (1,0,1,1,'section','','','',0.00,0.00),(2,1,1,2,'object','','','',0.00,0.00),(3,2,1,3,'sub_object','','','',0.00,0.00),(4,1,1,6,'object','','','',0.00,0.00),(5,6,1,10,'sub_object','','','',0.00,0.00);
+INSERT INTO `labour` VALUES (1,0,1,1,'1','section','1','','','',0.00,0.00),(2,1,1,1,'1','item','ENGINEERING','30001','Mechanic Design','Preparation',1.00,125000.00),(3,1,1,1,'1','item','ENGINEERING','30001','Mechanic Design','3D',0.00,125000.00),(4,1,1,1,'1','item','ENGINEERING','30001','Mechanic Design','Detil',0.00,125000.00),(5,1,1,1,'1','item','ENGINEERING','30001','Mechanic Design','Manual Book',0.00,125000.00),(6,1,1,1,'1','item','ENGINEERING','30001','Mechanic Design','Administrasi',0.00,125000.00),(7,1,1,1,'1','item','ENGINEERING','30002','Electric Design','Preparation',0.00,125000.00),(8,1,1,1,'1','item','ENGINEERING','30002','Electric Design','Desain',0.00,125000.00),(9,1,1,1,'1','item','ENGINEERING','30002','Electric Design','Programing',0.00,125000.00),(10,1,1,1,'1','item','ENGINEERING','30002','Electric Design','Installation',0.00,125000.00),(11,1,1,1,'1','item','ENGINEERING','30002','Electric Design','Commisioning',0.00,125000.00),(12,1,1,1,'1','item','ENGINEERING','30002','Electric Design','Administrasi',0.00,125000.00),(13,1,1,1,'1','item','ENGINEERING','30011','Control Project','Preparation',0.00,125000.00),(14,1,1,1,'1','item','ENGINEERING','30011','Control Project','Installation',0.00,125000.00),(15,1,1,1,'1','item','ENGINEERING','30011','Control Project','Commisioning',0.00,125000.00),(16,1,1,1,'1','item','ENGINEERING','30011','Control Project','Administrasi',0.00,125000.00),(17,1,1,1,'1','item','PRODUCTION','30003','Fabrication','Cutting',1.00,75000.00),(18,1,1,1,'1','item','PRODUCTION','30003','Fabrication','Welding',0.00,75000.00),(19,1,1,1,'1','item','PRODUCTION','30004','Machining','Machining',0.00,75000.00),(20,1,1,1,'1','item','PRODUCTION','30010','Painting','Painting',0.00,75000.00),(21,1,1,1,'1','item','PRODUCTION','30008','Assembly','Delivery',0.00,75000.00),(22,1,1,1,'1','item','PRODUCTION','30009','Installation','Installation',0.00,75000.00),(23,1,1,1,'1','item','PRODUCTION','30009','Installation','Commisioning',0.00,75000.00),(24,1,1,1,'1','item','PRODUCTION','30009','Installation','Delivery',0.00,75000.00),(25,1,1,1,'1','item','PRODUCTION','30009','Installation','Administrasi',0.00,75000.00),(26,1,1,2,'1','object','1','','','',0.00,0.00),(27,26,1,2,'1','item','ENGINEERING','30001','Mechanic Design','Preparation',2.00,125000.00),(28,26,1,2,'1','item','ENGINEERING','30001','Mechanic Design','3D',2.00,125000.00),(29,26,1,2,'1','item','ENGINEERING','30001','Mechanic Design','Detil',1.00,125000.00),(30,26,1,2,'1','item','ENGINEERING','30001','Mechanic Design','Manual Book',2.00,125000.00),(31,26,1,2,'1','item','ENGINEERING','30001','Mechanic Design','Administrasi',1.00,125000.00),(32,26,1,2,'1','item','ENGINEERING','30002','Electric Design','Preparation',1.00,125000.00),(33,26,1,2,'1','item','ENGINEERING','30002','Electric Design','Desain',1.00,125000.00),(34,26,1,2,'1','item','ENGINEERING','30002','Electric Design','Programing',1.00,125000.00),(35,26,1,2,'1','item','ENGINEERING','30002','Electric Design','Installation',0.00,125000.00),(36,26,1,2,'1','item','ENGINEERING','30002','Electric Design','Commisioning',0.00,125000.00),(37,26,1,2,'1','item','ENGINEERING','30002','Electric Design','Administrasi',0.00,125000.00),(38,26,1,2,'1','item','ENGINEERING','30011','Control Project','Preparation',0.00,125000.00),(39,26,1,2,'1','item','ENGINEERING','30011','Control Project','Installation',0.00,125000.00),(40,26,1,2,'1','item','ENGINEERING','30011','Control Project','Commisioning',0.00,125000.00),(41,26,1,2,'1','item','ENGINEERING','30011','Control Project','Administrasi',0.00,125000.00),(42,26,1,2,'1','item','PRODUCTION','30003','Fabrication','Cutting',0.00,75000.00),(43,26,1,2,'1','item','PRODUCTION','30003','Fabrication','Welding',2.00,75000.00),(44,26,1,2,'1','item','PRODUCTION','30004','Machining','Machining',1.00,75000.00),(45,26,1,2,'1','item','PRODUCTION','30010','Painting','Painting',1.00,75000.00),(46,26,1,2,'1','item','PRODUCTION','30008','Assembly','Delivery',1.00,75000.00),(47,26,1,2,'1','item','PRODUCTION','30009','Installation','Installation',1.00,75000.00),(48,26,1,2,'1','item','PRODUCTION','30009','Installation','Commisioning',1.00,75000.00),(49,26,1,2,'1','item','PRODUCTION','30009','Installation','Delivery',0.00,75000.00),(50,26,1,2,'1','item','PRODUCTION','30009','Installation','Administrasi',0.00,75000.00),(51,26,1,6,'1.1.1','sub_object','1.1.1','','','',0.00,0.00),(52,51,1,6,'1.1.1','item','ENGINEERING','30001','Mechanic Design','Preparation',1.00,125000.00),(53,51,1,6,'1.1.1','item','ENGINEERING','30001','Mechanic Design','3D',2.00,125000.00),(54,51,1,6,'1.1.1','item','ENGINEERING','30001','Mechanic Design','Detil',0.00,125000.00),(55,51,1,6,'1.1.1','item','ENGINEERING','30001','Mechanic Design','Manual Book',0.00,125000.00),(56,51,1,6,'1.1.1','item','ENGINEERING','30001','Mechanic Design','Administrasi',0.00,125000.00),(57,51,1,6,'1.1.1','item','ENGINEERING','30002','Electric Design','Preparation',0.00,125000.00),(58,51,1,6,'1.1.1','item','ENGINEERING','30002','Electric Design','Desain',0.00,125000.00),(59,51,1,6,'1.1.1','item','ENGINEERING','30002','Electric Design','Programing',0.00,125000.00),(60,51,1,6,'1.1.1','item','ENGINEERING','30002','Electric Design','Installation',0.00,125000.00),(61,51,1,6,'1.1.1','item','ENGINEERING','30002','Electric Design','Commisioning',0.00,125000.00),(62,51,1,6,'1.1.1','item','ENGINEERING','30002','Electric Design','Administrasi',0.00,125000.00),(63,51,1,6,'1.1.1','item','ENGINEERING','30011','Control Project','Preparation',0.00,125000.00),(64,51,1,6,'1.1.1','item','ENGINEERING','30011','Control Project','Installation',1.00,125000.00),(65,51,1,6,'1.1.1','item','ENGINEERING','30011','Control Project','Commisioning',1.00,125000.00),(66,51,1,6,'1.1.1','item','ENGINEERING','30011','Control Project','Administrasi',0.00,125000.00),(67,51,1,6,'1.1.1','item','PRODUCTION','30003','Fabrication','Cutting',1.00,75000.00),(68,51,1,6,'1.1.1','item','PRODUCTION','30003','Fabrication','Welding',0.00,75000.00),(69,51,1,6,'1.1.1','item','PRODUCTION','30004','Machining','Machining',0.00,75000.00),(70,51,1,6,'1.1.1','item','PRODUCTION','30010','Painting','Painting',0.00,75000.00),(71,51,1,6,'1.1.1','item','PRODUCTION','30008','Assembly','Delivery',0.00,75000.00),(72,51,1,6,'1.1.1','item','PRODUCTION','30009','Installation','Installation',0.00,75000.00),(73,51,1,6,'1.1.1','item','PRODUCTION','30009','Installation','Commisioning',0.00,75000.00),(74,51,1,6,'1.1.1','item','PRODUCTION','30009','Installation','Delivery',0.00,75000.00),(75,51,1,6,'1.1.1','item','PRODUCTION','30009','Installation','Administrasi',0.00,75000.00);
 /*!40000 ALTER TABLE `labour` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -210,7 +240,7 @@ CREATE TABLE `login_attempts` (
   `login` varchar(100) NOT NULL,
   `time` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -219,7 +249,6 @@ CREATE TABLE `login_attempts` (
 
 LOCK TABLES `login_attempts` WRITE;
 /*!40000 ALTER TABLE `login_attempts` DISABLE KEYS */;
-INSERT INTO `login_attempts` VALUES (2,'::1','rootadministrator',1553044961);
 /*!40000 ALTER TABLE `login_attempts` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -341,7 +370,7 @@ CREATE TABLE `part_jasa` (
   `qty` int(11) NOT NULL DEFAULT '0',
   `kategori` varchar(100) NOT NULL DEFAULT '''''',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -350,7 +379,7 @@ CREATE TABLE `part_jasa` (
 
 LOCK TABLES `part_jasa` WRITE;
 /*!40000 ALTER TABLE `part_jasa` DISABLE KEYS */;
-INSERT INTO `part_jasa` VALUES (1,1,0,'section','1','1','','','','','',0.00,0,''),(2,1,1,'object','1.1','1.1','','','','','',0.00,0,''),(3,1,2,'sub_object','1.1.1','1.1.1','','','','','',0.00,0,''),(4,1,3,'item','','','ATK00254','LEM KERTAS BESAR GLUKOL','','','PCS',8240.00,10,'10001'),(5,1,3,'item','','','ATK00003','LEM KERTAS BESAR DIAKOL','','','PCS',8240.00,10,''),(6,1,1,'object','1.2','1.2','ATK00003','','','','',0.00,0,''),(7,1,1,'item','','','CNS00319','LEM DEXTONE 5 MENIT','','','PCS',12360.00,10,''),(8,1,2,'item','','','ATK00254','LEM KERTAS BESAR GLUKOL','','','PCS',8240.00,10,''),(9,1,6,'item','','','CNS00789','LEM AICA AIBON','','','KLG',69010.00,10,''),(10,1,6,'sub_object','1.2.1','1.2.1','CNS00789','','','','',0.00,0,''),(11,1,10,'item','','','CNS00219','LEM FOX PUTIH 350 GR','','','PCS',23175.00,10,'');
+INSERT INTO `part_jasa` VALUES (1,1,0,'section','1','1','','','','','',0.00,0,''),(2,1,1,'object','1','1','','','','','',0.00,0,''),(3,1,2,'item','','','ATK00021','AMPLOP COKLAT TANPA TALI','','','PACK',33630.00,10,'10006'),(4,1,1,'item','','','ATK00411','AMPLOP PUTIH','NO 104','','PACK',16480.00,10,'10006'),(5,1,1,'item','','','ATK00042','WHITE BOARD + STAND','1200MM X 2400MM','','UNIT',1236000.00,1,'10006'),(6,1,2,'sub_object','1.1.1','1.1.1','','','','','',0.00,0,'');
 /*!40000 ALTER TABLE `part_jasa` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -468,7 +497,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'127.0.0.1','administrator','$2y$12$IcnSV7JpHgcyM4Ei3wdnEuZALWztYSbKuYALxTy1w3PIqUYBR..Oi','admin@admin.com',NULL,'',NULL,NULL,NULL,NULL,NULL,1268889823,1553044975,1,'Admin','istrator','ADMIN','0');
+INSERT INTO `users` VALUES (1,'127.0.0.1','administrator','$2y$12$IcnSV7JpHgcyM4Ei3wdnEuZALWztYSbKuYALxTy1w3PIqUYBR..Oi','admin@admin.com',NULL,'',NULL,NULL,NULL,NULL,NULL,1268889823,1553144338,1,'Admin','istrator','ADMIN','0');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -594,4 +623,4 @@ USE `dbtemplate`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-20 15:16:42
+-- Dump completed on 2019-03-21 15:54:48

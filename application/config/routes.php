@@ -101,6 +101,8 @@ $route['quotation/get_data_labour/(:num)/(:num)'] = 'Quotation/getDataLabour/$1/
 $route['quotation/save_labour'] = 'Quotation/saveLabour';
 
 $route['quotation/del_item'] = 'Quotation/delItem';
+$route['quotation/save_hour'] = 'Quotation/saveHourLabour';
+
 
 
 /**/

@@ -88,7 +88,6 @@ if ($param != null) {
                             <div class="form-group">
                                 <label for="customer" class="col-sm-3 control-label">Customer</label>
                                 <div class="col-sm-9">
-                                    <!-- <input type="text" class="form-control" name="customer" id="customer" placeholder="Customer"> -->
                                     <select class="form-control" id="customer" name="customer" style="width: 100%;">                                        
                                     </select>
                                 </div>
@@ -96,7 +95,6 @@ if ($param != null) {
                             <div class="form-group">
                                 <label for="pic_marketing" class="col-sm-3 control-label">PIC marketing</label>
                                 <div class="col-sm-9">
-                                    <!-- <input type="text" class="form-control" name="pic_marketing" id="pic_marketing" placeholder="PIC Marketing"> -->
                                     <select class="form-control" id="pic_marketing" name="pic_marketing" style="width: 100%;">                                        
                                     </select>
                                 </div>
@@ -360,7 +358,7 @@ if ($param != null) {
         $.get( base_url + "quotation/get_item_code", function(data){
             $("#item_code-item").typeahead({ 
                 source: data,
-                minLength: 3,
+                minLength: 1,
                 order: "asc",
                 afterSelect: function(o){
                     $("#item_code").val(o.stcd);
@@ -440,7 +438,7 @@ if ($param != null) {
         toolbar: "#demo-toolbar",    //顶部工具条
         expandColumn : 1,    
         expandAll: true,
-        height:400,
+        height:480,
         type: 'get',
         parentId: 'id_parent',
         url: base_url + 'quotation/get_data_part/'+ id_header_tree,
@@ -624,9 +622,9 @@ if ($param != null) {
 
     var treeTable = $('#labour_table').bootstrapTreeTable({
         toolbar: "#labour-toolbar",    //顶部工具条
-        expandColumn : 1,    
-        expandAll: true,
-        height:400,
+        expandColumn : 1,   
+        expandAll: false,
+        height:480,
         type: 'get',
         parentId: 'id_parent',
         url: base_url + 'quotation/get_data_labour/'+ id_header_tree,
@@ -634,27 +632,24 @@ if ($param != null) {
             {
                 checkbox: true
             },   
-            {
-                title: 'Opsi',
-                width: '140',
-                align: "center",
-                fixed: true,
-                formatter: function(value,row, index) {
-                    var actions = [];             
-                    actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="showModalLabour('+row.id+','+row.id_parent+','+false+',\'edit\')"><i class="fa fa-edit"></i></a> ');        
-                    
-                    if(row.tipe_item === 'item'){  
-                        actions.push('<a class="btn btn-danger btn-xs " title="Hapus" onclick="confirmDelete('+row.id+',\'labour\')"><i class="fa fa-remove"></i></a>');
-                    }else if(row.tipe_item === 'sub_object'){
-                        actions.push('<a class="btn btn-info btn-xs " title="Tambah Sub" onclick="showModalLabour('+row.id+','+row.id_parent+','+true+')" href="#"><i class="fa fa-plus"></i></a> ');
-                    }
-                    return actions.join('');
-                }
-            },
+            // {
+            //     title: 'Opsi',
+            //     width: '140',
+            //     align: "center",
+            //     fixed: true,
+            //     formatter: function(value,row, index) {
+            //         var actions = [];             
+            //         if(row.tipe_item === 'item'){ 
+            //             actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="showModalLabour('+row.id+','+row.id_parent+','+false+',\'edit\')"><i class="fa fa-edit"></i></a> ');        
+            //         }
+            //         return actions.join('');
+            //     }
+            // },
             {
                 title: 'Section & Object',
                 field: 'tipe_id',
-                width: '200',
+                width: '150',
+                fixed: true,
                 formatter: function(value,row, index) {
                     if (row.tipe_item == 'section') {
                         return '<span class="label label-success">'+value+'</span>';
@@ -681,7 +676,7 @@ if ($param != null) {
             {
                 field: 'id_labour',
                 title: 'Id Labour',
-                width: '300',
+                width: '150',
                 align: "left",
                 visible: true
             },
@@ -705,10 +700,16 @@ if ($param != null) {
                 width: '100',
                 align: "right",
                 formatter: function(value,row, index) {
+
                     if( row.tipe_item != 'item' ){
                         return '';
                     }else{
-                        return value;
+                        var actions = [];
+                        actions.push('<span id="valHour'+row.id+'">'+value+'</span>&nbsp;&nbsp;');
+                        actions.push('<button id="btnEdit'+row.id+'"class="btn btn-success btn-xs btnEdit" title="Edit" onclick="editHour('+row.id+')"><span id="iconHour'+row.id+'"><i class="fa fa-edit"></i></span></button> ');
+
+                        actions.push('<button style="display:none;" id="btnSave'+row.id+'"class="btn btn-info btn-xs btnEdit" title="Save" onclick="saveHour('+row.id+','+row.id_parent+')"><i class="fa fa-check"></i></button> ');
+                        return actions.join('');   
                     }
                 }
             },
@@ -722,7 +723,7 @@ if ($param != null) {
                     if( row.tipe_item != 'item' ){
                         return '';
                     }else{
-                        return '<span class="total_harga">'+value+'</span>';
+                        return '<span id="rateValue'+row.id+'" class="total_harga">'+value+'</span>';
                     }
                 }
             },            
@@ -732,7 +733,10 @@ if ($param != null) {
                 width: '150',
                 align: "right",
                 formatter: function(value,row, index) {
-                    return '<span class="total_harga">'+value+'</span>';
+                    if(row.tipe_item != 'item'){
+                        return '<span id="totalValue'+row.id+'" class="total_harga text-bold">'+value+'</span>';
+                    }
+                    return '<span id="totalValue'+row.id+'" class="total_harga">'+value+'</span>';
                 }
             }
             
@@ -790,7 +794,8 @@ if ($param != null) {
             cache: false,
             success: function(json) {
                 if (json.data.code === 0) {
-                    genericAlert('Terjadi kesalahan!', 'error','Error');
+                    notify('danger','Terjadi kesalahan!');
+
                 } else {
 
                     $("#inquiry_no").val(json.data.object.inquiry_no);
@@ -810,7 +815,6 @@ if ($param != null) {
                     $("#value-input").val(json.data.object.id);
                     $("#id_header-item").val(json.data.object.id);
                     calcDate();
-                    console.log($('#pic_marketing').val());
                 }
             }
         });
@@ -838,7 +842,7 @@ if ($param != null) {
                     success: function(json){
                         loading('loading',false);
                         if (json.data.code === 1) {
-                            genericAlert('Hapus data berhasil','success','Sukses');
+                            notify('success', 'Hapus data berhasil');
 
                             if(table == 'part_jasa'){
                                 $('#demo').bootstrapTreeTable('refresh');
@@ -847,17 +851,15 @@ if ($param != null) {
                             }
 
                         } else if(json.data.code === 2){
-
-                            genericAlert('Hapus data gagal!','error','Error');
+                            notify('danger', 'Hapus data gagal!');
 
                         } else{
-
-                            genericAlert(json.data.message,'warning','Perhatian');
+                            notify('warning', json.data.message);
                         }
                     },
                     error: function () {
                         loading('loading',false);
-                        genericAlert('Tidak dapat hapus data!','error', 'Error');
+                        notify('danger','Tidak dapat hapus data!','error', 'Error');
                     }
                 });
             }, 100);
@@ -871,7 +873,7 @@ if ($param != null) {
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         var target = $(e.target).attr("href").substr(1) // activated tab
         if(target != 'general_info_tab' && id_header_tree == ''){
-            genericAlert('Simpan General Info Terlebih dahulu!', 'error','Error');
+            notify('danger', 'Simpan General Info Terlebih dahulu!');
             setActiveTab("general_info_tab");
         }else{
             /* if header saved load tree table*/
@@ -1044,23 +1046,20 @@ if ($param != null) {
                 success: function(json) {
                     loading('loading',false);
                     if (json.data.code === 0) {
-                        // console.log(typeof json.data.message);
-                        // return;
                         if (json.data.message == '') {
-                            genericAlert('Penyimpanan data gagal!', 'error','Error');
+                            notify('danger', 'Penyimpanan data gagal!');
                         } else {
-                            genericAlert(json.data.message, 'warning','Peringatan');
+                            notify('warning', json.data.message);
                         }
                     } else {
-                        genericAlert('Penyimpanan data berhasil', 'success','Sukses');
-                        // notify('success', 'Penyimpanan data berhasil');
+                        notify('success', 'Penyimpanan data berhasil');
                         setTimeout(function(){
                             window.open(base_url + 'quotation/' + json.last_id, '_self');
                         },1000);
                     }
                 }, error: function () {
                     loading('loading',false);
-                    genericAlert('Terjadi kesalahan!', 'error','Error');
+                    notify('danger', 'Terjadi kesalahan!');
                 }
             });
         }, 100);
@@ -1117,14 +1116,11 @@ if ($param != null) {
                     loading('loading',false);
                     if (json.data.code === 0) {
                         if (json.data.message == '') {
-                            genericAlert('Penyimpanan data gagal!', 'error','Error');
+                            notify('danger', 'Penyimpanan data gagal!');
                         } else {
-                            genericAlert(json.data.message, 'warning','Peringatan');
+                            notify('warning', json.data.message);
                         }
                     } else {
-                        // var page ='_users/';
-                        // page += json.data.last_id;
-                        // genericAlert('Penyimpanan data berhasil', 'success','Sukses');
                         notify('success', 'Penyimpanan data berhasil');
                         $('#modal-input-item').modal('hide');
                         $('#demo').bootstrapTreeTable('refresh');
@@ -1132,7 +1128,7 @@ if ($param != null) {
                     }
                 }, error: function () {
                     loading('loading',false);
-                    genericAlert('Terjadi kesalahan!', 'error','Error');
+                    notify('danger', 'Terjadi kesalahan!!');
                 }
             });
         }, 100);
@@ -1155,82 +1151,85 @@ if ($param != null) {
 
     }
 
-    function saveLabour(){
-        var rate = $("#rate-labour").cleanVal();
-        var data = $("#form-input-labour").serialize() +'&rate-labour-clean='+ rate;
-        setTimeout(function() {
-            $.ajax({
-                url: base_url + 'quotation/save_labour',
-                data: data,
-                dataType: 'json',
-                type: 'POST',
-                cache: false,
-                success: function(json) {
-                    loading('loading',false);
-                    if (json.data.code === 0) {
-                        if (json.data.message == '') {
-                            genericAlert('Penyimpanan data gagal!', 'error','Error');
-                        } else {
-                            genericAlert(json.data.message, 'warning','Peringatan');
-                        }
-                    } else {
-                        // var page ='_users/';
-                        // page += json.data.last_id;
-                        // genericAlert('Penyimpanan data berhasil', 'success','Sukses');
-                        notify('success', 'Penyimpanan data berhasil');
-                        $('#modal-input-labour').modal('hide');
-                        $('#labour_table').bootstrapTreeTable('refresh');
-                        
-                    }
-                }, error: function () {
-                    loading('loading',false);
-                    genericAlert('Terjadi kesalahan!', 'error','Error');
-                }
-            });
-        }, 100);
+    function editHour(id){
+        // console.log(val, id)
+        var val = $("#valHour"+id+"").text();
+        var html = '<input class="" style="width:50px;height:23px;border:1px solid #ccc;padding:0px;margin:0px;" type="number" id="inputHour'+id+'" value="'+val+'" min="0" />';
+        $("#valHour"+id+"").html(html);
+        $("#inputHour"+id+"").focus();      
+        $("#btnEdit"+id+"").css("display","none");      
+        $("#btnSave"+id+"").css("display","inline");      
     }
 
-    function showModalLabour(id='', id_parent='', sub=false, action = 'add'){
-
-        /* Set default Form value*/
-
-        if(action == 'edit'){
-            $.ajax({
-                url: base_url + 'quotation/get_data_labour/'+id_header_tree+'/'+id,
-                dataType: 'json',
-                type: 'POST',
-                cache: false,
-                success: function(json) {
-                    console.log(json)
-                    $("#tipe_name-item").val(json.tipe_name);
-                    $("#tipe_item-labour").val(json.tipe_item);
-                    $("#aktivitas-labour").val(json.aktivitas);
-                    $("#sub_aktivitas-labour").val(json.sub_aktivitas);
-                    $("#hour-labour").val(json.hour);
-                    $("#rate-labour").val(parseInt(json.rate));
-                    $("#id_labour-labour").val(json.id_labour);
-                    $("#id-labour").val(json.id);
-                    if(json.tipe_item == 'item' ){
-                        $(".only-item-labour").show();
-                    }else{
-                        $(".only-item-labour").hide();
-                    }
-                }
-            });
-
-            $("#id_parent-labour").val(id_parent);
-            $("#action-labour").val(2);
-
-        }else{
-
-            $("#form-input-labour")[0].reset();
-
-            $("#id_parent-labour").val(id);
-
-            $("#action-labour").val(1);
+    function saveHour(id, id_parent = 0){
+        var hour = $("#inputHour"+id+"").val() * 1;        
+        if(hour == ''){
+            notify('warning', 'Input Hour!');
+            return;
         }
 
-        $('#modal-input-labour').modal('show');
+        var total_old = $("#totalValue"+id+"").cleanVal() * 1;
+        var rate = $("#rateValue"+id+"").cleanVal() * 1;
+        var total = hour * rate;
+        var total_parent_old = $("#totalValue"+id_parent+"").cleanVal() * 1;
+        var total_parent = (total - total_old)  + total_parent_old;
+        
+        $("#valHour"+id+"").html(hour);
+        $("#totalValue"+id+"").text(total);
+        var masked = $("#totalValue"+id+"").masked(total);
+        $("#totalValue"+id+"").text(masked);
+
+        $("#totalValue"+id_parent+"").text(total_parent);
+        var masked = $("#totalValue"+id_parent+"").masked(total_parent);
+
+        $("#totalValue"+id_parent+"").text(masked);
+        $("#btnEdit"+id+"").css("display","inline");      
+        $("#btnSave"+id+"").css("display","none");
+
+        $.ajax({
+            url: base_url + 'quotation/save_hour/',
+            dataType: 'json',
+            type: 'POST',
+            data: {id:id, hour:hour},
+            cache: false,
+            success: function(json) {
+                console.log(json);
+                if(json.code == 1){
+                    notify('success', 'Sukses');
+                    if(json.tipe_parent != 'section'){
+
+                            // console.log(total_parent);
+                        if(json.tipe_parent == 'object'){
+                            var total_section_old = $("#totalValue"+json.id_section+"").cleanVal() * 1;
+                            var total_section = (total - total_old) + total_section_old;
+                            var masked_section = $("#totalValue"+json.id_section+"").masked(total_section);
+                            $("#totalValue"+json.id_section+"").text(masked_section);                            
+
+                        }else{
+                            var total_object_old = $("#totalValue"+json.id_object+"").cleanVal() * 1;
+                            var total_object = (total - total_old) + total_object_old;
+                            var masked_object = $("#totalValue"+json.id_object+"").masked(total_object);
+                            $("#totalValue"+json.id_object+"").text(masked_object);
+
+                            var total_section_old = $("#totalValue"+json.id_section+"").cleanVal() * 1;
+                            var total_section = (total - total_old) + total_section_old;
+                            var masked_section = $("#totalValue"+json.id_section+"").masked(total_section);
+                            $("#totalValue"+json.id_section+"").text(masked_section);
+                                
+                        }
+
+                    }
+                }else{
+                    notify('danger', 'Gagal!');
+                    var parent_masked = $("#totalValue"+id_parent+"").masked(total_parent_old);
+                    $("#totalValue"+id_parent+"").text(parent_masked);
+
+                    var total_masked = $("#totalValue"+id+"").masked(total_old);
+                    $("#totalValue"+id+"").text(total_masked);
+                }
+            }
+        });
+
     }
 
 </script>

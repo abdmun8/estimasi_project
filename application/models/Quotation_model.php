@@ -66,7 +66,6 @@ class Quotation_model extends Model {
             "tipe_item" => $post['tipe_item-item'],
             "id_parent" => $post['id_parent-item'],
             "tipe_name" => $post['tipe_name-item'],
-            "tipe_name" => $post['tipe_name-item'],
             "merk" => $post['merk-item'],
             "harga" => $post['harga-item-clean'],
             "kategori" => $post['kategori-item']
