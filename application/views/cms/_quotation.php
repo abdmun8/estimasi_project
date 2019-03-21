@@ -236,7 +236,7 @@ if ($param != null) {
 
 
     function newForm() {
-        loadContent(base_url + "view/_users", function () {
+        loadContent(base_url + "view/_quotation", function () {
             setActiveTab("data-form-tab");
         });
     }
@@ -272,7 +272,7 @@ if ($param != null) {
     function utilsDataTable() {
         $("#table-data .editBtn").on("click",function() {
             openWindow(base_url + 'quotation/' + $(this).attr('href').substring(1));
-            // loadContent(base_url + 'view/_users/' + $(this).attr('href').substring(1));
+            // loadContent(base_url + 'view/_quotation/' + $(this).attr('href').substring(1));
         });
 
         $("#table-data .removeBtn").on("click",function() {
@@ -299,7 +299,7 @@ if ($param != null) {
                             genericAlert(json.data.message, 'warning','Peringatan');
                         }
                     } else {
-                        var page ='_users/';
+                        var page ='_quotation/';
                         page += json.data.last_id;
                         genericAlert('Penyimpanan data berhasil', 'success','Sukses');
                         loadContent(base_url + 'view/' + page);
@@ -354,7 +354,7 @@ if ($param != null) {
             setTimeout(function() {
                 $.ajax({
                     url: base_url + 'manage',
-                    data: 'model-input=users&action-input=3&key-input=id&value-input='+n,
+                    data: 'model-input=quotation&action-input=3&key-input=id&value-input='+n,
                     dataType: 'json',
                     type: 'POST',
                     cache: false,

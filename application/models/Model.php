@@ -128,6 +128,7 @@ class Model extends CI_Model {
                     break;
                 case $this->DELETE: // delete ;)
                     $result = $this->db->delete($query['table'], $query['at']); // at is an array
+                    echo $this->db->last_query();
                     // $result = $this->db->update($query['table'], ['active'=>0],$query['at']); // at is an array
                     break;
             }

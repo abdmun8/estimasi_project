@@ -405,23 +405,61 @@ class Quotation extends CI_Controller {
 
     public function delItem(){
         $code = 0;
-        $msg = '';
+        $msg = 'Terjadi kesalahan!';
         $post = $this->input->post();
 
-        $child = $this->db->get_where($post['table'], ['id_parent' => $post['id']])->num_rows();
 
-        if($child > 0){
-            $msg = 'Hapus sub terlebih dahulu';
-            echo json_encode(['data'=>['code'=>$code,'message'=>$msg]]);
-            return;
+        if($post['tipe_item'] != 'item'){
+            $child = $this->db->get_where($post['table'], ['id_parent' => $post['id']])->num_rows();
+
+            if($child > 0){
+
+                $msg = 'Hapus sub terlebih dahulu';
+                echo json_encode(['data'=>['code'=>$code,'message'=>$msg]]);
+                return;
+
+            }else{
+
+                $this->db->trans_begin();
+                $del = $this->db->delete($post['table'], ['id' => $post['id']]);
+
+                if($del){
+                    $parent = $this->db->get_where('labour', ['id_part_jasa' => $post['id']])->row();
+                    $total = $this->db->select('SUM(hour) as total', false)->get_where('labour', ['id_parent' => $parent->id])->row()->total;
+                    if(intval($total) > 0){
+                        $this->db->trans_rollback();
+                        $msg = 'Set jumlah hour (labour) menjadi 0 dahulu!';
+                        $code = 0;
+                    }else{
+                        $this->db->where('id', $parent->id);
+                        $this->db->or_where('id_parent', $parent->id);
+                        $delAll = $this->db->delete('labour');
+                        if($delAll){
+                            $this->db->trans_commit();
+                            $code = 1;
+                            $msg = '';
+                        }
+                    }
+                }
+            }
+
+        }else{
+
+            $this->db->trans_begin();
+            $del = $this->db->delete($post['table'], ['id' => $post['id']]);
+            if($del){
+                $this->db->trans_commit();
+                $code = 1;
+                $msg = '';
+            }else{
+                $this->db->trans_rollback();
+                $code = 0;
+                $msg = 'Tidak dapat menghapus data!';
+            }
         }
+        
 
-        $del = $this->db->delete($post['table'], ['id' => $post['id']]);
-        if($del){
-            $code = 1;
-        }
-
-        echo json_encode(['data'=>['code'=>$code,$msg=>$msg]]);
+        echo json_encode(['data'=>['code'=>$code,'message'=>$msg]]);
     }
 
     public function saveHourLabour(){

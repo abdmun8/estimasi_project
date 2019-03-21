@@ -584,7 +584,7 @@ if ($param != null) {
             return false;
         },
         onDblClickCell: function(field, value, row, $element) {
-            console.log("onDblClickCell",row);
+            // console.log("onDblClickCell",row);
             return false;
         },
         onClickRow: function(row, $element) {
@@ -592,7 +592,7 @@ if ($param != null) {
             return false;
         },
         onDblClickRow: function(row, $element) {
-            console.log("onDblClickRow",row);
+            // console.log("onDblClickRow",row);
             return false;
         },
         // data:[]
@@ -757,7 +757,7 @@ if ($param != null) {
             return false;
         },
         onDblClickCell: function(field, value, row, $element) {
-            console.log("onDblClickCell",row);
+            // console.log("onDblClickCell",row);
             return false;
         },
         onClickRow: function(row, $element) {
@@ -765,7 +765,7 @@ if ($param != null) {
             return false;
         },
         onDblClickRow: function(row, $element) {
-            console.log("onDblClickRow",row);
+            // console.log("onDblClickRow",row);
             return false;
         },
         // data:[]
@@ -828,7 +828,7 @@ if ($param != null) {
             showCancelButton: true,
             confirmButtonClass: "btn-danger",
             confirmButtonText: " Ya",
-            closeOnConfirm: false
+            closeOnConfirm: true
         },
         function(){
             loading('loading',true);
@@ -844,14 +844,7 @@ if ($param != null) {
                         if (json.data.code === 1) {
                             notify('success', 'Hapus data berhasil');
 
-                            if(table == 'part_jasa'){
-                                $('#demo').bootstrapTreeTable('refresh');
-                            }else{
-                                $('#labour_table').bootstrapTreeTable('refresh');
-                            }
-
-                        } else if(json.data.code === 2){
-                            notify('danger', 'Hapus data gagal!');
+                            $('#demo').bootstrapTreeTable('refresh');
 
                         } else{
                             notify('warning', json.data.message);
@@ -1162,12 +1155,12 @@ if ($param != null) {
     }
 
     function saveHour(id, id_parent = 0){
-        var hour = $("#inputHour"+id+"").val() * 1;        
-        if(hour == ''){
+        var hour = $("#inputHour"+id+"").val();  
+        if(hour === ''){
             notify('warning', 'Input Hour!');
             return;
         }
-
+        hour = hour * 1;
         var total_old = $("#totalValue"+id+"").cleanVal() * 1;
         var rate = $("#rateValue"+id+"").cleanVal() * 1;
         var total = hour * rate;
@@ -1193,12 +1186,11 @@ if ($param != null) {
             data: {id:id, hour:hour},
             cache: false,
             success: function(json) {
-                console.log(json);
+
                 if(json.code == 1){
                     notify('success', 'Sukses');
                     if(json.tipe_parent != 'section'){
 
-                            // console.log(total_parent);
                         if(json.tipe_parent == 'object'){
                             var total_section_old = $("#totalValue"+json.id_section+"").cleanVal() * 1;
                             var total_section = (total - total_old) + total_section_old;
@@ -1215,10 +1207,9 @@ if ($param != null) {
                             var total_section = (total - total_old) + total_section_old;
                             var masked_section = $("#totalValue"+json.id_section+"").masked(total_section);
                             $("#totalValue"+json.id_section+"").text(masked_section);
-                                
                         }
-
                     }
+
                 }else{
                     notify('danger', 'Gagal!');
                     var parent_masked = $("#totalValue"+id_parent+"").masked(total_parent_old);
