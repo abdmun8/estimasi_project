@@ -228,11 +228,14 @@ if ($param != null) {
         sel = $("#lot_general").selectize();
         lot_general = sel[0].selectize;
 
-        /* dt*/
-        
+        /* dt*/      
        
       
     });
+
+    function printQuotation(){
+        window.open(base_url + 'report/quotationreport')
+    }
 
 
     function newForm() {

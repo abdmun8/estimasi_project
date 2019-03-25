@@ -103,9 +103,9 @@ $route['quotation/save_labour'] = 'Quotation/saveLabour';
 $route['quotation/del_item'] = 'Quotation/delItem';
 $route['quotation/save_hour'] = 'Quotation/saveHourLabour';
 
+/* Pdf Gen*/
+// $route['report'] = 'Pdfgen/index';
 
-
-/**/
 
 
 
