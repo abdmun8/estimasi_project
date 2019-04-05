@@ -17,7 +17,7 @@ if ($param != null) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="renderer" content="webkit">
-    <title><?php echo $this->config->item('app_name'); ?> | <?php echo (isset($_TITLE))?$_TITLE:'';?></title>
+    <title><?php echo $this->config->item('app_name'); ?> | Sekawan</title>
     <meta name="keywords" content="bootstrap-treetable">
     <meta name="description" content="bootstrap-treetable">
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/bootstrap-treetable/libs/v3/bootstrap.min.css" type="text/css" />
@@ -47,6 +47,7 @@ if ($param != null) {
 	<ul class="nav nav-tabs">
 		<li class="active"><a data-toggle="tab" href="#general_info_tab">General Info</a></li>
 		<li><a data-toggle="tab" href="#std_part_tab">Part & Jasa</a></li>
+        <li><a data-toggle="tab" href="#material_tab">Material</a></li>
 		<li><a data-toggle="tab" href="#labour_tab">Labour</a></li>
 	</ul>
 
@@ -163,13 +164,21 @@ if ($param != null) {
 			
 		</div>
 
+        <div id="material_tab" class="tab-pane fade">
+            <section class="">
+                <div id="material-toolbar" class="btn-group" role="group" aria-label="...">
+                    <button id="expandAllBtnMaterial" type="button" class="btn btn-default">Expand/Collapse All</button>
+                </div>
+                <table id="material_table"></table>   
+            </section>
+        </div>
+
 		<div id="labour_tab" class="tab-pane fade">
-		  <section class="">
-            <div id="labour-toolbar" class="btn-group" role="group" aria-label="...">
-                <!-- <button id="addBtn" type="button" class="btn btn-default" onclick="showModalInput('section')">Add Section</button> -->
-                <button id="expandAllBtnLabour" type="button" class="btn btn-default">Expand/Collapse All</button>
-            </div>
-            <table id="labour_table"></table>   
+            <section class="">
+                <div id="labour-toolbar" class="btn-group" role="group" aria-label="...">
+                    <button id="expandAllBtnLabour" type="button" class="btn btn-default">Expand/Collapse All</button>
+                </div>
+                <table id="labour_table"></table>   
             </section>
 		</div>
 	</div>
@@ -261,50 +270,83 @@ if ($param != null) {
     </div>
     <!-- ./End Modal Part -->
 
-    <!-- Modal Labour -->
-    <div id="modal-input-labour" class="modal fade" role="dialog">
+
+    <!-- Modal Material -->
+    <div id="modal-input-material" class="modal fade" role="dialog">
       <div class="modal-dialog modal-lg">
 
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Manage Labour</h4>
+            <h4 class="modal-title">Manage Material</span></h4>
             </div>
             <div class="modal-body">
-                <form role="form" id="form-input-labour">
+                <form role="form" id="form-input-material">
                     <div class="box-body">
                         <div class="col-md-6">
-                            <div class="form-group only-item-labour">
-                                <label for="id_labour-labour">Id Labour</label>
-                                <input type="text" class="form-control input-sm" id="id_labour-labour" name="id_labour-labour" placeholder="Id">                                
+                            <input type="hidden" id="tipe_rumus-material" name="tipe_rumus-material" value="" />
+                            <input type="hidden" id="id_parent-material" name="id_parent-material" />
+                            <input type="hidden" id="id-material" name="id-material" /> 
+                            <input type="hidden" id="id_header-material" name="id_header-material" /> 
+                            <input type="hidden" id="item_code-save-material" name="item_code-save-material" /> 
+                            <input type="hidden" id="action-material" name="action-material" value="1" />
+
+                            <div class="form-group">
+                                <label>Item Code</label>
+                                <input type="text" class="form-control input-sm" id="item_code-material" name="item_code-material" placeholder="Item Code" data-provide="typeahead">
+                            </div>           
+                            <div class="form-group">
+                                <label>Part name</label>
+                                <input type="text" readonly class="form-control input-sm" id="part_name-material" name="part_name-material" placeholder="Part name">
                             </div>
                             <div class="form-group">
-                                <label for="aktivitas-labour">Aktivitas</label>
-                                <input type="text" class="form-control input-sm" id="aktivitas-labour" name="aktivitas-labour" placeholder="Aktivitas">
-                            </div> 
-                            <div class="form-group">
-                                <label for="sub_aktivitas-labour">Sub Aktivitas</label>
-                                <input type="text" class="form-control input-sm" id="sub_aktivitas-labour" name="sub_aktivitas-labour" placeholder="Sub Aktivitas">
+                                <label>Units</label>
+                                <input type="text" readonly class="form-control input-sm" id="units-material" name="units-material" placeholder="Units">
                             </div>
-                            
-                            <input type="hidden" id="tipe_item-labour" name="tipe_item-labour" value="item" />
-                            <input type="hidden" id="id_parent-labour" name="id_parent-labour" value="0" />
-                            <input type="hidden" id="id_header-labour" name="id_header-labour" value="0" />
-                            <input type="hidden" id="action-labour" name="action-labour" value="1" />
-                            <input type="hidden" id="id-labour" name="id-labour" value="1" />
+                            <div class="form-group">
+                                <label>Materials</label>
+                                <input type="text" readonly class="form-control input-sm" id="materials-material" name="materials-material" placeholder="Materials">
+                            </div>
+                            <div class="form-group">
+                                <label>Density</label>
+                                <input type="text" readonly class="form-control input-sm" id="density-material" name="density-material" placeholder="Density">
+                            </div>
+                            <div class="form-group">
+                                <label>Price</label>
+                                <input type="text" readonly class="form-control input-sm total_harga" id="price-material" name="price-material" placeholder="Price">
+                            </div>
                         </div>
 
                         <div class="col-md-6">
-                            
-                            <div class="form-group only-item-labour">
-                                <label for="hour-labour">Hour</label>
-                                <input type="text" class="form-control input-sm" id="hour-labour" name="hour-labour" placeholder="Hour">
+                            <div class="form-group rumus2 rumus3" style="display:none;">
+                                <label>L</label>
+                                <input type="text" class="form-control input-sm" id="length-material" name="length-material" placeholder="L" onkeyup="perhitunganMaterial()">                                
                             </div> 
-                            <div class="form-group only-item-labour">
-                                <label for="rate-labour">Rate</label>
-                                <input type="text" class="form-control input-sm" id="rate-labour" name="rate-labour" placeholder="Rate">
+                            <div class="form-group rumus1 rumus3" style="display:none;">
+                                <label>W</label>
+                                <input type="text" class="form-control input-sm" id="width-material" name="width-material" placeholder="W" onkeyup="perhitunganMaterial()">                                
+                            </div> 
+                            <div class="form-group rumus1 rumus3" style="display:none;">
+                                <label>H</label>
+                                <input type="text" class="form-control input-sm" id="height-material" name="height-material" placeholder="H" onkeyup="perhitunganMaterial()">                                
+                            </div> 
+                            <div class="form-group rumus1 rumus2 rumus3" style="display:none;">
+                                <label>t / &#8960;</label>
+                                <input type="text" class="form-control input-sm" id="diameter-material" name="diameter-material" placeholder="t / &#8960;" onkeyup="perhitunganMaterial()">                                
+                            </div>                            
+                            <div class="form-group">
+                                <label>Qty</label>
+                                <input type="text" class="form-control input-sm" id="qty-material" name="qty-material" placeholder="Qty" onkeyup="perhitunganMaterial()">                               
                             </div>
+                            <div class="form-group">
+                                <label>Weight</label>
+                                <input type="text" readonly class="form-control input-sm" id="weight-material" name="weight-material" placeholder="Weight" value="0">                                
+                            </div>
+                            <div class="form-group">
+                                <label>Total</label>
+                                <input type="text" readonly class="form-control input-sm"  id="total-material" name="total-material" placeholder="Total">                                
+                            </div>                             
                         </div>
                     </div>
                 </form>
@@ -312,13 +354,13 @@ if ($param != null) {
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success" onclick="saveLabour()">Save</button>
+                <button type="button" class="btn btn-success" onclick="saveMaterial()">Save</button>
             </div>
         </div>
 
       </div>
     </div>
-    <!-- ./End Modal Labour -->
+    <!-- ./End Modal Material -->
 		
 <!-- 全局js -->
 <script type="text/javascript" src="<?php echo base_url();?>assets/cms/bootstrap-treetable/libs/jquery.min.js"></script>
@@ -342,7 +384,10 @@ if ($param != null) {
 
         $('.total_harga').mask("#,##0", {reverse: true});
         $('#harga-item').mask("#,##0", {reverse: true});
-        $('#rate-labour').mask("#,##0", {reverse: true});
+        $('#rate-labour').mask("#,##0", {reverse: true});        
+        $('#total-material').mask("#,##0.00", {reverse: true});
+        $('#weight-material').mask("#,##0.00", {reverse: true});
+        // $('#total-material').mask("#,##0", {reverse: true});
 
         $('.select_date').daterangepicker({
             singleDatePicker: true,
@@ -369,7 +414,7 @@ if ($param != null) {
                     $("#harga-item").val(parseInt(o.harga));
                 }
             });
-        }, 'json');
+        }, 'json');        
         
         $("#tipe_item-item").change(function(){
             if(this.value == 'item'){
@@ -380,7 +425,6 @@ if ($param != null) {
                 $(".except_item").show();            
             }
         });
-
 
         /* get kategori barang */
         $.get( base_url+'quotation/get_kategori', function( data ) {
@@ -414,6 +458,43 @@ if ($param != null) {
                 echo '$("#id_header-labour").val("'. $param .'");';
             }
         ?>
+
+        $.get( base_url + "quotation/get_material_code", function(data){
+            $("#item_code-material").typeahead({ 
+                source: data,
+                minLength: 1,
+                order: "asc",
+                afterSelect: function(o){
+                    $("#part_name-material").val(o.part_name);
+                    $("#units-material").val(o.units);
+                    $("#materials-material").val(o.materials);
+                    $("#item_code-save-material").val(o.item_code);
+                    $("#density-material").val(o.density);
+                    $("#price-material").val(o.price * 1);
+                    var masked_price = $("#price-material").masked();
+                    $("#price-material").val(masked_price);
+                    $("#tipe_rumus-material").val(o.type);
+                    $("#id_header-material").val(id_header_tree);
+                    if(o.type == 'RUMUS-1'){
+                        $(".rumus2, .rumus3").hide();
+                        $(".rumus1").show();
+                    }else if(o.type == 'RUMUS-2'){
+                        $(".rumus1, .rumus3").hide();
+                        $(".rumus2").show();
+                    }else{
+                        $(".rumus1, .rumus2").hide();
+                        $(".rumus3").show();
+                    }
+                    $("#width-material").val('');
+                    $("#length-material").val('');
+                    $("#height-material").val('');
+                    $("#diameter-material").val('');
+                    $("#weight-material").val('');
+                    $("#qty-material").val('');
+                    $("#total-material").val('');
+                }
+            });
+        }, 'json');
 
     });
 
@@ -620,7 +701,7 @@ if ($param != null) {
         tree table labour
     */
 
-    var treeTable = $('#labour_table').bootstrapTreeTable({
+    var labourTable = $('#labour_table').bootstrapTreeTable({
         toolbar: "#labour-toolbar",    //顶部工具条
         expandColumn : 1,   
         expandAll: false,
@@ -781,6 +862,239 @@ if ($param != null) {
         _expandFlag_all_labour = _expandFlag_all_labour?false:true;
     });
 
+    /* 
+        tree table labour
+    */
+
+    var materialTable = $('#material_table').bootstrapTreeTable({
+        toolbar: "#material-toolbar",    //顶部工具条
+        expandColumn : 1,   
+        expandAll: false,
+        height:480,
+        type: 'get',
+        parentId: 'id_parent',
+        url: base_url + 'quotation/get_data_material/'+ id_header_tree,
+        columns: [
+            {
+                checkbox: true
+            },   
+            {
+                title: 'Opsi',
+                width: '140',
+                align: "center",
+                fixed: true,
+                formatter: function(value,row, index) {
+                    var actions = [];                    
+                    if(row.tipe_item === 'item'){ 
+                        actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="addItemMaterial('+row.id+','+row.id_parent+',\'edit\')"><i class="fa fa-edit"></i></a> ');  
+                        actions.push('<a class="btn btn-danger btn-xs " title="Hapus" onclick="confirmDelete('+row.id+',\'rawmaterial\',\''+row.tipe_item+'\')"><i class="fa fa-remove"></i></a>');      
+                    }else{
+                        actions.push('<a class="btn btn-info btn-xs " title="Tambah Sub" onclick="addItemMaterial('+row.id+','+row.id_parent+')" href="#"><i class="fa fa-plus"></i></a> ');
+                    }
+                    return actions.join('');
+                }
+            },
+            {
+                title: 'Section & Object',
+                field: 'tipe_id',
+                width: '150',
+                fixed: true,
+                formatter: function(value,row, index) {
+                    if (row.tipe_item == 'section') {
+                        return '<span class="label label-success">'+value+'</span>';
+                    }
+                    else if (row.tipe_item == 'object') {
+                        return '<span class="label label-primary">'+value+'</span>';
+                    }
+                    else if (row.tipe_item == 'sub_object') {
+                        return '<span class="label label-warning">'+value+'</span>';
+                    }else{
+                        return '';
+                    }
+                }
+            },
+            
+            
+            {
+                field: 'tipe_name',
+                title: 'Name',
+                width: '300',
+                align: "left",
+                visible: true
+            },
+            {
+                field: 'item_code',
+                title: 'Item Code',
+                width: '150',
+                align: "left",
+                visible: true
+            },
+            {
+                field: 'part_name',
+                title: 'Part Name',
+                width: '150',
+                align: "left",
+                visible: true
+            },
+            {
+                field: 'units',
+                title: 'Units',
+                width: '150',
+                align: "left",
+                visible: true
+            },
+            {
+                field: 'qty',
+                title: 'Qty',
+                width: '150',
+                align: "right",
+                visible: true,
+                formatter: function(value,row, index) {
+                    if(value == 0){
+                        return '';
+                    }
+                    return value;
+                }
+            },            
+            {
+                field: 'materials',
+                title: 'Materials',
+                width: '150',
+                align: "left",
+                visible: true
+            }, 
+            {
+                field: 'l',
+                title: 'Length',
+                width: '150',
+                align: "right",
+                visible: true,
+                formatter: function(value,row, index) {
+                    if(value == 0){
+                        return '';
+                    }
+                    return value;
+                }
+            },
+            {
+                field: 'h',
+                title: 'Height',
+                width: '150',
+                align: "right",
+                visible: true,
+                formatter: function(value,row, index) {
+                    if(value == 0){
+                        return '';
+                    }
+                    return value;
+                }
+            },
+            {
+                field: 'w',
+                title: 'Weight',
+                width: '150',
+                align: "right",
+                visible: true,
+                formatter: function(value,row, index) {
+                    if(value == 0){
+                        return '';
+                    }
+                    return value;
+                }
+            },
+            {
+                field: 't',
+                title: 'Diameter',
+                width: '150',
+                align: "right",
+                visible: true,
+                formatter: function(value,row, index) {
+                    if(value == 0){
+                        return '';
+                    }
+                    return value;
+                }
+            },
+            {
+                field: 'density',
+                title: 'Density',
+                width: '150',
+                align: "right",
+                visible: true,
+                formatter: function(value,row, index) {
+                    if(value == 0){
+                        return '';
+                    }
+                    return value * 1;
+                }
+            }, 
+            {
+                field: 'weight',
+                title: 'Weight',
+                width: '150',
+                align: "right",
+                visible: true,
+                formatter: function(value,row, index) {
+                    // if(value == 0){
+                    //     return '';
+                    // }
+                    return value * 1;
+                }
+            },    
+            {
+                field: 'total',
+                title: 'Total',
+                width: '200',
+                align: "right",
+                formatter: function(value,row, index) {
+                    if(row.tipe_item != 'item'){
+                        return '<span id="totalValue'+row.id+'" class="total_harga text-bold">'+value+'</span>';
+                    }
+                    return '<span id="totalValue'+row.id+'" class="total_harga">'+value+'</span>';
+                }
+            }
+            
+        ],
+        onAll: function(data) {
+            // console.log("onAll");
+            return false;
+        },
+        onLoadSuccess: function(data) {
+            // console.log("onLoadSuccess");
+            return false;
+        },
+        onLoadError: function(status) {
+            console.log("onLoadError");
+            return false;
+        },
+        onClickCell: function(field, value, row, $element) {
+            return false;
+        },
+        onDblClickCell: function(field, value, row, $element) {
+            // console.log("onDblClickCell",row);
+            return false;
+        },
+        onClickRow: function(row, $element) {
+            // console.log("onClickRow",row);
+            return false;
+        },
+        onDblClickRow: function(row, $element) {
+            // console.log("onDblClickRow",row);
+            return false;
+        },
+        // data:[]
+    });
+
+    var _expandFlag_all_labour = false;
+    $("#expandAllBtnMaterial").click(function(){
+        if(_expandFlag_all_labour){
+            $('#material_table').bootstrapTreeTable('expandAll');
+        }else{
+            $('#material_table').bootstrapTreeTable('collapseAll');
+        }
+        _expandFlag_all_labour = _expandFlag_all_labour?false:true;
+    });
+
 
     function newForm(){
         window.open( base_url + 'quotation', '_self');
@@ -843,11 +1157,14 @@ if ($param != null) {
                         loading('loading',false);
                         if (json.data.code === 1) {
                             notify('success', 'Hapus data berhasil');
-
-                            $('#demo').bootstrapTreeTable('refresh');
+                            if(table == 'part_jasa'){
+                                $('#demo').bootstrapTreeTable('refresh');
+                            }else if(table == 'part_jasa'){
+                                $('#material_table').bootstrapTreeTable('refresh');
+                            }
 
                         } else{
-                            notify('warning', json.data.message);
+                            notify('warning', json.data.message, 300);
                         }
                     },
                     error: function () {
@@ -865,6 +1182,7 @@ if ($param != null) {
     */
     $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         var target = $(e.target).attr("href").substr(1) // activated tab
+        // console.log(target)
         if(target != 'general_info_tab' && id_header_tree == ''){
             notify('danger', 'Simpan General Info Terlebih dahulu!');
             setActiveTab("general_info_tab");
@@ -872,8 +1190,10 @@ if ($param != null) {
             /* if header saved load tree table*/
             if(target == 'std_part_tab'){
                 $('#demo').bootstrapTreeTable('refresh');
-            }else{
+            }else if(target == 'labour_tab'){
                 $('#labour_table').bootstrapTreeTable('refresh');
+            }else if(target == 'material_tab'){
+                $('#material_table').bootstrapTreeTable('refresh');                
             }
         }
     });
@@ -1125,7 +1445,7 @@ if ($param != null) {
                 }
             });
         }, 100);
-    }
+    }    
 
     function formatDate(date, to_indo = true){
         var m,d,y,formatted;
@@ -1221,6 +1541,140 @@ if ($param != null) {
             }
         });
 
+    }
+
+    /* rumus perhitungan material */
+    function perhitunganMaterial(){
+        var tipe = $("#tipe_rumus-material").val();
+        var width = $("#width-material").val() * 1;
+        var length = $("#length-material").val() * 1;
+        var height = $("#height-material").val() * 1;
+        var diameter = $("#diameter-material").val() * 1;
+        var qty = $("#qty-material").val() * 1;
+        var density = $("#density-material").val() * 1;
+        var price = $("#price-material").cleanVal() * 1;
+        var weight = 0;
+        var wval = 0;
+        var total = 0;
+        var totval = 0;
+        if(tipe == 'RUMUS-1'){
+            // WEIGHT = QTY x ( W x H x TB) x Density
+            weight = qty * (width * height * diameter) * density;
+            wval = weight.toFixed(2);
+            total =  wval * price;
+            totval = total.toFixed();
+        }else if(tipe == 'RUMUS-2'){
+            //WEIGHT = QTY x (( 3.14 x ( DIA / 2) ^ 2) x L) * Density
+            weight =  qty * ((3.14 * Math.pow((diameter / 2), 2) ) * length) * density;
+            wval = weight.toFixed(2);
+            total =  wval * price;
+            totval = total.toFixed();
+        }else{
+            //WEIGHT = QTY x (( 2 x ( H x TB x L)) + (( W - ( 2 x TB)) x TB x L )) x Density
+            weight =  qty * ((2 * (height * diameter * length)) + ((width - (2 * diameter)) * diameter * length)) * density;
+            wval = weight.toFixed(2);
+            total =  wval * price;
+            totval = total.toFixed();
+        }
+
+        var masked_weight = $("#weight-material").masked(weight.toFixed(2));
+        $("#weight-material").val(masked_weight);
+
+        var masked_total = $("#total-material").masked(total.toFixed(2));
+        $("#total-material").val(masked_total);
+    }
+
+    /* save material item*/
+    function saveMaterial(){
+        loading('loading',true);        
+
+        var data = $("#form-input-material").serialize();
+        setTimeout(function() {
+            $.ajax({
+                url: base_url + 'quotation/save_material',
+                data: data,
+                dataType: 'json',
+                type: 'POST',
+                cache: false,
+                success: function(json) {
+                    loading('loading',false);
+                    if (json.data.code === 0) {
+                        if (json.data.message == '') {
+                            notify('danger', 'Penyimpanan data gagal!');
+                        } else {
+                            notify('warning', json.data.message);
+                        }
+                    } else {
+                        notify('success', 'Penyimpanan data berhasil');
+                        $('#modal-input-material').modal('hide');
+                        $('#material_table').bootstrapTreeTable('refresh');
+                        
+                    }
+                }, error: function () {
+                    loading('loading',false);
+                    notify('danger', 'Terjadi kesalahan!!');
+                }
+            });
+        }, 100);
+    }
+
+    function addItemMaterial(id, id_parent, action = 'add'){
+        $("#form-input-material")[0].reset();
+        if(action == 'edit'){
+            $("#id-material").val(id)            
+            $("#action-material").val(2)
+            $("#id_parent-material").val(id_parent)
+
+            setTimeout(function() {
+                $.ajax({
+                    url: base_url + 'quotation/get_data_material/'+id_header_tree+'/'+id,
+                    dataType: 'json',
+                    type: 'POST',
+                    cache: false,
+                    success: function(json) {
+                        console.log(json)
+                        loading('loading',false);
+                        $("#item_code-save-material").val(json.item_code); 
+                        $("#item_code-material").val(json.item_code); 
+                        $("#weight-material").val(json.weight); 
+                        $("#length-material").val(json.l * 1); 
+                        $("#width-material").val(json.w * 1); 
+                        $("#height-material").val(json.h * 1); 
+                        $("#diameter-material").val(json.t * 1); 
+                        $("#part_name-material").val(json.part_name); 
+                        $("#materials-material").val(json.materials); 
+                        $("#density-material").val(json.density * 1); 
+                        $("#tipe_rumus-material").val(json.type);
+                        var masked_price = $("#price-material").masked(json.price * 1); 
+                        $("#price-material").val(masked_price); 
+                        $("#qty-material").val(json.qty * 1); 
+                        $("#units-material").val(json.units); 
+                        $("#total-material").val(json.weight * json.price); 
+
+                        if(json.type == 'RUMUS-1'){
+                            $(".rumus2, .rumus3").hide();
+                            $(".rumus1").show();
+                        }else if(json.type == 'RUMUS-2'){
+                            $(".rumus1, .rumus3").hide();
+                            $(".rumus2").show();
+                        }else{
+                            $(".rumus1, .rumus2").hide();
+                            $(".rumus3").show();
+                        }
+                    }, error: function () {
+                        loading('loading',false);
+                        notify('danger', 'Terjadi kesalahan!!');
+                    }
+                });
+            }, 100);
+        }else{
+            $("#id-material").val('')
+            $("#action-material").val(1)
+            $("#id_parent-material").val(id)
+        }
+
+        $("#id_header-material").val(id_header_tree);            
+        $("#modal-input-material").modal('show');
     }
 
 </script>

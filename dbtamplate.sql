@@ -177,7 +177,7 @@ CREATE TABLE `header` (
   `project_type` varchar(100) NOT NULL,
   `difficulty` varchar(100) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -186,7 +186,7 @@ CREATE TABLE `header` (
 
 LOCK TABLES `header` WRITE;
 /*!40000 ALTER TABLE `header` DISABLE KEYS */;
-INSERT INTO `header` VALUES (1,'123','Raku raku',10,2,'ABB','110527004','2019-03-05','2019-06-19','Raku-Raku','Easy'),(2,'123','Conveyor',1,0,'AHM','Sugi','2019-03-19','2019-05-31','Conveyor','Easy'),(3,'123','Raku Raku',10,1,'Toyota','123','2019-03-19','2019-05-18','','Medium'),(4,'123','tes',1,1,'a','abcd','2019-03-20','2019-05-17','','Easy');
+INSERT INTO `header` VALUES (1,'123','Raku raku',10,2,'ABB','110527004','2019-03-05','2019-06-19','Raku-Raku','Easy'),(2,'123','Conveyor',1,0,'AHM','Sugi','2019-03-19','2019-05-31','Conveyor','Easy'),(3,'123','Raku Raku',10,1,'Toyota','123','2019-03-19','2019-05-18','','Medium'),(4,'123','tes',1,1,'a','abcd','2019-03-20','2019-05-17','','Easy'),(5,'FDL','FADLI PROJECT',1,0,'ABM','111101010','2019-03-28','2019-05-31','Robot','Easy');
 /*!40000 ALTER TABLE `header` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -210,11 +210,12 @@ CREATE TABLE `labour` (
   `sub_aktivitas` varchar(100) NOT NULL,
   `hour` decimal(11,2) NOT NULL,
   `rate` decimal(11,2) NOT NULL,
+  `updated_datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `id_part_jasa` (`id_part_jasa`),
   KEY `id_header` (`id_header`),
   KEY `id_part_jasa_2` (`id_part_jasa`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=352 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -223,6 +224,7 @@ CREATE TABLE `labour` (
 
 LOCK TABLES `labour` WRITE;
 /*!40000 ALTER TABLE `labour` DISABLE KEYS */;
+INSERT INTO `labour` VALUES (1,0,5,1,'RK01','section','RAKU RAKU 1','','','',0.00,0.00,'2019-04-04 07:49:37'),(2,1,5,1,'RK01','item','ENGINEERING','30001','Mechanic Design','Preparation',10.00,125000.00,'2019-04-04 07:49:37'),(3,1,5,1,'RK01','item','ENGINEERING','30001','Mechanic Design','3D',0.00,125000.00,'2019-04-04 07:49:37'),(4,1,5,1,'RK01','item','ENGINEERING','30001','Mechanic Design','Detil',0.00,125000.00,'2019-04-04 07:49:37'),(5,1,5,1,'RK01','item','ENGINEERING','30001','Mechanic Design','Manual Book',0.00,125000.00,'2019-04-04 07:49:37'),(6,1,5,1,'RK01','item','ENGINEERING','30001','Mechanic Design','Administrasi',0.00,125000.00,'2019-04-04 07:49:37'),(7,1,5,1,'RK01','item','ENGINEERING','30002','Electric Design','Preparation',0.00,125000.00,'2019-04-04 07:49:37'),(8,1,5,1,'RK01','item','ENGINEERING','30002','Electric Design','Desain',0.00,125000.00,'2019-04-04 07:49:37'),(9,1,5,1,'RK01','item','ENGINEERING','30002','Electric Design','Programing',0.00,125000.00,'2019-04-04 07:49:37'),(10,1,5,1,'RK01','item','ENGINEERING','30002','Electric Design','Installation',0.00,125000.00,'2019-04-04 07:49:37'),(11,1,5,1,'RK01','item','ENGINEERING','30002','Electric Design','Commisioning',0.00,125000.00,'2019-04-04 07:49:37'),(12,1,5,1,'RK01','item','ENGINEERING','30002','Electric Design','Administrasi',0.00,125000.00,'2019-04-04 07:49:37'),(13,1,5,1,'RK01','item','ENGINEERING','30011','Control Project','Preparation',0.00,125000.00,'2019-04-04 07:49:37'),(14,1,5,1,'RK01','item','ENGINEERING','30011','Control Project','Installation',0.00,125000.00,'2019-04-04 07:49:37'),(15,1,5,1,'RK01','item','ENGINEERING','30011','Control Project','Commisioning',0.00,125000.00,'2019-04-04 07:49:37'),(16,1,5,1,'RK01','item','ENGINEERING','30011','Control Project','Administrasi',0.00,125000.00,'2019-04-04 07:49:37'),(17,1,5,1,'RK01','item','PRODUCTION','30003','Fabrication','Cutting',0.00,75000.00,'2019-04-04 07:49:37'),(18,1,5,1,'RK01','item','PRODUCTION','30003','Fabrication','Welding',0.00,75000.00,'2019-04-04 07:49:37'),(19,1,5,1,'RK01','item','PRODUCTION','30004','Machining','Machining',0.00,75000.00,'2019-04-04 07:49:37'),(20,1,5,1,'RK01','item','PRODUCTION','30010','Painting','Painting',0.00,75000.00,'2019-04-04 07:49:37'),(21,1,5,1,'RK01','item','PRODUCTION','30008','Assembly','Delivery',0.00,75000.00,'2019-04-04 07:49:37'),(22,1,5,1,'RK01','item','PRODUCTION','30009','Installation','Installation',0.00,75000.00,'2019-04-04 07:49:37'),(23,1,5,1,'RK01','item','PRODUCTION','30009','Installation','Commisioning',0.00,75000.00,'2019-04-04 07:49:37'),(24,1,5,1,'RK01','item','PRODUCTION','30009','Installation','Delivery',0.00,75000.00,'2019-04-04 07:49:37'),(25,1,5,1,'RK01','item','PRODUCTION','30009','Installation','Administrasi',0.00,75000.00,'2019-04-04 07:49:37'),(26,0,5,2,'RK02','section','RAKU RAKU 2','','','',0.00,0.00,'2019-04-04 07:49:37'),(27,26,5,2,'RK02','item','ENGINEERING','30001','Mechanic Design','Preparation',0.00,125000.00,'2019-04-04 07:49:37'),(28,26,5,2,'RK02','item','ENGINEERING','30001','Mechanic Design','3D',0.00,125000.00,'2019-04-04 07:49:37'),(29,26,5,2,'RK02','item','ENGINEERING','30001','Mechanic Design','Detil',0.00,125000.00,'2019-04-04 07:49:37'),(30,26,5,2,'RK02','item','ENGINEERING','30001','Mechanic Design','Manual Book',0.00,125000.00,'2019-04-04 07:49:37'),(31,26,5,2,'RK02','item','ENGINEERING','30001','Mechanic Design','Administrasi',0.00,125000.00,'2019-04-04 07:49:37'),(32,26,5,2,'RK02','item','ENGINEERING','30002','Electric Design','Preparation',0.00,125000.00,'2019-04-04 07:49:37'),(33,26,5,2,'RK02','item','ENGINEERING','30002','Electric Design','Desain',0.00,125000.00,'2019-04-04 07:49:37'),(34,26,5,2,'RK02','item','ENGINEERING','30002','Electric Design','Programing',0.00,125000.00,'2019-04-04 07:49:37'),(35,26,5,2,'RK02','item','ENGINEERING','30002','Electric Design','Installation',0.00,125000.00,'2019-04-04 07:49:37'),(36,26,5,2,'RK02','item','ENGINEERING','30002','Electric Design','Commisioning',0.00,125000.00,'2019-04-04 07:49:37'),(37,26,5,2,'RK02','item','ENGINEERING','30002','Electric Design','Administrasi',0.00,125000.00,'2019-04-04 07:49:37'),(38,26,5,2,'RK02','item','ENGINEERING','30011','Control Project','Preparation',0.00,125000.00,'2019-04-04 07:49:37'),(39,26,5,2,'RK02','item','ENGINEERING','30011','Control Project','Installation',0.00,125000.00,'2019-04-04 07:49:37'),(40,26,5,2,'RK02','item','ENGINEERING','30011','Control Project','Commisioning',0.00,125000.00,'2019-04-04 07:49:37'),(41,26,5,2,'RK02','item','ENGINEERING','30011','Control Project','Administrasi',0.00,125000.00,'2019-04-04 07:49:37'),(42,26,5,2,'RK02','item','PRODUCTION','30003','Fabrication','Cutting',0.00,75000.00,'2019-04-04 07:49:37'),(43,26,5,2,'RK02','item','PRODUCTION','30003','Fabrication','Welding',0.00,75000.00,'2019-04-04 07:49:37'),(44,26,5,2,'RK02','item','PRODUCTION','30004','Machining','Machining',0.00,75000.00,'2019-04-04 07:49:37'),(45,26,5,2,'RK02','item','PRODUCTION','30010','Painting','Painting',0.00,75000.00,'2019-04-04 07:49:37'),(46,26,5,2,'RK02','item','PRODUCTION','30008','Assembly','Delivery',0.00,75000.00,'2019-04-04 07:49:37'),(47,26,5,2,'RK02','item','PRODUCTION','30009','Installation','Installation',0.00,75000.00,'2019-04-04 07:49:37'),(48,26,5,2,'RK02','item','PRODUCTION','30009','Installation','Commisioning',0.00,75000.00,'2019-04-04 07:49:37'),(49,26,5,2,'RK02','item','PRODUCTION','30009','Installation','Delivery',0.00,75000.00,'2019-04-04 07:49:37'),(50,26,5,2,'RK02','item','PRODUCTION','30009','Installation','Administrasi',0.00,75000.00,'2019-04-04 07:49:37'),(51,1,5,3,'GRIP01','object','GRIPER RIGHT','','','',0.00,0.00,'2019-04-04 07:49:37'),(52,51,5,3,'GRIP01','item','ENGINEERING','30001','Mechanic Design','Preparation',0.00,125000.00,'2019-04-04 07:49:37'),(53,51,5,3,'GRIP01','item','ENGINEERING','30001','Mechanic Design','3D',0.00,125000.00,'2019-04-04 07:49:37'),(54,51,5,3,'GRIP01','item','ENGINEERING','30001','Mechanic Design','Detil',0.00,125000.00,'2019-04-04 07:49:37'),(55,51,5,3,'GRIP01','item','ENGINEERING','30001','Mechanic Design','Manual Book',0.00,125000.00,'2019-04-04 07:49:37'),(56,51,5,3,'GRIP01','item','ENGINEERING','30001','Mechanic Design','Administrasi',0.00,125000.00,'2019-04-04 07:49:37'),(57,51,5,3,'GRIP01','item','ENGINEERING','30002','Electric Design','Preparation',0.00,125000.00,'2019-04-04 07:49:37'),(58,51,5,3,'GRIP01','item','ENGINEERING','30002','Electric Design','Desain',0.00,125000.00,'2019-04-04 07:49:37'),(59,51,5,3,'GRIP01','item','ENGINEERING','30002','Electric Design','Programing',0.00,125000.00,'2019-04-04 07:49:37'),(60,51,5,3,'GRIP01','item','ENGINEERING','30002','Electric Design','Installation',0.00,125000.00,'2019-04-04 07:49:37'),(61,51,5,3,'GRIP01','item','ENGINEERING','30002','Electric Design','Commisioning',0.00,125000.00,'2019-04-04 07:49:37'),(62,51,5,3,'GRIP01','item','ENGINEERING','30002','Electric Design','Administrasi',0.00,125000.00,'2019-04-04 07:49:37'),(63,51,5,3,'GRIP01','item','ENGINEERING','30011','Control Project','Preparation',0.00,125000.00,'2019-04-04 07:49:37'),(64,51,5,3,'GRIP01','item','ENGINEERING','30011','Control Project','Installation',0.00,125000.00,'2019-04-04 07:49:37'),(65,51,5,3,'GRIP01','item','ENGINEERING','30011','Control Project','Commisioning',0.00,125000.00,'2019-04-04 07:49:37'),(66,51,5,3,'GRIP01','item','ENGINEERING','30011','Control Project','Administrasi',0.00,125000.00,'2019-04-04 07:49:37'),(67,51,5,3,'GRIP01','item','PRODUCTION','30003','Fabrication','Cutting',0.00,75000.00,'2019-04-04 07:49:37'),(68,51,5,3,'GRIP01','item','PRODUCTION','30003','Fabrication','Welding',0.00,75000.00,'2019-04-04 07:49:37'),(69,51,5,3,'GRIP01','item','PRODUCTION','30004','Machining','Machining',0.00,75000.00,'2019-04-04 07:49:37'),(70,51,5,3,'GRIP01','item','PRODUCTION','30010','Painting','Painting',0.00,75000.00,'2019-04-04 07:49:37'),(71,51,5,3,'GRIP01','item','PRODUCTION','30008','Assembly','Delivery',0.00,75000.00,'2019-04-04 07:49:37'),(72,51,5,3,'GRIP01','item','PRODUCTION','30009','Installation','Installation',0.00,75000.00,'2019-04-04 07:49:37'),(73,51,5,3,'GRIP01','item','PRODUCTION','30009','Installation','Commisioning',0.00,75000.00,'2019-04-04 07:49:37'),(74,51,5,3,'GRIP01','item','PRODUCTION','30009','Installation','Delivery',0.00,75000.00,'2019-04-04 07:49:37'),(75,51,5,3,'GRIP01','item','PRODUCTION','30009','Installation','Administrasi',0.00,75000.00,'2019-04-04 07:49:37'),(76,26,5,5,'GRIP02','object','GRIP LEFT','','','',0.00,0.00,'2019-04-04 07:49:37'),(77,76,5,5,'GRIP02','item','ENGINEERING','30001','Mechanic Design','Preparation',0.00,125000.00,'2019-04-04 07:49:37'),(78,76,5,5,'GRIP02','item','ENGINEERING','30001','Mechanic Design','3D',0.00,125000.00,'2019-04-04 07:49:37'),(79,76,5,5,'GRIP02','item','ENGINEERING','30001','Mechanic Design','Detil',0.00,125000.00,'2019-04-04 07:49:37'),(80,76,5,5,'GRIP02','item','ENGINEERING','30001','Mechanic Design','Manual Book',0.00,125000.00,'2019-04-04 07:49:37'),(81,76,5,5,'GRIP02','item','ENGINEERING','30001','Mechanic Design','Administrasi',0.00,125000.00,'2019-04-04 07:49:37'),(82,76,5,5,'GRIP02','item','ENGINEERING','30002','Electric Design','Preparation',0.00,125000.00,'2019-04-04 07:49:37'),(83,76,5,5,'GRIP02','item','ENGINEERING','30002','Electric Design','Desain',0.00,125000.00,'2019-04-04 07:49:37'),(84,76,5,5,'GRIP02','item','ENGINEERING','30002','Electric Design','Programing',0.00,125000.00,'2019-04-04 07:49:37'),(85,76,5,5,'GRIP02','item','ENGINEERING','30002','Electric Design','Installation',0.00,125000.00,'2019-04-04 07:49:37'),(86,76,5,5,'GRIP02','item','ENGINEERING','30002','Electric Design','Commisioning',0.00,125000.00,'2019-04-04 07:49:37'),(87,76,5,5,'GRIP02','item','ENGINEERING','30002','Electric Design','Administrasi',0.00,125000.00,'2019-04-04 07:49:37'),(88,76,5,5,'GRIP02','item','ENGINEERING','30011','Control Project','Preparation',0.00,125000.00,'2019-04-04 07:49:37'),(89,76,5,5,'GRIP02','item','ENGINEERING','30011','Control Project','Installation',0.00,125000.00,'2019-04-04 07:49:37'),(90,76,5,5,'GRIP02','item','ENGINEERING','30011','Control Project','Commisioning',0.00,125000.00,'2019-04-04 07:49:37'),(91,76,5,5,'GRIP02','item','ENGINEERING','30011','Control Project','Administrasi',0.00,125000.00,'2019-04-04 07:49:37'),(92,76,5,5,'GRIP02','item','PRODUCTION','30003','Fabrication','Cutting',0.00,75000.00,'2019-04-04 07:49:37'),(93,76,5,5,'GRIP02','item','PRODUCTION','30003','Fabrication','Welding',0.00,75000.00,'2019-04-04 07:49:37'),(94,76,5,5,'GRIP02','item','PRODUCTION','30004','Machining','Machining',0.00,75000.00,'2019-04-04 07:49:37'),(95,76,5,5,'GRIP02','item','PRODUCTION','30010','Painting','Painting',0.00,75000.00,'2019-04-04 07:49:37'),(96,76,5,5,'GRIP02','item','PRODUCTION','30008','Assembly','Delivery',0.00,75000.00,'2019-04-04 07:49:37'),(97,76,5,5,'GRIP02','item','PRODUCTION','30009','Installation','Installation',0.00,75000.00,'2019-04-04 07:49:37'),(98,76,5,5,'GRIP02','item','PRODUCTION','30009','Installation','Commisioning',0.00,75000.00,'2019-04-04 07:49:37'),(99,76,5,5,'GRIP02','item','PRODUCTION','30009','Installation','Delivery',0.00,75000.00,'2019-04-04 07:49:37'),(100,76,5,5,'GRIP02','item','PRODUCTION','30009','Installation','Administrasi',0.00,75000.00,'2019-04-04 07:49:37'),(327,0,1,20,'sec 1','section','section 1','','','',0.00,0.00,'2019-04-05 08:51:46'),(328,327,1,20,'sec 1','item','ENGINEERING','30001','Mechanic Design','Preparation',0.00,125000.00,'2019-04-05 08:51:46'),(329,327,1,20,'sec 1','item','ENGINEERING','30001','Mechanic Design','3D',0.00,125000.00,'2019-04-05 08:51:46'),(330,327,1,20,'sec 1','item','ENGINEERING','30001','Mechanic Design','Detil',0.00,125000.00,'2019-04-05 08:51:46'),(331,327,1,20,'sec 1','item','ENGINEERING','30001','Mechanic Design','Manual Book',0.00,125000.00,'2019-04-05 08:51:46'),(332,327,1,20,'sec 1','item','ENGINEERING','30001','Mechanic Design','Administrasi',0.00,125000.00,'2019-04-05 08:51:46'),(333,327,1,20,'sec 1','item','ENGINEERING','30002','Electric Design','Preparation',0.00,125000.00,'2019-04-05 08:51:46'),(334,327,1,20,'sec 1','item','ENGINEERING','30002','Electric Design','Desain',0.00,125000.00,'2019-04-05 08:51:46'),(335,327,1,20,'sec 1','item','ENGINEERING','30002','Electric Design','Programing',0.00,125000.00,'2019-04-05 08:51:46'),(336,327,1,20,'sec 1','item','ENGINEERING','30002','Electric Design','Installation',0.00,125000.00,'2019-04-05 08:51:46'),(337,327,1,20,'sec 1','item','ENGINEERING','30002','Electric Design','Commisioning',0.00,125000.00,'2019-04-05 08:51:46'),(338,327,1,20,'sec 1','item','ENGINEERING','30002','Electric Design','Administrasi',0.00,125000.00,'2019-04-05 08:51:46'),(339,327,1,20,'sec 1','item','ENGINEERING','30011','Control Project','Preparation',0.00,125000.00,'2019-04-05 08:51:46'),(340,327,1,20,'sec 1','item','ENGINEERING','30011','Control Project','Installation',0.00,125000.00,'2019-04-05 08:51:46'),(341,327,1,20,'sec 1','item','ENGINEERING','30011','Control Project','Commisioning',0.00,125000.00,'2019-04-05 08:51:46'),(342,327,1,20,'sec 1','item','ENGINEERING','30011','Control Project','Administrasi',0.00,125000.00,'2019-04-05 08:51:46'),(343,327,1,20,'sec 1','item','PRODUCTION','30003','Fabrication','Cutting',0.00,75000.00,'2019-04-05 08:51:46'),(344,327,1,20,'sec 1','item','PRODUCTION','30003','Fabrication','Welding',0.00,75000.00,'2019-04-05 08:51:46'),(345,327,1,20,'sec 1','item','PRODUCTION','30004','Machining','Machining',0.00,75000.00,'2019-04-05 08:51:46'),(346,327,1,20,'sec 1','item','PRODUCTION','30010','Painting','Painting',0.00,75000.00,'2019-04-05 08:51:46'),(347,327,1,20,'sec 1','item','PRODUCTION','30008','Assembly','Delivery',0.00,75000.00,'2019-04-05 08:51:46'),(348,327,1,20,'sec 1','item','PRODUCTION','30009','Installation','Installation',0.00,75000.00,'2019-04-05 08:51:46'),(349,327,1,20,'sec 1','item','PRODUCTION','30009','Installation','Commisioning',0.00,75000.00,'2019-04-05 08:51:47'),(350,327,1,20,'sec 1','item','PRODUCTION','30009','Installation','Delivery',0.00,75000.00,'2019-04-05 08:51:47'),(351,327,1,20,'sec 1','item','PRODUCTION','30009','Installation','Administrasi',0.00,75000.00,'2019-04-05 08:51:47');
 /*!40000 ALTER TABLE `labour` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -239,7 +241,7 @@ CREATE TABLE `login_attempts` (
   `login` varchar(100) NOT NULL,
   `time` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -249,6 +251,37 @@ CREATE TABLE `login_attempts` (
 LOCK TABLES `login_attempts` WRITE;
 /*!40000 ALTER TABLE `login_attempts` DISABLE KEYS */;
 /*!40000 ALTER TABLE `login_attempts` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `mrawmaterial`
+--
+
+DROP TABLE IF EXISTS `mrawmaterial`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `mrawmaterial` (
+  `item_code` varchar(100) NOT NULL,
+  `part_name` varchar(100) NOT NULL,
+  `units` varchar(20) NOT NULL,
+  `materials` varchar(100) NOT NULL,
+  `density` decimal(15,12) NOT NULL,
+  `price` decimal(15,2) NOT NULL COMMENT 'harga satuan',
+  `type` varchar(100) NOT NULL COMMENT 'tipe rumus',
+  PRIMARY KEY (`item_code`),
+  UNIQUE KEY `part_name` (`part_name`),
+  KEY `materials` (`materials`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `mrawmaterial`
+--
+
+LOCK TABLES `mrawmaterial` WRITE;
+/*!40000 ALTER TABLE `mrawmaterial` DISABLE KEYS */;
+INSERT INTO `mrawmaterial` VALUES ('RMT123','BORDESS PLATE','Pcs','SS400',0.000007850000,15500.00,'RUMUS-1'),('RMT124','COLLAR','Pcs','SS400',0.000007850000,15500.00,'RUMUS-2'),('RMT125','PLATE','Pcs','SS400',0.000007850000,15500.00,'RUMUS-3');
+/*!40000 ALTER TABLE `mrawmaterial` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -368,8 +401,9 @@ CREATE TABLE `part_jasa` (
   `harga` decimal(15,2) NOT NULL DEFAULT '0.00',
   `qty` int(11) NOT NULL DEFAULT '0',
   `kategori` varchar(100) NOT NULL DEFAULT '''''',
+  `updated_datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -378,6 +412,7 @@ CREATE TABLE `part_jasa` (
 
 LOCK TABLES `part_jasa` WRITE;
 /*!40000 ALTER TABLE `part_jasa` DISABLE KEYS */;
+INSERT INTO `part_jasa` VALUES (1,5,0,'section','RK01','RAKU RAKU 1','','','','','',0.00,0,'','2019-04-04 07:50:14'),(2,5,0,'section','RK02','RAKU RAKU 2','','','','','',0.00,0,'','2019-04-04 07:50:14'),(3,5,1,'object','GRIP01','GRIPER RIGHT','','','','','',0.00,0,'','2019-04-04 07:50:14'),(4,5,3,'item','','','CNS00232','SOLDER','DQ-77N 20-200 WATT','DEKKO','UNIT',144200.00,1,'10002','2019-04-04 07:50:14'),(5,5,2,'object','GRIP02','GRIP LEFT','CNS00232','','','','',0.00,0,'','2019-04-04 07:50:14'),(6,5,3,'item','','','CNS00391','GREASE 217 TIMKEN','','','PCS',77250.00,2,'10002','2019-04-04 07:50:14'),(7,5,3,'item','','','CNS00219','LEM FOX PUTIH 350 GR','','','PCS',23175.00,1,'10002','2019-04-04 07:50:14'),(20,1,0,'section','sec 1','section 1','','','','','',0.00,0,'','2019-04-05 08:51:45');
 /*!40000 ALTER TABLE `part_jasa` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -455,6 +490,47 @@ INSERT INTO `personal` VALUES ('100302003','Jamali','2019-03-13','Laki-laki','KT
 UNLOCK TABLES;
 
 --
+-- Table structure for table `rawmaterial`
+--
+
+DROP TABLE IF EXISTS `rawmaterial`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `rawmaterial` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_parent` int(11) NOT NULL,
+  `id_header` int(11) NOT NULL,
+  `id_part_jasa` int(11) NOT NULL,
+  `tipe_id` varchar(100) NOT NULL,
+  `tipe_item` varchar(20) NOT NULL,
+  `tipe_name` varchar(100) NOT NULL,
+  `item_code` varchar(50) NOT NULL,
+  `qty` decimal(11,0) NOT NULL,
+  `l` decimal(11,2) NOT NULL,
+  `w` decimal(15,2) NOT NULL,
+  `h` decimal(15,2) NOT NULL,
+  `t` decimal(15,2) NOT NULL COMMENT 'tebal / diameter',
+  `weight` decimal(15,4) NOT NULL DEFAULT '0.0000',
+  `updated_datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `id_parent` (`id_parent`),
+  KEY `id_header` (`id_header`),
+  KEY `id_part_jasa` (`id_part_jasa`),
+  KEY `tipe_id` (`tipe_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `rawmaterial`
+--
+
+LOCK TABLES `rawmaterial` WRITE;
+/*!40000 ALTER TABLE `rawmaterial` DISABLE KEYS */;
+INSERT INTO `rawmaterial` VALUES (16,0,1,20,'sec 1','section','section 1','',0,0.00,0.00,0.00,0.00,0.0000,'2019-04-05 08:51:46'),(17,16,1,0,'','item','','RMT123',12,0.00,12.00,12.00,12.00,0.1600,'2019-04-05 08:51:59');
+/*!40000 ALTER TABLE `rawmaterial` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `users`
 --
 
@@ -495,7 +571,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'127.0.0.1','administrator','$2y$12$IcnSV7JpHgcyM4Ei3wdnEuZALWztYSbKuYALxTy1w3PIqUYBR..Oi','admin@admin.com',NULL,'',NULL,NULL,NULL,NULL,NULL,1268889823,1553483575,1,'Admin','istrator','ADMIN','0');
+INSERT INTO `users` VALUES (1,'127.0.0.1','administrator','$2y$12$IcnSV7JpHgcyM4Ei3wdnEuZALWztYSbKuYALxTy1w3PIqUYBR..Oi','admin@admin.com',NULL,'',NULL,NULL,NULL,NULL,NULL,1268889823,1554427020,1,'Admin','istrator','ADMIN','0');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -571,6 +647,39 @@ SET character_set_client = utf8;
 SET character_set_client = @saved_cs_client;
 
 --
+-- Temporary table structure for view `v_rawmaterial`
+--
+
+DROP TABLE IF EXISTS `v_rawmaterial`;
+/*!50001 DROP VIEW IF EXISTS `v_rawmaterial`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `v_rawmaterial` AS SELECT 
+ 1 AS `id`,
+ 1 AS `id_parent`,
+ 1 AS `id_header`,
+ 1 AS `id_part_jasa`,
+ 1 AS `tipe_id`,
+ 1 AS `tipe_item`,
+ 1 AS `tipe_name`,
+ 1 AS `item_code`,
+ 1 AS `qty`,
+ 1 AS `l`,
+ 1 AS `w`,
+ 1 AS `h`,
+ 1 AS `t`,
+ 1 AS `weight`,
+ 1 AS `updated_datetime`,
+ 1 AS `tipe_parent`,
+ 1 AS `part_name`,
+ 1 AS `units`,
+ 1 AS `materials`,
+ 1 AS `density`,
+ 1 AS `price`,
+ 1 AS `type`*/;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Current Database: `dbtemplate`
 --
 
@@ -611,6 +720,24 @@ USE `dbtemplate`;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `v_rawmaterial`
+--
+
+/*!50001 DROP VIEW IF EXISTS `v_rawmaterial`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8 */;
+/*!50001 SET character_set_results     = utf8 */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `v_rawmaterial` AS select `r`.`id` AS `id`,`r`.`id_parent` AS `id_parent`,`r`.`id_header` AS `id_header`,`r`.`id_part_jasa` AS `id_part_jasa`,`r`.`tipe_id` AS `tipe_id`,`r`.`tipe_item` AS `tipe_item`,`r`.`tipe_name` AS `tipe_name`,`r`.`item_code` AS `item_code`,`r`.`qty` AS `qty`,`r`.`l` AS `l`,`r`.`w` AS `w`,`r`.`h` AS `h`,`r`.`t` AS `t`,`r`.`weight` AS `weight`,`r`.`updated_datetime` AS `updated_datetime`,(select `b`.`tipe_item` from `rawmaterial` `b` where (`b`.`id` = `r`.`id_parent`)) AS `tipe_parent`,`m`.`part_name` AS `part_name`,`m`.`units` AS `units`,`m`.`materials` AS `materials`,`m`.`density` AS `density`,`m`.`price` AS `price`,`m`.`type` AS `type` from (`rawmaterial` `r` left join `mrawmaterial` `m` on((`r`.`item_code` = `m`.`item_code`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -621,4 +748,4 @@ USE `dbtemplate`;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-03-25 14:42:19
+-- Dump completed on 2019-04-05 15:57:06

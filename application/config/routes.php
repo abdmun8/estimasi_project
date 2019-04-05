@@ -103,6 +103,13 @@ $route['quotation/save_labour'] = 'Quotation/saveLabour';
 $route['quotation/del_item'] = 'Quotation/delItem';
 $route['quotation/save_hour'] = 'Quotation/saveHourLabour';
 
+/* Material */
+$route['quotation/get_data_material/(:num)'] = 'Quotation/getDataMaterial/$1';
+$route['quotation/get_data_material/(:num)/(:num)'] = 'Quotation/getDataMaterial/$1/$2';
+$route['quotation/save_material'] = 'Quotation/saveMaterial';
+$route['quotation/get_material_code'] = 'Quotation/getMaterialCode';
+
+
 /* Pdf Gen*/
 // $route['report'] = 'Pdfgen/index';
 

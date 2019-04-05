@@ -61,141 +61,6 @@ if ($param != null) {
                 </table>
             </div>
         </div>
-        <div id="data-form-tab" class="tab-pane fade">
-            <!-- Custom Tabs -->
-            <div class="nav-tabs-custom">
-                <ul class="nav nav-tabs">
-                    <li class="active"><a href="#tab_1" data-toggle="tab">General Info</a></li>
-                    <li><a href="#tab_2" data-toggle="tab">Part & Jasa</a></li>
-                    <li><a href="#tab_3" data-toggle="tab">Labour</a></li>
-                    <li class="pull-right"><a href="#" class="text-muted"><i class="fa fa-gear"></i></a></li>
-                </ul>
-                <div class="tab-content">
-                    <div class="tab-pane active" id="tab_1">
-                        <section class="content">
-                            <div class="row">
-                                <!-- left column -->
-                                <form class="form-horizontal" role="form">
-                                    <div class="col-md-6">
-                                        <!-- Left Form -->                                    
-                                        <div class="form-group">
-                                            <label for="inquiry_no" class="col-sm-3 control-label">Inquiry No.</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control" name="inquiry_no" id="inquiry_no" placeholder="Inquiry No">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="project_name" class="col-sm-3 control-label">Project Name</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control" name="project_name" id="project_name" placeholder="Project name">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="qty_general" class="col-sm-3 control-label">QTY</label>
-                                            <div class="col-sm-2">
-                                                <input type="text" class="form-control" name="qty_general" id="qty_general" placeholder="Qty">
-                                            </div>
-                                            <div class="col-sm-7">
-                                                <!-- <input type="text" class="form-control" name="lot_general" id="lot_general" placeholder="Lot"> -->
-                                                <select class="form-control" id="lot_general" name="lot_general">
-                                                    <option value="" selected>Pilih Lot</option>
-                                                    <option value="1">1</option>
-                                                    <option value="2">2</option>
-                                                    <option value="3">3</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="customer" class="col-sm-3 control-label">Customer</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control" name="customer" id="customer" placeholder="Customer">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="pic_marketing" class="col-sm-3 control-label">PIC marketing</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control" name="pic_marketing" id="pic_marketing" placeholder="PIC Marketing">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <!-- Right Form -->
-                                        <div class="form-group">
-                                            <label for="start_date" class="col-sm-3 control-label">Start Date</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control select_date" name="start_date" id="start_date" placeholder="Start Date" onchange="calcDate()">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="finish_date" class="col-sm-3 control-label">Finish Date</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control select_date" name="finish_date" id="finish_date" placeholder="Finish Date" onchange="calcDate()">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="duration" class="col-sm-3 control-label">Duration</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" class="form-control" name="duration" id="duration" placeholder="0" readonly>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="project_type" class="col-sm-3 control-label">Project Type</label>
-                                            <div class="col-sm-9">
-                                                <select class="form-control" id="project_type" name="project_type">
-                                                    <option value="" selected>Pilih Lot</option>
-                                                    <option value="1">1</option>
-                                                    <option value="2">2</option>
-                                                    <option value="3">3</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="difficulty" class="col-sm-3 control-label">Difficulty</label>
-                                            <div class="col-sm-9">
-                                                <select class="form-control" id="difficulty" name="difficulty">
-                                                    <option value="" selected>Pilih Lot</option>
-                                                    <option value="1">1</option>
-                                                    <option value="2">2</option>
-                                                    <option value="3">3</option>
-                                                </select>
-                                            </div>
-                                        </div>                                   
-                                    </div>
-                                </form>
-                            </div>
-
-                            
-                        </section>
-                    </div>
-                    <!-- /.tab-pane -->
-                    <div class="tab-pane" id="tab_2">
-                        <section class="content">
-                            <div class="row">
-                            <!-- content -->
-                                <!-- Header -->
-                                
-                                <!-- ./Header -->
-                                <!-- Table -->
-                                <!-- ./ Table -->
-                            <!-- /.content -->
-                        </section>
-                    </div>
-                    <!-- /.tab-pane -->
-                    <div class="tab-pane" id="tab_3">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
-                    when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                    It has survived not only five centuries, but also the leap into electronic typesetting,
-                    remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
-                    sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
-                    like Aldus PageMaker including versions of Lorem Ipsum.
-                    </div>
-                    <!-- /.tab-pane -->
-                </div>
-                <!-- /.tab-content -->
-            </div>
-            <!-- nav-tabs-custom -->
-        </div>
     </div>
 </div>
 <script>
@@ -222,13 +87,7 @@ if ($param != null) {
             locale: {
                 format: 'DD-MM-YYYY'
             }
-        }); 
-
-        /* Selectize */
-        sel = $("#lot_general").selectize();
-        lot_general = sel[0].selectize;
-
-        /* dt*/      
+        });   
        
       
     });
@@ -264,6 +123,16 @@ if ($param != null) {
                ],
                 "ordering": true,
                 "deferRender": true,
+                "columnDefs" : [
+                    {
+                        "targets" : 8,
+                        "render" : function( data, type, row, meta ){
+                            var diff = calcDiffDateToMonth(formatDate(row.start_date), formatDate(row.finish_date))
+                            return diff + ' MONTH';
+                        },
+                    },
+                    {"targets" : 9, "className" : "text-center"}
+                ],
                 "order": [[0, "asc"]],
                 "fnDrawCallback": function (oSettings) {
                     utilsDataTable();
@@ -396,6 +265,8 @@ if ($param != null) {
         var diff = calcDiffDateToMonth(start,end);
         $("#duration").val(diff + ' MONTH');
     }
+
+    
 
     function openWindow(url){
         var params = [

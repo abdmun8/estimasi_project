@@ -50,6 +50,7 @@ class Quotation extends CI_Controller {
     * 3 = Delete
     */
 
+    /* Get data for part jasa tab*/
     public function getDataPart($id_header = NULL, $id_part = NULL)
     {
         $object = [];
@@ -74,13 +75,14 @@ class Quotation extends CI_Controller {
                 $data = $this->countTotal($object);
             }else{
                 $data = $this->db->get_where('part_jasa', ['id_header' => $id_header, 'id' => $id_part])->row_array();
-                $data['harga'] = $data['harga'];
+                // $data['harga'] = $data['harga'];
             }
         }
 
         echo json_encode($data);
     }
 
+    /* Get data for labour tab*/
     public function getDataLabour($id_header = NULL, $id_labour = NULL)
     {
         $object = [];
@@ -104,13 +106,30 @@ class Quotation extends CI_Controller {
                 $data = $this->countTotal($object, 'labour');
             }else{
                 $data = $this->db->get_where('v_labour', ['id_header' => $id_header, 'id' => $id_labour])->row_array();
-                $data['rate'] = $data['rate'];
+                // $data['rate'] = $data['rate'];
             }
         }
 
         echo json_encode($data);
     }
 
+    function getDataMaterial($id_header = NULL, $id_material = NULL)
+    {
+        $object = [];
+        $data = [];
+        if($id_header != NULL){
+            if($id_material == NULL){
+                $object = $this->db->get_where('v_rawmaterial', ['id_header' => $id_header])->result_array();
+                $data = $this->countTotal($object, 'rawmaterial');
+            }else{
+                $data = $this->db->get_where('v_rawmaterial', ['id_header' => $id_header, 'id' => $id_material])->row_array();
+            }
+        }
+        // print_r($data);
+        echo json_encode($data);
+    }
+
+    /* count item to parent */
     private function countTotal($array, $tipe = 'part')
     {
         // print_r($array);
@@ -124,125 +143,130 @@ class Quotation extends CI_Controller {
         $data_section = [];
         $temp_section = [];
         $new_data = [];
-
         $temp_parent_section = [];
         $temp_parent_object = [];
 
-        if($tipe == 'part'){
-            $col = ['qty', 'harga'];
-        }else{
-            $col = ['hour', 'rate'];
-        }
+        if(count($array) > 0){
 
-        foreach ($array as $key => $item) {
-            $item['total'] = 0;
-            if($item['tipe_item'] == 'item'){
 
-                $item['total'] = ($item[$col[0]] * $item[$col[1]]);
-                $item[$col[1]] = intval($item[$col[1]]);
-                $item[$col[0]] = intval($item[$col[0]]);
+            if($tipe == 'part'){
+                $col = ['qty', 'harga'];
+            }elseif($tipe == 'labour'){
+                $col = ['hour', 'rate'];
+            }else{
+                $col = ['price', 'weight'];
+            }
 
-                if($item['tipe_parent'] == 'section'){
-                    array_push($temp_parent_section, ['id_parent' => $item['id_parent'], 'total' => $item['total']]);
+            foreach ($array as $key => $item) {
+                $item['total'] = 0;
+                if($item['tipe_item'] == 'item'){
+
+                    $item['total'] = ($item[$col[0]] * $item[$col[1]]);
+                    $item[$col[0]] = intval($item[$col[0]]);
+                    if($col[1] == 'weight'){
+                        $item[$col[1]] = $item[$col[1]];
+                    }else{
+                        $item[$col[1]] = intval($item[$col[1]]);
+                    }
+
+                    if($item['tipe_parent'] == 'section'){
+                        array_push($temp_parent_section, ['id_parent' => $item['id_parent'], 'total' => $item['total']]);
+                    }
+
+                    if($item['tipe_parent'] == 'object'){
+                        array_push($temp_parent_object, ['id_parent' => $item['id_parent'], 'total' => $item['total']]);
+                    }
+                    
+                    $data_item[] = $item;
                 }
 
-                if($item['tipe_parent'] == 'object'){
-                    array_push($temp_parent_object, ['id_parent' => $item['id_parent'], 'total' => $item['total']]);
+                if($item['tipe_item'] == 'sub_object'){
+                    $temp_sub_obj[] = $item;
                 }
-                
-                $data_item[] = $item;
-            }
 
-            if($item['tipe_item'] == 'sub_object'){
-                $temp_sub_obj[] = $item;
-            }
+                if($item['tipe_item'] == 'object'){
+                    $temp_obj[] = $item;
+                }
 
-            if($item['tipe_item'] == 'object'){
-                $temp_obj[] = $item;
+                if($item['tipe_item'] == 'section'){
+                    $temp_section[] = $item;
+                }
             }
+            
 
-            if($item['tipe_item'] == 'section'){
-                $temp_section[] = $item;
-            }
-        }
-        
-
-        
-        foreach ($temp_sub_obj as $key => $so) {
-            $so['total'] = 0; 
-            foreach ($data_item as $key => $item) {
-                if($so['tipe_item'] == 'sub_object'){
-                    if($item['id_parent'] == $so['id']){
-                        $so['total'] += $item['total'];
+            
+            foreach ($temp_sub_obj as $key => $so) {
+                $so['total'] = 0; 
+                foreach ($data_item as $key => $item) {
+                    if($so['tipe_item'] == 'sub_object'){
+                        if($item['id_parent'] == $so['id']){
+                            $so['total'] += $item['total'];
+                        }
                     }
                 }
+                $data_sub_obj[] = $so;    
             }
-            $data_sub_obj[] = $so;    
-        }
 
-        
+            
 
-        foreach ($temp_obj as $key => $object) {
-            $object['total'] = 0; 
-            foreach ($data_sub_obj as $key => $so) {
-                if($object['tipe_item'] == 'object'){
-                    if($so['id_parent'] == $object['id']){
-                        $object['total'] += $so['total'];
+            foreach ($temp_obj as $key => $object) {
+                $object['total'] = 0; 
+                foreach ($data_sub_obj as $key => $so) {
+                    if($object['tipe_item'] == 'object'){
+                        if($so['id_parent'] == $object['id']){
+                            $object['total'] += $so['total'];
+                        }
                     }
                 }
+                $data_obj[] = $object;
             }
-            $data_obj[] = $object;
-        }
 
-        $new_object = [];
-        foreach ($data_obj as $key => $object) {
-            // $key = array_search($object['id'], array_column($temp_parent_object, 'id_parent'));
-            // if($key !== false){
-            //     $object['total'] += $temp_parent_object[$key]['total'];
-            // }
-            foreach ($temp_parent_object as  $value) {
-                if($value['id_parent'] == $object['id']){
-                    $object['total'] += $value['total'];
-                }
-            }
-            $new_object[] = $object;
-        }
-
-        foreach ($temp_section as $key => $section) {
-            $section['total'] = 0;
-            foreach ($new_object as $key => $object) {
-                if($section['tipe_item'] == 'section'){
-                    if($object['id_parent'] == $section['id']){
-                        $section['total'] += $object['total'];
+            $new_object = [];
+            foreach ($data_obj as $key => $object) {
+                // $key = array_search($object['id'], array_column($temp_parent_object, 'id_parent'));
+                // if($key !== false){
+                //     $object['total'] += $temp_parent_object[$key]['total'];
+                // }
+                foreach ($temp_parent_object as  $value) {
+                    if($value['id_parent'] == $object['id']){
+                        $object['total'] += $value['total'];
                     }
                 }
+                $new_object[] = $object;
             }
-            $data_section[] = $section;
-        }   
 
-        $new_section = [];    
-        foreach ($data_section as $key => $section) {
-            // $key = array_search($section['id'], array_column($temp_parent_section, 'id_parent'));
-            // if($key !== false){
-            //     $section['total'] += $temp_parent_section[$key]['total'];
-            //     // var_dump($section['total']);
-            // }
-            // $new_section[] = $section;
-
-            foreach ($temp_parent_section as  $value) {
-                if($value['id_parent'] == $section['id']){
-                    $section['total'] += $value['total'];
+            foreach ($temp_section as $key => $section) {
+                $section['total'] = 0;
+                foreach ($new_object as $key => $object) {
+                    if($section['tipe_item'] == 'section'){
+                        if($object['id_parent'] == $section['id']){
+                            $section['total'] += $object['total'];
+                        }
+                    }
                 }
-            }
-            $new_section[] = $section;
-        }
-        
+                $data_section[] = $section;
+            }   
 
-        $new_data = array_merge($data_item, $data_sub_obj, $new_object, $new_section);
+            $new_section = [];    
+            foreach ($data_section as $key => $section) {
+
+                foreach ($temp_parent_section as  $value) {
+                    if($value['id_parent'] == $section['id']){
+                        $section['total'] += $value['total'];
+                    }
+                }
+                $new_section[] = $section;
+            }        
+
+            $new_data = array_merge($data_item, $data_sub_obj, $new_object, $new_section);
+
+            }
+        // print_r($new_data);
         return $new_data;
 
     }
 
+    /* saving general info */
     public function saveGeneralInfo()
     {
         // print_r($_POST);
@@ -288,69 +312,86 @@ class Quotation extends CI_Controller {
         $message = '';
         $default_dept_labour = ['ENGINEERING','PRODUCTION'];
         $action = $this->input->post('action-item');
+        // $this->db->trans_begin();
         if($action == 1){
-                // $this->db->trans_begin();
-                if( $this->quotation->insertDetailPart() == TRUE){
-                    $code = 1;
-                    $tipe_item = '';
-                    $id_parent = 0;
-                    $id_temp = 0;
-                    $last_id = $this->db->insert_id();
-                    if( $this->input->post('tipe_item-item') != 'item'){
-                        if( $this->input->post('tipe_item-item') == 'section' ){
-                            $tipe_item = 'section';
-                        }elseif ( $this->input->post('tipe_item-item') == 'object' ) {
-                            $tipe_item = 'object';
-                            $id_temp = $this->db->get_where('part_jasa', ['id' => $last_id])->row()->id_parent;
-                            $id_parent = $this->db->get_where('labour', ['id_part_jasa' => $id_temp])->row()->id;
-                        }else{
-                            $tipe_item = 'sub_object';
-                            $id_temp = $this->db->get_where('part_jasa', ['id' => $last_id])->row()->id_parent;
-                            $id_parent = $this->db->get_where('labour', ['id_part_jasa' => $id_temp])->row()->id;
-                        }
+            if( $this->quotation->insertDetailPart() == TRUE){
+                $code = 1;
+                $tipe_item = '';
+                $id_parent_lb = 0;
+                $id_parent_rm = 0;
+                $id_temp = 0;
+                $last_id = $this->db->insert_id();
+                if( $this->input->post('tipe_item-item') != 'item'){
+                    if( $this->input->post('tipe_item-item') == 'section' ){
+                        $tipe_item = 'section';
+                    }elseif ( $this->input->post('tipe_item-item') == 'object' ) {
+                        $tipe_item = 'object';
+                        $id_temp = $this->db->get_where('part_jasa', ['id' => $last_id])->row()->id_parent;
+                        $id_parent_lb = $this->db->get_where('labour', ['id_part_jasa' => $id_temp])->row()->id;
+                        $id_parent_rm = $this->db->get_where('rawmaterial', ['id_part_jasa' => $id_temp])->row()->id;
+                    }else{
+                        $tipe_item = 'sub_object';
+                        $id_temp = $this->db->get_where('part_jasa', ['id' => $last_id])->row()->id_parent;
+                        $id_parent_lb = $this->db->get_where('labour', ['id_part_jasa' => $id_temp])->row()->id;
+                        $id_parent_rm = $this->db->get_where('rawmaterial', ['id_part_jasa' => $id_temp])->row()->id;
+                    }
 
-                        $this->db->insert('labour', 
-                            [
-                                'id_header' => $this->input->post('id_header-item'),
-                                'tipe_item' => $tipe_item,
-                                'tipe_id' => $this->input->post('tipe_id-item'),
-                                'tipe_name' => $this->input->post('tipe_name-item'),
-                                'id_parent' => $id_parent,
-                                'id_part_jasa' => $last_id
-                            ]
-                        );
+                    $this->db->insert('labour', 
+                        [
+                            'id_header' => $this->input->post('id_header-item'),
+                            'tipe_item' => $tipe_item,
+                            'tipe_id' => $this->input->post('tipe_id-item'),
+                            'tipe_name' => $this->input->post('tipe_name-item'),
+                            'id_parent' => $id_parent_lb,
+                            'id_part_jasa' => $last_id
+                        ]
+                    );
 
-                        $last_id_labour = $this->db->insert_id();
-                        // $this->db->trans_rollback();
-                        $default = $this->db->get('default_labour')->result_array();
-                        for ($i=0; $i < count($default_dept_labour); $i++) { 
-                            foreach ($default as $key => $value) {
-                                if($value['name'] == $default_dept_labour[$i]){
-                                    $field = [
-                                        'id_header' => $this->input->post('id_header-item'),
-                                        'tipe_item' => 'item',
-                                        'id_parent' => $last_id_labour,
-                                        'id_part_jasa' => $last_id,
-                                        'tipe_id' => $this->input->post('tipe_id-item'),
-                                        'tipe_name' => $default_dept_labour[$i],
-                                        'id_labour' => $value['budget_id'],
-                                        'rate' => $value['rate'],
-                                        'aktivitas' => $value['aktivitas'],
-                                        'sub_aktivitas' => $value['sub_aktivitas']
-                                    ];
+                    $last_id_labour = $this->db->insert_id();
 
-                                    $this->db->insert('labour', $field);
-                                }                                
-                            }
+                    $this->db->insert('rawmaterial',
+                        [
+                            'id_header' => $this->input->post('id_header-item'),
+                            'tipe_item' => $tipe_item,
+                            'tipe_id' => $this->input->post('tipe_id-item'),
+                            'tipe_name' => $this->input->post('tipe_name-item'),
+                            'id_parent' => $id_parent_rm,
+                            'id_part_jasa' => $last_id
+                        ]
+                    );
+
+                    $last_id_material = $this->db->insert_id();
+
+                    // $this->db->trans_rollback();
+                    $default = $this->db->get('default_labour')->result_array();
+                    for ($i=0; $i < count($default_dept_labour); $i++) { 
+                        foreach ($default as $key => $value) {
+                            if($value['name'] == $default_dept_labour[$i]){
+                                $field = [
+                                    'id_header' => $this->input->post('id_header-item'),
+                                    'tipe_item' => 'item',
+                                    'id_parent' => $last_id_labour,
+                                    'id_part_jasa' => $last_id,
+                                    'tipe_id' => $this->input->post('tipe_id-item'),
+                                    'tipe_name' => $default_dept_labour[$i],
+                                    'id_labour' => $value['budget_id'],
+                                    'rate' => $value['rate'],
+                                    'aktivitas' => $value['aktivitas'],
+                                    'sub_aktivitas' => $value['sub_aktivitas']
+                                ];
+
+                                $this->db->insert('labour', $field);
+                            }                                
                         }
                     }
                 }
-
-            }else{
-                if( $this->quotation->udpateDetailPart() == TRUE ){
-                    $code = 1;
-                }
             }
+
+        }else{
+            if( $this->quotation->udpateDetailPart() == TRUE ){
+                $code = 1;
+            }
+        }
         echo json_encode(array('data' => array(
             'code' => $code,
             'message' => $message
@@ -359,8 +400,6 @@ class Quotation extends CI_Controller {
 
     public function saveLabour()
     {
-        // print_r($this->input->post());
-        // die;
         $code = 0;
         $message = '';
         $action = $this->input->post('action-labour');
@@ -424,20 +463,35 @@ class Quotation extends CI_Controller {
                 $del = $this->db->delete($post['table'], ['id' => $post['id']]);
 
                 if($del){
-                    $parent = $this->db->get_where('labour', ['id_part_jasa' => $post['id']])->row();
-                    $total = $this->db->select('SUM(hour) as total', false)->get_where('labour', ['id_parent' => $parent->id])->row()->total;
-                    if(intval($total) > 0){
+                    // cek total hour labour
+                    $parent_labour = $this->db->get_where('labour', ['id_part_jasa' => $post['id']])->row();
+                    $total_labour = $this->db->select('SUM(hour) as total', false)->get_where('labour', ['id_parent' => $parent_labour->id])->row()->total;
+
+                    // cek child material
+                    $parent_material = $this->db->get_where('rawmaterial', ['id_part_jasa' => $post['id']])->row();
+                    $child_material = $this->db->get_where('rawmaterial', ['id_parent' => $parent_material->id])->num_rows();
+
+                    if(intval($total_labour) > 0 || $child_material > 0){
                         $this->db->trans_rollback();
-                        $msg = 'Set jumlah hour (labour) menjadi 0 dahulu!';
+                        $msg = 'Set jumlah hour (labour) menjadi 0 dahulu <br> dan hapus sub material!';
                         $code = 0;
                     }else{
-                        $this->db->where('id', $parent->id);
-                        $this->db->or_where('id_parent', $parent->id);
-                        $delAll = $this->db->delete('labour');
-                        if($delAll){
+                        $this->db->where('id', $parent_labour->id);
+                        $this->db->or_where('id_parent', $parent_labour->id);
+                        $delLabour = $this->db->delete('labour');
+
+                        $this->db->where('id', $parent_material->id);
+                        $this->db->or_where('id_parent', $parent_material->id);
+                        $dellMaterial = $this->db->delete('rawmaterial');
+                        // echo $this->db->last_query();
+                        if($delLabour && $dellMaterial){
                             $this->db->trans_commit();
                             $code = 1;
                             $msg = '';
+                        }else{
+                            $this->db->trans_rollback();
+                            $code = 0;
+                            $msg = 'gagal Hapus data!';
                         }
                     }
                 }
@@ -447,6 +501,7 @@ class Quotation extends CI_Controller {
 
             $this->db->trans_begin();
             $del = $this->db->delete($post['table'], ['id' => $post['id']]);
+            // echo $this->db->last_query();
             if($del){
                 $this->db->trans_commit();
                 $code = 1;
@@ -494,4 +549,33 @@ class Quotation extends CI_Controller {
             "id_section" => $id_section
         ]);
     }
+
+    public function getMaterialCode()
+    {
+        $obj = $this->db->select('mrawmaterial.*, CONCAT( TRIM(part_name)," (",item_code,")" ) as name', false)->get('mrawmaterial')->result();
+        
+        echo json_encode($obj);
+    }
+
+    public function saveMaterial(){
+        $code = 0;
+        $message = '';
+        $action = $this->input->post('action-material');
+        if($action == 1){
+                
+                if( $this->quotation->insertMaterial() == TRUE){
+                    $code = 1;
+                }
+
+            }else{
+                if( $this->quotation->udpateMaterial() == TRUE ){
+                    $code = 1;
+                }
+            }
+        echo json_encode(array('data' => array(
+            'code' => $code,
+            'message' => $message
+        )));
+    }
+    
 }

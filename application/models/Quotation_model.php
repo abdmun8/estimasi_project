@@ -90,6 +90,28 @@ class Quotation_model extends Model {
 
         return $data;
     }
+
+    public function getFieldMaterial()
+    {
+        $inputs = $this->input->post(); 
+        $data = [
+            'id_parent' => $inputs['id_parent-material'],
+            'id_header' => $inputs['id_header-material'],
+            'id_part_jasa' => 0,
+            'tipe_id' => '',
+            'tipe_name' => '',
+            'tipe_item' => 'item',
+            'item_code' => $inputs['item_code-save-material'],
+            'qty' => $inputs['qty-material'],
+            'l' => $inputs['length-material'],
+            'w' => $inputs['width-material'],
+            'h' => $inputs['height-material'],
+            't' => $inputs['diameter-material'],
+            'weight' => $inputs['weight-material']
+        ];
+
+        return $data;
+    }
    
 
     // public
@@ -159,6 +181,30 @@ class Quotation_model extends Model {
         $this->input->post();
         $data = $this->getFieldLabour();
         $this->db->update( 'labour', $data, ['id'=>$this->input->post('id-labour')]);
+
+        if( $this->db->affected_rows() > 0){            
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    public function insertMaterial()
+    {
+        $this->input->post();
+        $data = $this->getFieldMaterial();
+        $this->db->insert( 'rawmaterial', $data );
+
+        if( $this->db->affected_rows() > 0){            
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    public function udpateMaterial()
+    {
+        $this->input->post();
+        $data = $this->getFieldMaterial();
+        $this->db->update( 'rawmaterial', $data, ['id'=>$this->input->post('id-material')]);
 
         if( $this->db->affected_rows() > 0){            
             return TRUE;
