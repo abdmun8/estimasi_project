@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Quotation extends CI_Controller {
 	private $identity; // store session
 
-	public function __construct() 
+	public function __construct()
     {
 	    parent::__construct();
 	    $this->identity = $this->session->userdata('identity');
@@ -12,7 +12,7 @@ class Quotation extends CI_Controller {
         $this->load->library('form_validation');
 	}
 
-	public function index($id = NULL) 
+	public function index($id = NULL)
     {
         $data = [];
         if (!$this->ion_auth->logged_in())
@@ -25,17 +25,30 @@ class Quotation extends CI_Controller {
         $this->load->view('cms/_detail_quotation',$data);
 	}
 
-	public function getDataHeader($id = NULL)
+	public function getDataHeader($id = NULL, $json = true)
     {
         $code = 1;
         $object = [];
         $message = '';
         if($id != NULL){
-            // $object 
-            $object = $this->model->getRecord(['table'=>'header','where'=>['id'=>$id]]);
+            // $object = $this->model->getRecord(['table'=>'header','where'=>['id'=>$id]]);
+			$object = $this->db->select('header.*, personal.nama as pic_name, customer.nama as customer_name', false)
+				->join('customer', 'header.customer = customer.custid')
+				->join('personal', 'header.pic_marketing = personal.id_personalia')
+				->where('id', $id)
+				->get('header')
+				->row();
         }else{
-            $object = $this->model->getList(['table'=>'header']);
+            // $object = $this->model->getList(['table'=>'header']);
+			$object = $this->db->select('header.*, personal.nama as pic_name, customer.nama as customer_name', false)
+				->join('customer', 'header.customer = customer.custid')
+				->join('personal', 'header.pic_marketing = personal.id_personalia')
+				->get('header')
+				->result();
         }
+
+		if(!$json)
+			return $object;
 
         echo json_encode(array('data' => array(
             'code' => $code,
@@ -51,15 +64,15 @@ class Quotation extends CI_Controller {
     */
 
     /* Get data for part jasa tab*/
-    public function getDataPart($id_header = NULL, $id_part = NULL)
+    public function getDataPart($id_header = NULL, $id_part = NULL, $json = true)
     {
         $object = [];
         $data = [];
         if($id_header != NULL){
             if($id_part == NULL){
-                $object = $this->db->query('SELECT 
+                $object = $this->db->query('SELECT
                             *,
-                            (SELECT 
+                            (SELECT
                                     tipe_item
                                 FROM
                                     part_jasa p
@@ -75,11 +88,13 @@ class Quotation extends CI_Controller {
                 $data = $this->countTotal($object);
             }else{
                 $data = $this->db->get_where('part_jasa', ['id_header' => $id_header, 'id' => $id_part])->row_array();
-                // $data['harga'] = $data['harga'];
             }
         }
 
+		if(!$json)
+			return $data;
         echo json_encode($data);
+
     }
 
     /* Get data for labour tab*/
@@ -90,9 +105,9 @@ class Quotation extends CI_Controller {
         if($id_header != NULL){
             if($id_labour == NULL){
                 // $object = $this->db->get_where('v_labour', ['id_header' => $id_header])->result_array();
-                $object = $this->db->query('SELECT 
+                $object = $this->db->query('SELECT
                     `l`.*,
-                            (SELECT 
+                            (SELECT
                                     tipe_item
                                 FROM
                                     labour b
@@ -176,7 +191,7 @@ class Quotation extends CI_Controller {
                     if($item['tipe_parent'] == 'object'){
                         array_push($temp_parent_object, ['id_parent' => $item['id_parent'], 'total' => $item['total']]);
                     }
-                    
+
                     $data_item[] = $item;
                 }
 
@@ -192,11 +207,11 @@ class Quotation extends CI_Controller {
                     $temp_section[] = $item;
                 }
             }
-            
 
-            
+
+
             foreach ($temp_sub_obj as $key => $so) {
-                $so['total'] = 0; 
+                $so['total'] = 0;
                 foreach ($data_item as $key => $item) {
                     if($so['tipe_item'] == 'sub_object'){
                         if($item['id_parent'] == $so['id']){
@@ -204,13 +219,13 @@ class Quotation extends CI_Controller {
                         }
                     }
                 }
-                $data_sub_obj[] = $so;    
+                $data_sub_obj[] = $so;
             }
 
-            
+
 
             foreach ($temp_obj as $key => $object) {
-                $object['total'] = 0; 
+                $object['total'] = 0;
                 foreach ($data_sub_obj as $key => $so) {
                     if($object['tipe_item'] == 'object'){
                         if($so['id_parent'] == $object['id']){
@@ -245,9 +260,9 @@ class Quotation extends CI_Controller {
                     }
                 }
                 $data_section[] = $section;
-            }   
+            }
 
-            $new_section = [];    
+            $new_section = [];
             foreach ($data_section as $key => $section) {
 
                 foreach ($temp_parent_section as  $value) {
@@ -256,7 +271,7 @@ class Quotation extends CI_Controller {
                     }
                 }
                 $new_section[] = $section;
-            }        
+            }
 
             $new_data = array_merge($data_item, $data_sub_obj, $new_object, $new_section);
 
@@ -285,7 +300,7 @@ class Quotation extends CI_Controller {
         }else{
 
             if($action == 1){
-                
+
                 if( $this->quotation->insertGeneralInfo() == TRUE){
                     $code = 1;
                     $last_id = $this->db->insert_id();
@@ -297,7 +312,7 @@ class Quotation extends CI_Controller {
                     $last_id = $this->input->post('id_header');
                 }
             }
-        }        
+        }
 
         echo json_encode(array('data' => array(
             'code' => $code,
@@ -336,7 +351,7 @@ class Quotation extends CI_Controller {
                         $id_parent_rm = $this->db->get_where('rawmaterial', ['id_part_jasa' => $id_temp])->row()->id;
                     }
 
-                    $this->db->insert('labour', 
+                    $this->db->insert('labour',
                         [
                             'id_header' => $this->input->post('id_header-item'),
                             'tipe_item' => $tipe_item,
@@ -364,7 +379,7 @@ class Quotation extends CI_Controller {
 
                     // $this->db->trans_rollback();
                     $default = $this->db->get('default_labour')->result_array();
-                    for ($i=0; $i < count($default_dept_labour); $i++) { 
+                    for ($i=0; $i < count($default_dept_labour); $i++) {
                         foreach ($default as $key => $value) {
                             if($value['name'] == $default_dept_labour[$i]){
                                 $field = [
@@ -381,7 +396,7 @@ class Quotation extends CI_Controller {
                                 ];
 
                                 $this->db->insert('labour', $field);
-                            }                                
+                            }
                         }
                     }
                 }
@@ -404,7 +419,7 @@ class Quotation extends CI_Controller {
         $message = '';
         $action = $this->input->post('action-labour');
         if($action == 1){
-                
+
                 if( $this->quotation->insertDetailLabour() == TRUE){
                     $code = 1;
                 }
@@ -423,7 +438,7 @@ class Quotation extends CI_Controller {
     public function getItemCode()
     {
         $obj = $this->db->select('stcd, CONCAT( TRIM(nama)," (",stcd,")" ) as name, TRIM(spek) as spek, TRIM(maker) as maker, TRIM(uom) as uom, TRIM(nama) as nama, harga', false)->get('v_item')->result();
-        
+
         echo json_encode($obj);
     }
 
@@ -512,7 +527,7 @@ class Quotation extends CI_Controller {
                 $msg = 'Tidak dapat menghapus data!';
             }
         }
-        
+
 
         echo json_encode(['data'=>['code'=>$code,'message'=>$msg]]);
     }
@@ -542,7 +557,7 @@ class Quotation extends CI_Controller {
             }
         }
         echo json_encode([
-            "code" => $code, 
+            "code" => $code,
             "last_value" => $last_value,
             "tipe_parent" => $parent->tipe_item,
             "id_object" => $id_object,
@@ -553,7 +568,7 @@ class Quotation extends CI_Controller {
     public function getMaterialCode()
     {
         $obj = $this->db->select('mrawmaterial.*, CONCAT( TRIM(part_name)," (",item_code,")" ) as name', false)->get('mrawmaterial')->result();
-        
+
         echo json_encode($obj);
     }
 
@@ -562,7 +577,7 @@ class Quotation extends CI_Controller {
         $message = '';
         $action = $this->input->post('action-material');
         if($action == 1){
-                
+
                 if( $this->quotation->insertMaterial() == TRUE){
                     $code = 1;
                 }
@@ -577,5 +592,5 @@ class Quotation extends CI_Controller {
             'message' => $message
         )));
     }
-    
+
 }

@@ -39,9 +39,9 @@ class Retriever extends CI_Controller {
 				case 'karyawan':
 					$query['table'] = 'v_karyawan';
 					if( $this->input->get('type') == 1){
-						$query['where'] = ['status_karyawan <>'=>'Non-Aktif']; 
+						$query['where'] = ['status_karyawan <>'=>'Non-Aktif'];
 					}else{
-						$query['where'] = ['status_karyawan'=>'Non-Aktif']; 
+						$query['where'] = ['status_karyawan'=>'Non-Aktif'];
 					}
 					break;
 				default:
@@ -88,9 +88,9 @@ class Retriever extends CI_Controller {
 					case 'karyawan':
 						$query['table'] = 'v_karyawan';
 						if( $this->input->get('type') == 1){
-							$query['where'] = ['status_karyawan <>'=>'Non-Aktif']; 
+							$query['where'] = ['status_karyawan <>'=>'Non-Aktif'];
 						}else{
-							$query['where'] = ['status_karyawan'=>'Non-Aktif']; 
+							$query['where'] = ['status_karyawan'=>'Non-Aktif'];
 						}
 						break;
 					default:
@@ -266,13 +266,14 @@ class Retriever extends CI_Controller {
 			} else if ($picker == 'no') {
 				$linkBtn = ' <a href="#' . $record->id . '" class="btn btn-xs btn-primary editBtn" title="Edit"><i class="fa fa-edit"></i> Edit</a>';
 				$linkBtn .= ' <a href="#' . $record->id . '" class="btn btn-xs btn-danger removeBtn" title="Hapus"><i class="fa fa-trash-o"></i> Hapus</a>';
-				$linkBtn .= ' <a onclick="printQuotation(); return false;" href="#" class="btn btn-xs btn-success " title="Print"><i class="fa fa-print"></i> Print</a>';
+				$linkBtn .= ' <a onclick="printQuotation('.$record->id.'); return false;" href="#" class="btn btn-xs btn-success " title="Print"><i class="fa fa-print"></i> Print</a>';
 			}
 
 			$data[] = array(
 				'no' => $no,
 				'project_name' => $record->project_name,
 				'qty' => $record->qty,
+				'satuan' => $record->satuan,
 				'inquiry_no' => $record->inquiry_no,
 				'customer' => $record->customer,
 				'pic_marketing' => $record->pic_marketing,

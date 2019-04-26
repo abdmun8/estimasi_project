@@ -10,6 +10,8 @@ if ($param != null) {
     }
 }
 
+$satuan = $this->db->get_where('tblsatuan')->result();
+
 ?>
 <!DOCTYPE html>
 <html  lang="id_ID">
@@ -59,7 +61,7 @@ if ($param != null) {
                     <!-- left column -->
                     <form class="form-horizontal" role="form" id="form-general-info">
                         <div class="col-md-6">
-                            <!-- Left Form -->                                    
+                            <!-- Left Form -->
                             <div class="form-group">
                                 <label for="inquiry_no" class="col-sm-3 control-label">Inquiry No.</label>
                                 <div class="col-sm-9">
@@ -79,24 +81,23 @@ if ($param != null) {
                                 </div>
                                 <div class="col-sm-7">
                                     <select class="form-control" id="lot_general" name="lot_general">
-                                        <option value="" selected>Pilih Lot</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
+                                        <?php foreach ($satuan as $key => $value) : ?>
+                                            <option value="<?=$value->name;?>"><?=$value->name;?></option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="customer" class="col-sm-3 control-label">Customer</label>
                                 <div class="col-sm-9">
-                                    <select class="form-control" id="customer" name="customer" style="width: 100%;">                                        
+                                    <select class="form-control" id="customer" name="customer" style="width: 100%;">
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="pic_marketing" class="col-sm-3 control-label">PIC marketing</label>
                                 <div class="col-sm-9">
-                                    <select class="form-control" id="pic_marketing" name="pic_marketing" style="width: 100%;">                                        
+                                    <select class="form-control" id="pic_marketing" name="pic_marketing" style="width: 100%;">
                                     </select>
                                 </div>
                             </div>
@@ -142,14 +143,14 @@ if ($param != null) {
                                         <option value="Hard">Hard</option>
                                     </select>
                                 </div>
-                            </div>                                   
+                            </div>
                             <button type="button" class="btn btn-success pull-right" onclick="saving();"><i class="fa fa-save"></i> Save</button>
                             <button type="button" class="btn btn-default pull-right" onclick="newForm();" style="margin-right: 10px;"><i class="fa fa-plus"></i> New</button>
                             <input type="hidden" id="id_header" name="id_header" value="" />
                             <input type="hidden" id="action" name="action" value="1" />
                         </div>
                     </form>
-                </div>                
+                </div>
             </section>
 		</div>
 
@@ -159,9 +160,9 @@ if ($param != null) {
 				<button id="addBtn" type="button" class="btn btn-default" onclick="showModalInput('section')">Add Section</button>
                 <button id="expandAllBtn" type="button" class="btn btn-default">Expand/Collapse All</button>
 			</div>
-			<table id="demo"></table>	
+			<table id="demo"></table>
 			</section>
-			
+
 		</div>
 
         <div id="material_tab" class="tab-pane fade">
@@ -169,7 +170,7 @@ if ($param != null) {
                 <div id="material-toolbar" class="btn-group" role="group" aria-label="...">
                     <button id="expandAllBtnMaterial" type="button" class="btn btn-default">Expand/Collapse All</button>
                 </div>
-                <table id="material_table"></table>   
+                <table id="material_table"></table>
             </section>
         </div>
 
@@ -178,7 +179,7 @@ if ($param != null) {
                 <div id="labour-toolbar" class="btn-group" role="group" aria-label="...">
                     <button id="expandAllBtnLabour" type="button" class="btn btn-default">Expand/Collapse All</button>
                 </div>
-                <table id="labour_table"></table>   
+                <table id="labour_table"></table>
             </section>
 		</div>
 	</div>
@@ -198,16 +199,16 @@ if ($param != null) {
                 <form role="form" id="form-input-item">
                     <div class="box-body">
                         <div class="col-md-6">
-                            <!-- <input type="hidden" id="tipe_item-item" name="tipe_item-item" value="section" /> -->    
+                            <!-- <input type="hidden" id="tipe_item-item" name="tipe_item-item" value="section" /> -->
                             <div class="form-group">
                                 <label>Tipe Item</label>
                                 <select class="form-control select2 input-sm" name="tipe_item-item" id="tipe_item-item">
                                 </select>
-                            </div>                     
+                            </div>
                             <div class="form-group only_item">
                                 <label for="item_code-item">Item Code</label>
                                 <input type="text" class="form-control input-sm" id="item_code-item" name="item_code-item" placeholder="Item Code" data-provide="typeahead">
-                            </div> 
+                            </div>
                             <div class="form-group only_item">
                                 <label for="spec-item">Spec</label>
                                 <input type="text" class="form-control input-sm" id="spec-item" name="spec-item" placeholder="Spec">
@@ -220,7 +221,7 @@ if ($param != null) {
                                 <label for="qty-item">Qty</label>
                                 <input type="text" class="form-control input-sm" id="qty-item" name="qty-item" placeholder="Qty">
                             </div>
-                            
+
                             <input type="hidden" id="item_code" name="item_code" />
                             <input type="hidden" id="id_parent-item" name="id_parent-item" value="0" />
                             <input type="hidden" id="id_header-item" name="id_header-item" value="0" />
@@ -231,8 +232,8 @@ if ($param != null) {
                         <div class="col-md-6">
                             <div class="form-group except_item">
                                 <label for="tipe_id-item">Id <span class="modal-title-input"></span></label>
-                                <input type="text" class="form-control input-sm" id="tipe_id-item" name="tipe_id-item" placeholder="Id">                                
-                            </div> 
+                                <input type="text" class="form-control input-sm" id="tipe_id-item" name="tipe_id-item" placeholder="Id">
+                            </div>
                             <div class="form-group except_item">
                                 <label for="tipe_name-item"><span class="modal-title-input"></span> Name</label>
                                 <input type="text" class="form-control input-sm" id="tipe_name-item" name="tipe_name-item" placeholder="Name">
@@ -240,15 +241,15 @@ if ($param != null) {
                             <div class="form-group only_item">
                                 <label for="item_name-item">Item Name</label>
                                 <input type="text" class="form-control input-sm" id="item_name-item" name="item_name-item" placeholder="Item Name">
-                            </div> 
+                            </div>
                             <div class="form-group only_item">
                                 <label for="merk-item">Merk</label>
                                 <input type="text" class="form-control input-sm" id="merk-item" name="merk-item" placeholder="Merk">
-                            </div> 
+                            </div>
                             <div class="form-group only_item">
                                 <label for="harga-item">Harga</label>
                                 <input type="text" class="form-control input-sm" id="harga-item" name="harga-item" placeholder="Price">
-                            </div> 
+                            </div>
                             <div class="form-group only_item">
                                 <label>Kategori</label>
                                 <select class="form-control select2 input-sm" id="kategori-item" name="kategori-item" style="width: 100%;">
@@ -287,15 +288,15 @@ if ($param != null) {
                         <div class="col-md-6">
                             <input type="hidden" id="tipe_rumus-material" name="tipe_rumus-material" value="" />
                             <input type="hidden" id="id_parent-material" name="id_parent-material" />
-                            <input type="hidden" id="id-material" name="id-material" /> 
-                            <input type="hidden" id="id_header-material" name="id_header-material" /> 
-                            <input type="hidden" id="item_code-save-material" name="item_code-save-material" /> 
+                            <input type="hidden" id="id-material" name="id-material" />
+                            <input type="hidden" id="id_header-material" name="id_header-material" />
+                            <input type="hidden" id="item_code-save-material" name="item_code-save-material" />
                             <input type="hidden" id="action-material" name="action-material" value="1" />
 
                             <div class="form-group">
                                 <label>Item Code</label>
                                 <input type="text" class="form-control input-sm" id="item_code-material" name="item_code-material" placeholder="Item Code" data-provide="typeahead">
-                            </div>           
+                            </div>
                             <div class="form-group">
                                 <label>Part name</label>
                                 <input type="text" readonly class="form-control input-sm" id="part_name-material" name="part_name-material" placeholder="Part name">
@@ -321,32 +322,32 @@ if ($param != null) {
                         <div class="col-md-6">
                             <div class="form-group rumus2 rumus3" style="display:none;">
                                 <label>L</label>
-                                <input type="text" class="form-control input-sm" id="length-material" name="length-material" placeholder="L" onkeyup="perhitunganMaterial()">                                
-                            </div> 
+                                <input type="text" class="form-control input-sm" id="length-material" name="length-material" placeholder="L" onkeyup="perhitunganMaterial()">
+                            </div>
                             <div class="form-group rumus1 rumus3" style="display:none;">
                                 <label>W</label>
-                                <input type="text" class="form-control input-sm" id="width-material" name="width-material" placeholder="W" onkeyup="perhitunganMaterial()">                                
-                            </div> 
+                                <input type="text" class="form-control input-sm" id="width-material" name="width-material" placeholder="W" onkeyup="perhitunganMaterial()">
+                            </div>
                             <div class="form-group rumus1 rumus3" style="display:none;">
                                 <label>H</label>
-                                <input type="text" class="form-control input-sm" id="height-material" name="height-material" placeholder="H" onkeyup="perhitunganMaterial()">                                
-                            </div> 
+                                <input type="text" class="form-control input-sm" id="height-material" name="height-material" placeholder="H" onkeyup="perhitunganMaterial()">
+                            </div>
                             <div class="form-group rumus1 rumus2 rumus3" style="display:none;">
                                 <label>t / &#8960;</label>
-                                <input type="text" class="form-control input-sm" id="diameter-material" name="diameter-material" placeholder="t / &#8960;" onkeyup="perhitunganMaterial()">                                
-                            </div>                            
+                                <input type="text" class="form-control input-sm" id="diameter-material" name="diameter-material" placeholder="t / &#8960;" onkeyup="perhitunganMaterial()">
+                            </div>
                             <div class="form-group">
                                 <label>Qty</label>
-                                <input type="text" class="form-control input-sm" id="qty-material" name="qty-material" placeholder="Qty" onkeyup="perhitunganMaterial()">                               
+                                <input type="text" class="form-control input-sm" id="qty-material" name="qty-material" placeholder="Qty" onkeyup="perhitunganMaterial()">
                             </div>
                             <div class="form-group">
                                 <label>Weight</label>
-                                <input type="text" readonly class="form-control input-sm" id="weight-material" name="weight-material" placeholder="Weight" value="0">                                
+                                <input type="text" readonly class="form-control input-sm" id="weight-material" name="weight-material" placeholder="Weight" value="0">
                             </div>
                             <div class="form-group">
                                 <label>Total</label>
-                                <input type="text" readonly class="form-control input-sm"  id="total-material" name="total-material" placeholder="Total">                                
-                            </div>                             
+                                <input type="text" readonly class="form-control input-sm"  id="total-material" name="total-material" placeholder="Total">
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -361,7 +362,7 @@ if ($param != null) {
       </div>
     </div>
     <!-- ./End Modal Material -->
-		
+
 <!-- 全局js -->
 <script type="text/javascript" src="<?php echo base_url();?>assets/cms/bootstrap-treetable/libs/jquery.min.js"></script>
 <script type="text/javascript" src="<?php echo base_url();?>assets/cms/bootstrap-treetable/libs/v3/bootstrap.min.js"></script>
@@ -380,11 +381,11 @@ if ($param != null) {
     var id_header_tree = '';
     var data_select = [];
     // var $selTipe = $("#tipe_item-item").select2();
-    $(document).ready(function () {        
+    $(document).ready(function () {
 
         $('.total_harga').mask("#,##0", {reverse: true});
         $('#harga-item').mask("#,##0", {reverse: true});
-        $('#rate-labour').mask("#,##0", {reverse: true});        
+        $('#rate-labour').mask("#,##0", {reverse: true});
         $('#total-material').mask("#,##0.00", {reverse: true});
         $('#weight-material').mask("#,##0.00", {reverse: true});
         // $('#total-material').mask("#,##0", {reverse: true});
@@ -401,7 +402,7 @@ if ($param != null) {
 
         /* get item code */
         $.get( base_url + "quotation/get_item_code", function(data){
-            $("#item_code-item").typeahead({ 
+            $("#item_code-item").typeahead({
                 source: data,
                 minLength: 1,
                 order: "asc",
@@ -414,15 +415,15 @@ if ($param != null) {
                     $("#harga-item").val(parseInt(o.harga));
                 }
             });
-        }, 'json');        
-        
+        }, 'json');
+
         $("#tipe_item-item").change(function(){
             if(this.value == 'item'){
                 $(".except_item").hide();
                 $(".only_item").show();
             }else{
                 $(".only_item").hide();
-                $(".except_item").show();            
+                $(".except_item").show();
             }
         });
 
@@ -460,7 +461,7 @@ if ($param != null) {
         ?>
 
         $.get( base_url + "quotation/get_material_code", function(data){
-            $("#item_code-material").typeahead({ 
+            $("#item_code-material").typeahead({
                 source: data,
                 minLength: 1,
                 order: "asc",
@@ -511,13 +512,13 @@ if ($param != null) {
     }
 
 
-    /* 
+    /*
         tree table part jasa
     */
     <?php echo ($param != null) ? 'id_header_tree='. $param.';' : ''; ?>
     var treeTable = $('#demo').bootstrapTreeTable({
         toolbar: "#demo-toolbar",    //顶部工具条
-        expandColumn : 1,    
+        expandColumn : 1,
         expandAll: true,
         height:480,
         type: 'get',
@@ -526,7 +527,7 @@ if ($param != null) {
         columns: [
             {
                 checkbox: true
-            },   
+            },
             {
                 title: 'Opsi',
                 width: '160',
@@ -647,7 +648,7 @@ if ($param != null) {
                 width: '150',
                 align: "left",
             }
-            
+
         ],
         onAll: function(data) {
             // console.log("onAll");
@@ -697,13 +698,13 @@ if ($param != null) {
         _expandFlag_all = _expandFlag_all?false:true;
     });
 
-    /* 
+    /*
         tree table labour
     */
 
     var labourTable = $('#labour_table').bootstrapTreeTable({
         toolbar: "#labour-toolbar",    //顶部工具条
-        expandColumn : 1,   
+        expandColumn : 1,
         expandAll: false,
         height:480,
         type: 'get',
@@ -712,16 +713,16 @@ if ($param != null) {
         columns: [
             {
                 checkbox: true
-            },   
+            },
             // {
             //     title: 'Opsi',
             //     width: '140',
             //     align: "center",
             //     fixed: true,
             //     formatter: function(value,row, index) {
-            //         var actions = [];             
-            //         if(row.tipe_item === 'item'){ 
-            //             actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="showModalLabour('+row.id+','+row.id_parent+','+false+',\'edit\')"><i class="fa fa-edit"></i></a> ');        
+            //         var actions = [];
+            //         if(row.tipe_item === 'item'){
+            //             actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="showModalLabour('+row.id+','+row.id_parent+','+false+',\'edit\')"><i class="fa fa-edit"></i></a> ');
             //         }
             //         return actions.join('');
             //     }
@@ -745,8 +746,8 @@ if ($param != null) {
                     }
                 }
             },
-            
-            
+
+
             {
                 field: 'tipe_name',
                 title: 'Name',
@@ -790,7 +791,7 @@ if ($param != null) {
                         actions.push('<button id="btnEdit'+row.id+'"class="btn btn-success btn-xs btnEdit" title="Edit" onclick="editHour('+row.id+')"><span id="iconHour'+row.id+'"><i class="fa fa-edit"></i></span></button> ');
 
                         actions.push('<button style="display:none;" id="btnSave'+row.id+'"class="btn btn-info btn-xs btnEdit" title="Save" onclick="saveHour('+row.id+','+row.id_parent+')"><i class="fa fa-check"></i></button> ');
-                        return actions.join('');   
+                        return actions.join('');
                     }
                 }
             },
@@ -807,7 +808,7 @@ if ($param != null) {
                         return '<span id="rateValue'+row.id+'" class="total_harga">'+value+'</span>';
                     }
                 }
-            },            
+            },
             {
                 field: 'total',
                 title: 'Total',
@@ -820,7 +821,7 @@ if ($param != null) {
                     return '<span id="totalValue'+row.id+'" class="total_harga">'+value+'</span>';
                 }
             }
-            
+
         ],
         onAll: function(data) {
             // console.log("onAll");
@@ -862,13 +863,13 @@ if ($param != null) {
         _expandFlag_all_labour = _expandFlag_all_labour?false:true;
     });
 
-    /* 
+    /*
         tree table labour
     */
 
     var materialTable = $('#material_table').bootstrapTreeTable({
         toolbar: "#material-toolbar",    //顶部工具条
-        expandColumn : 1,   
+        expandColumn : 1,
         expandAll: false,
         height:480,
         type: 'get',
@@ -877,17 +878,17 @@ if ($param != null) {
         columns: [
             {
                 checkbox: true
-            },   
+            },
             {
                 title: 'Opsi',
                 width: '140',
                 align: "center",
                 fixed: true,
                 formatter: function(value,row, index) {
-                    var actions = [];                    
-                    if(row.tipe_item === 'item'){ 
-                        actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="addItemMaterial('+row.id+','+row.id_parent+',\'edit\')"><i class="fa fa-edit"></i></a> ');  
-                        actions.push('<a class="btn btn-danger btn-xs " title="Hapus" onclick="confirmDelete('+row.id+',\'rawmaterial\',\''+row.tipe_item+'\')"><i class="fa fa-remove"></i></a>');      
+                    var actions = [];
+                    if(row.tipe_item === 'item'){
+                        actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="addItemMaterial('+row.id+','+row.id_parent+',\'edit\')"><i class="fa fa-edit"></i></a> ');
+                        actions.push('<a class="btn btn-danger btn-xs " title="Hapus" onclick="confirmDelete('+row.id+',\'rawmaterial\',\''+row.tipe_item+'\')"><i class="fa fa-remove"></i></a>');
                     }else{
                         actions.push('<a class="btn btn-info btn-xs " title="Tambah Sub" onclick="addItemMaterial('+row.id+','+row.id_parent+')" href="#"><i class="fa fa-plus"></i></a> ');
                     }
@@ -913,8 +914,8 @@ if ($param != null) {
                     }
                 }
             },
-            
-            
+
+
             {
                 field: 'tipe_name',
                 title: 'Name',
@@ -955,14 +956,14 @@ if ($param != null) {
                     }
                     return value;
                 }
-            },            
+            },
             {
                 field: 'materials',
                 title: 'Materials',
                 width: '150',
                 align: "left",
                 visible: true
-            }, 
+            },
             {
                 field: 'l',
                 title: 'Length',
@@ -1027,7 +1028,7 @@ if ($param != null) {
                     }
                     return value * 1;
                 }
-            }, 
+            },
             {
                 field: 'weight',
                 title: 'Weight',
@@ -1040,7 +1041,7 @@ if ($param != null) {
                     // }
                     return value * 1;
                 }
-            },    
+            },
             {
                 field: 'total',
                 title: 'Total',
@@ -1053,7 +1054,7 @@ if ($param != null) {
                     return '<span id="totalValue'+row.id+'" class="total_harga">'+value+'</span>';
                 }
             }
-            
+
         ],
         onAll: function(data) {
             // console.log("onAll");
@@ -1117,7 +1118,7 @@ if ($param != null) {
                     $("#customer").val(json.data.object.customer);
                     $('#customer').trigger('change');
                     $("#qty_general").val(json.data.object.qty);
-                    $("#lot_general").val(json.data.object.lot);
+                    $("#lot_general").val(json.data.object.satuan);
                     $("#pic_marketing").val(json.data.object.pic_marketing);
                     $('#pic_marketing').trigger('change');
                     $("#start_date").val(convertDateIndo(json.data.object.start_date));
@@ -1193,7 +1194,7 @@ if ($param != null) {
             }else if(target == 'labour_tab'){
                 $('#labour_table').bootstrapTreeTable('refresh');
             }else if(target == 'material_tab'){
-                $('#material_table').bootstrapTreeTable('refresh');                
+                $('#material_table').bootstrapTreeTable('refresh');
             }
         }
     });
@@ -1219,16 +1220,16 @@ if ($param != null) {
         $("#qty-item").parent().removeClass('has-error');
         $("#tipe_item-item").parent().show();
 
-        var title_self = title;    
+        var title_self = title;
         var title_text = title;
-        
+
 
         if(title == 'item'){
             $(".except_item").hide();
             $(".only_item").show();
         }else{
             $(".only_item").hide();
-            $(".except_item").show();            
+            $(".except_item").show();
         }
 
         if(sub == true){
@@ -1313,8 +1314,8 @@ if ($param != null) {
 
             $("#id_parent-item").val(id_parent);
             $("#action-item").val(2);
-            $("#tipe_item-item").val(title);   
-            $("#tipe_item-item").parent().hide();         
+            $("#tipe_item-item").val(title);
+            $("#tipe_item-item").parent().hide();
 
         }else{
 
@@ -1338,7 +1339,7 @@ if ($param != null) {
         }
 
         title_text = title_text.replace('_',' ');
-        
+
         $(".modal-title-input").text(ucFirst(title_text));
         $('#modal-input-item').modal('show');
     }
@@ -1384,7 +1385,7 @@ if ($param != null) {
         loading('loading',true);
         var harga = ($("#harga-item").cleanVal() * 1);
         var qty = $("#qty-item").val();
-        var tipe_id = $("#tipe_id-item").val();       
+        var tipe_id = $("#tipe_id-item").val();
 
 
         if( $("#tipe_item-item").val() == 'item' ){
@@ -1415,7 +1416,7 @@ if ($param != null) {
                 $("#tipe_id-item").parent().removeClass('has-error');
             }
         }
-        
+
 
         var data = $("#form-input-item").serialize() +'&harga-item-clean='+harga;
         setTimeout(function() {
@@ -1437,7 +1438,7 @@ if ($param != null) {
                         notify('success', 'Penyimpanan data berhasil');
                         $('#modal-input-item').modal('hide');
                         $('#demo').bootstrapTreeTable('refresh');
-                        
+
                     }
                 }, error: function () {
                     loading('loading',false);
@@ -1445,7 +1446,7 @@ if ($param != null) {
                 }
             });
         }, 100);
-    }    
+    }
 
     function formatDate(date, to_indo = true){
         var m,d,y,formatted;
@@ -1469,13 +1470,13 @@ if ($param != null) {
         var val = $("#valHour"+id+"").text();
         var html = '<input class="" style="width:50px;height:23px;border:1px solid #ccc;padding:0px;margin:0px;" type="number" id="inputHour'+id+'" value="'+val+'" min="0" />';
         $("#valHour"+id+"").html(html);
-        $("#inputHour"+id+"").focus();      
-        $("#btnEdit"+id+"").css("display","none");      
-        $("#btnSave"+id+"").css("display","inline");      
+        $("#inputHour"+id+"").focus();
+        $("#btnEdit"+id+"").css("display","none");
+        $("#btnSave"+id+"").css("display","inline");
     }
 
     function saveHour(id, id_parent = 0){
-        var hour = $("#inputHour"+id+"").val();  
+        var hour = $("#inputHour"+id+"").val();
         if(hour === ''){
             notify('warning', 'Input Hour!');
             return;
@@ -1486,7 +1487,7 @@ if ($param != null) {
         var total = hour * rate;
         var total_parent_old = $("#totalValue"+id_parent+"").cleanVal() * 1;
         var total_parent = (total - total_old)  + total_parent_old;
-        
+
         $("#valHour"+id+"").html(hour);
         $("#totalValue"+id+"").text(total);
         var masked = $("#totalValue"+id+"").masked(total);
@@ -1496,7 +1497,7 @@ if ($param != null) {
         var masked = $("#totalValue"+id_parent+"").masked(total_parent);
 
         $("#totalValue"+id_parent+"").text(masked);
-        $("#btnEdit"+id+"").css("display","inline");      
+        $("#btnEdit"+id+"").css("display","inline");
         $("#btnSave"+id+"").css("display","none");
 
         $.ajax({
@@ -1515,7 +1516,7 @@ if ($param != null) {
                             var total_section_old = $("#totalValue"+json.id_section+"").cleanVal() * 1;
                             var total_section = (total - total_old) + total_section_old;
                             var masked_section = $("#totalValue"+json.id_section+"").masked(total_section);
-                            $("#totalValue"+json.id_section+"").text(masked_section);                            
+                            $("#totalValue"+json.id_section+"").text(masked_section);
 
                         }else{
                             var total_object_old = $("#totalValue"+json.id_object+"").cleanVal() * 1;
@@ -1586,7 +1587,7 @@ if ($param != null) {
 
     /* save material item*/
     function saveMaterial(){
-        loading('loading',true);        
+        loading('loading',true);
 
         var data = $("#form-input-material").serialize();
         setTimeout(function() {
@@ -1608,7 +1609,7 @@ if ($param != null) {
                         notify('success', 'Penyimpanan data berhasil');
                         $('#modal-input-material').modal('hide');
                         $('#material_table').bootstrapTreeTable('refresh');
-                        
+
                     }
                 }, error: function () {
                     loading('loading',false);
@@ -1621,7 +1622,7 @@ if ($param != null) {
     function addItemMaterial(id, id_parent, action = 'add'){
         $("#form-input-material")[0].reset();
         if(action == 'edit'){
-            $("#id-material").val(id)            
+            $("#id-material").val(id)
             $("#action-material").val(2)
             $("#id_parent-material").val(id_parent)
 
@@ -1634,22 +1635,22 @@ if ($param != null) {
                     success: function(json) {
                         console.log(json)
                         loading('loading',false);
-                        $("#item_code-save-material").val(json.item_code); 
-                        $("#item_code-material").val(json.item_code); 
-                        $("#weight-material").val(json.weight); 
-                        $("#length-material").val(json.l * 1); 
-                        $("#width-material").val(json.w * 1); 
-                        $("#height-material").val(json.h * 1); 
-                        $("#diameter-material").val(json.t * 1); 
-                        $("#part_name-material").val(json.part_name); 
-                        $("#materials-material").val(json.materials); 
-                        $("#density-material").val(json.density * 1); 
+                        $("#item_code-save-material").val(json.item_code);
+                        $("#item_code-material").val(json.item_code);
+                        $("#weight-material").val(json.weight);
+                        $("#length-material").val(json.l * 1);
+                        $("#width-material").val(json.w * 1);
+                        $("#height-material").val(json.h * 1);
+                        $("#diameter-material").val(json.t * 1);
+                        $("#part_name-material").val(json.part_name);
+                        $("#materials-material").val(json.materials);
+                        $("#density-material").val(json.density * 1);
                         $("#tipe_rumus-material").val(json.type);
-                        var masked_price = $("#price-material").masked(json.price * 1); 
-                        $("#price-material").val(masked_price); 
-                        $("#qty-material").val(json.qty * 1); 
-                        $("#units-material").val(json.units); 
-                        $("#total-material").val(json.weight * json.price); 
+                        var masked_price = $("#price-material").masked(json.price * 1);
+                        $("#price-material").val(masked_price);
+                        $("#qty-material").val(json.qty * 1);
+                        $("#units-material").val(json.units);
+                        $("#total-material").val(json.weight * json.price);
 
                         if(json.type == 'RUMUS-1'){
                             $(".rumus2, .rumus3").hide();
@@ -1673,7 +1674,7 @@ if ($param != null) {
             $("#id_parent-material").val(id)
         }
 
-        $("#id_header-material").val(id_header_tree);            
+        $("#id_header-material").val(id_header_tree);
         $("#modal-input-material").modal('show');
     }
 

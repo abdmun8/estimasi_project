@@ -45,10 +45,33 @@ function genActivationCode($len = 5)
     return implode('', array_rand($angka, $len));
 }
 
-/* 
+/*
 * Switch day to indo
 */
 function switch_day($i){
 	$days = array('senin','selasa','rabu','kamis','jum\'at','sabtu','minggu');
 	return $days[$i - 1];
+}
+
+// calc diff date
+function calcDiffDate($dt1, $dt2, $tipe = 'm'){
+	$date1 = new DateTime($dt1);
+	$date2 = $date1->diff(new DateTime($dt2));
+	switch($tipe){
+		case 'days':
+			return $date2->days;
+			break;
+		case 'y':
+			return $date2->y;
+			break;
+		case 'm':
+			return $date2->m;
+			break;
+		case 'd':
+			return $date2->d;
+			break;
+		case 'h':
+			return $date2->h;
+			break;
+	}
 }

@@ -73,12 +73,12 @@ $route['object/(:any)'] = 'Retriever/record/$1';
 $route['objects/(:any)'] = 'Retriever/records/$1'; // read/retrieve list
 $route['objects/(:any)/(:any)/(:any)'] = 'Retriever/records/$1/$2/$3/no'; // read/retrieve list with param
 $route['pick/(:any)'] = 'Retriever/records/$1/null/null/yes'; // read/retrieve list with param for picker
-$route['pick/(:any)/(:any)/(:any)'] = 'Retriever/records/$1/$2/$3/yes'; // read/retrieve list with param for 
+$route['pick/(:any)/(:any)/(:any)'] = 'Retriever/records/$1/$2/$3/yes'; // read/retrieve list with param for
 
 /* Routing Quotation Controller*/
 
-/* header */	
-$route['quotation'] = 'Quotation/index'; 
+/* header */
+$route['quotation'] = 'Quotation/index';
 $route['quotation/(:num)'] = 'Quotation/index/$1';
 $route['quotation/get_data_header'] = 'Quotation/getDataHeader';
 $route['quotation/get_data_header/(:num)'] = 'Quotation/getDataHeader/$1';
@@ -109,14 +109,10 @@ $route['quotation/get_data_material/(:num)/(:num)'] = 'Quotation/getDataMaterial
 $route['quotation/save_material'] = 'Quotation/saveMaterial';
 $route['quotation/get_material_code'] = 'Quotation/getMaterialCode';
 
+// Report
+$route['quotationreport/(:num)'] = 'Report/quotationReport/$1';
+
+
 
 /* Pdf Gen*/
 // $route['report'] = 'Pdfgen/index';
-
-
-
-
-
-
-
-

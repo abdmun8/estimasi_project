@@ -87,13 +87,13 @@ if ($param != null) {
             locale: {
                 format: 'DD-MM-YYYY'
             }
-        });   
-       
-      
+        });
+
+
     });
 
-    function printQuotation(){
-        window.open(base_url + 'report/quotationreport')
+    function printQuotation(id){
+        window.open(base_url + 'report/quotationreport/'+id)
     }
 
 
@@ -266,7 +266,7 @@ if ($param != null) {
         $("#duration").val(diff + ' MONTH');
     }
 
-    
+
 
     function openWindow(url){
         var params = [
@@ -277,7 +277,7 @@ if ($param != null) {
              // and any other options from
              // https://developer.mozilla.org/en/DOM/window.open
 
-        var popup = window.open(url, 'popup_window', params); 
+        var popup = window.open(url, 'popup_window', params);
         popup.moveTo(0,0);
     }
 </script>
