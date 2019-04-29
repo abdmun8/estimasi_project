@@ -61,17 +61,26 @@ class Report extends Quotation
         $val_pl = 0;
         $val_me = 0;
         $val_ee = 0;
-        $val_fbr = 0;
-        $val_mach = 0;
-        $val_paint = 0;
+        $val_fbr = 0; //30003
+        $val_mach = 0; //30004
+        $val_paint = 0; //30010
         $val_ma = 0;
         $val_ea = 0;
         $val_fc = 0;
         $val_sft = 0;
-
+        // print_r($group_labour);die;
         foreach ($group_labour as $key => $value) {
             if($value->id_labour == '40006')
                 $val_pl = $value->total;
+
+            if($value->id_labour == '30010')
+                $val_paint = $value->hour;
+
+            if($value->id_labour == '30003')
+                $val_fbr = $value->hour;
+
+            if($value->id_labour == '30004')
+                $val_mach = $value->hour;
         }
 
         $section_name_temp = [];
@@ -416,7 +425,7 @@ class Report extends Quotation
         /* Row 12 Right*/
         $this->pdf->Cell(5);
         $this->pdf->Cell(50,4,'FABRICATION',1 ,0);
-        $this->pdf->Cell(20,4,$val_fbr,1 ,0,'R');
+        $this->pdf->Cell(20,4,intval($val_fbr),1 ,0,'R');
         $this->pdf->Cell(10);
         $this->pdf->Cell(30,4,'75.000',1 ,0,'R');
         $this->pdf->Cell(0,4,number_format($val_fbr *75000),1 ,0,'R');
@@ -448,7 +457,7 @@ class Report extends Quotation
         /* Row 13 Right*/
         $this->pdf->Cell(5);
         $this->pdf->Cell(50,4,'MACHINING',1 ,0);
-        $this->pdf->Cell(20,4,$val_mach,1 ,0,'R');
+        $this->pdf->Cell(20,4,intval($val_mach),1 ,0,'R');
         $this->pdf->Cell(10);
         $this->pdf->Cell(30,4,'75.000',1 ,0,'R');
         $this->pdf->Cell(0,4,number_format($val_mach *75000),1 ,0,'R');
@@ -479,10 +488,10 @@ class Report extends Quotation
         /* Row 14 Right*/
         $this->pdf->Cell(5);
         $this->pdf->Cell(50,4,'PAINTING',1 ,0);
-        $this->pdf->Cell(20,4,$val_paint,1 ,0,'R');
+        $this->pdf->Cell(20,4,intval($val_paint),1 ,0,'R');
         $this->pdf->Cell(10);
         $this->pdf->Cell(30,4,'75.000',1 ,0,'R');
-        $this->pdf->Cell(0,4,number_format($val_paint *75000),1 ,0,'R');
+        $this->pdf->Cell(0,4,number_format($val_paint * 75000),1 ,0,'R');
 
         // Row 14 Rp
         $this->pdf->Ln(0);
@@ -510,7 +519,7 @@ class Report extends Quotation
         /* Row 15 Right*/
         $this->pdf->Cell(5);
         $this->pdf->Cell(50,4,'MECHANICAL ASSEMBLING',1 ,0);
-        $this->pdf->Cell(20,4,$val_ma,1 ,0,'R');
+        $this->pdf->Cell(20,4,intval($val_ma),1 ,0,'R');
         $this->pdf->Cell(10);
         $this->pdf->Cell(30,4,'75.000',1 ,0,'R');
         $this->pdf->Cell(0,4,number_format($val_ma *75000),1 ,0,'R');
@@ -541,7 +550,7 @@ class Report extends Quotation
         /* Row 15 Right*/
         $this->pdf->Cell(5);
         $this->pdf->Cell(50,4,'ELECTRICAL ASSEMBLING',1 ,0);
-        $this->pdf->Cell(20,4,$val_ea,1 ,0,'R');
+        $this->pdf->Cell(20,4,intval($val_ea),1 ,0,'R');
         $this->pdf->Cell(10);
         $this->pdf->Cell(30,4,'75.000',1 ,0,'R');
         $this->pdf->Cell(0,4,number_format($val_ea *75000),1 ,0,'R');
