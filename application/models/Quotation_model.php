@@ -203,13 +203,16 @@ class Quotation_model extends Model {
     public function udpateMaterial()
     {
         $this->input->post();
+        // var_dump($this->input->post);
         $data = $this->getFieldMaterial();
         $this->db->update( 'rawmaterial', $data, ['id'=>$this->input->post('id-material')]);
+        // echo $this->db->last_query();
 
-        if( $this->db->affected_rows() > 0){
-            return TRUE;
-        }
-        return FALSE;
+        return TRUE;
+        // if( $this->db->affected_rows() > 0){
+        //     return TRUE;
+        // }
+        // return FALSE;
     }
 
     public function getDataReport(){

@@ -33,6 +33,8 @@ class Retriever extends CI_Controller {
 				case 'groups':
 					$query['table'] = 'v_groups';
 					break;
+				// Master Data
+				//Quotation
 				case 'header':
 					$query['table'] = 'header';
 					break;
@@ -82,6 +84,8 @@ class Retriever extends CI_Controller {
 					case 'groups':
 						$query['table'] = 'v_groups';
 						break;
+					// Master Data
+					// Quotation
 					case 'header':
 						$query['table'] = 'header';
 						break;
@@ -280,6 +284,36 @@ class Retriever extends CI_Controller {
 				'start_date' => $record->start_date,
 				'finish_date' => $record->finish_date,
 				'duration' => '',
+				'aksi' => $linkBtn
+			);
+		}
+
+		return $data;
+	}
+
+	function _mrawmaterial($records, $picker = 'no') {
+		$data = array();
+		$no = 0;
+		foreach ($records as $record) {
+
+			$no++;
+
+			if ($picker == 'yes') {
+				$linkBtn = '<a href="#' . $record->id . '" class="btn btn-xs btn-info pickBtn" title="Pilih"><i class="fa fa-thumb-tack"></i> Pilih</a>';
+			} else if ($picker == 'no') {
+				$linkBtn = ' <a href="#' . $record->id . '" class="btn btn-xs btn-primary editBtn" title="Edit"><i class="fa fa-edit"></i> Edit</a>';
+				$linkBtn .= ' <a href="#' . $record->id . '" class="btn btn-xs btn-danger removeBtn" title="Hapus"><i class="fa fa-trash-o"></i> Hapus</a>';
+			}
+
+			$data[] = array(
+				'no' => $no,
+				'item_code' => $record->item_code,
+				'part_name' => $record->part_name,
+				'units' => $record->units,
+				'materials' => $record->materials,
+				'density' => $record->density,
+				'price' => $record->price,
+				'type' => $record->type,
 				'aksi' => $linkBtn
 			);
 		}

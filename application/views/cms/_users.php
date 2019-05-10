@@ -105,7 +105,7 @@ if ($param != null) {
         }
         ?>
 
-      
+
  });
     function newForm() {
         loadContent(base_url + "view/_users", function () {
@@ -168,7 +168,7 @@ if ($param != null) {
                             genericAlert(json.data.message, 'warning','Peringatan');
                         }
                     } else {
-                        var page ='_users/';
+                        var page ='_m_rawmaterial/';
                         page += json.data.last_id;
                         genericAlert('Penyimpanan data berhasil', 'success','Sukses');
                         loadContent(base_url + 'view/' + page);

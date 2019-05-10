@@ -75,3 +75,8 @@ function calcDiffDate($dt1, $dt2, $tipe = 'm'){
 			break;
 	}
 }
+
+function createSequence($code, $length, $number){
+	$sequence = sprintf('%0'.$length.'d', $number);
+	return $code.$sequence;
+}

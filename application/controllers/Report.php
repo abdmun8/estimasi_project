@@ -25,6 +25,8 @@ class Report extends Quotation
             ->get('part_jasa j')
             ->result();
 
+        // $total_rwm = $this->db->selec
+
         $val_rm = 0; //raw material 10001
         $val_jsp = 0; //jasa spesial proses 20001
         $val_oe = 0; //onsite expenses 40006

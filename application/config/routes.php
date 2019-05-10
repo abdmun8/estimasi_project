@@ -110,7 +110,10 @@ $route['quotation/save_material'] = 'Quotation/saveMaterial';
 $route['quotation/get_material_code'] = 'Quotation/getMaterialCode';
 
 // Report
-$route['quotationreport/(:num)'] = 'Report/quotationReport/$1';
+
+
+// Master Data
+
 
 
 

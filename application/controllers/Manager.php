@@ -72,7 +72,7 @@ class Manager extends CI_Controller {
 	    		'code' => $code,
 	    		'message' => $message
     		)));
-    		
+
 		} else if ($action == 'revoke') { // for logout
 			if ($this->activeSession != null) {
 	    		$this->session->sess_destroy();
@@ -84,7 +84,7 @@ class Manager extends CI_Controller {
 	/*
 	*	create, update, or delete
 	*/
-	
+
 	public function process() {
 		/*
 		* code info:
@@ -133,7 +133,7 @@ class Manager extends CI_Controller {
 				} else {
 					$code = 2;
 				}
-				
+
 			} else {
 				$this->form_validation->set_rules($this->$model->getRules());
 
@@ -147,7 +147,7 @@ class Manager extends CI_Controller {
 
 					$last_id = ($action == $this->$model->CREATE) ? $this->$model->getLastID() : $this->input->post('value-input') ;
 					$code = ($result) ? 1 : 2;
-					
+
 				}
 			}
 		}
@@ -174,7 +174,7 @@ class Manager extends CI_Controller {
 	}
 
 	private function _do_delete($model, $inputs) {
-		
+
 		$query = array(
 			'table' => $model->getTable(), 'type' => 3,
 			'data' => 'null',

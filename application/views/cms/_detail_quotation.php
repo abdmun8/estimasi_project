@@ -978,8 +978,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 }
             },
             {
-                field: 'h',
-                title: 'Height',
+                field: 'w',
+                title: 'Weight',
                 width: '150',
                 align: "right",
                 visible: true,
@@ -991,8 +991,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 }
             },
             {
-                field: 'w',
-                title: 'Weight',
+                field: 'h',
+                title: 'Height',
                 width: '150',
                 align: "right",
                 visible: true,
@@ -1560,19 +1560,24 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         var totval = 0;
         if(tipe == 'RUMUS-1'){
             // WEIGHT = QTY x ( W x H x TB) x Density
-            weight = qty * (width * height * diameter) * density;
+            temp_weight = (width * height * diameter) * density
+            weight = qty * temp_weight.toFixed(9);
+            // weight = qty * (width * height * diameter) * density;
             wval = weight.toFixed(2);
             total =  wval * price;
             totval = total.toFixed();
         }else if(tipe == 'RUMUS-2'){
             //WEIGHT = QTY x (( 3.14 x ( DIA / 2) ^ 2) x L) * Density
-            weight =  qty * ((3.14 * Math.pow((diameter / 2), 2) ) * length) * density;
+            temp_weight =  ( (3.14 * Math.pow((diameter / 2), 2) ) * length) * density;
+            weight =  qty * temp_weight.toFixed(9);
             wval = weight.toFixed(2);
             total =  wval * price;
             totval = total.toFixed();
         }else{
             //WEIGHT = QTY x (( 2 x ( H x TB x L)) + (( W - ( 2 x TB)) x TB x L )) x Density
-            weight =  qty * ((2 * (height * diameter * length)) + ((width - (2 * diameter)) * diameter * length)) * density;
+            temp_weight = ((2 * (height * diameter * length)) + ((width - (2 * diameter)) * diameter * length)) * density;
+            weight =  qty * temp_weight.toFixed(9);
+            // weight =  qty * ((2 * (height * diameter * length)) + ((width - (2 * diameter)) * diameter * length)) * density;
             wval = weight.toFixed(2);
             total =  wval * price;
             totval = total.toFixed();
@@ -1580,7 +1585,6 @@ $satuan = $this->db->get_where('tblsatuan')->result();
 
         var masked_weight = $("#weight-material").masked(weight.toFixed(2));
         $("#weight-material").val(masked_weight);
-
         var masked_total = $("#total-material").masked(total.toFixed(2));
         $("#total-material").val(masked_total);
     }
@@ -1633,7 +1637,6 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     type: 'POST',
                     cache: false,
                     success: function(json) {
-                        console.log(json)
                         loading('loading',false);
                         $("#item_code-save-material").val(json.item_code);
                         $("#item_code-material").val(json.item_code);

@@ -4,6 +4,19 @@
     </a>
 </li>
 
+<li class="treeview menu" id="group-master-date">
+    <a href="#">
+        <i class="fa fa-cubes"></i>
+        <span>Master Data</span>
+        <span class="pull-right-container">
+          <i class="fa fa-angle-left pull-right"></i>
+        </span>
+    </a>
+    <ul class="treeview-menu">
+        <li><a href="#" onclick="loadContent(base_url + 'view/_m_rawmaterial'); return false;"><i class="fa fa-cube"></i> Raw Material</a></li>
+    </ul>
+</li>
+
 <li class="treeview menu" id="group-quotation">
     <a href="#">
         <i class="fa fa-handshake-o"></i>

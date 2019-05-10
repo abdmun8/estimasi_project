@@ -128,12 +128,12 @@ class Model extends CI_Model {
                     break;
                 case $this->DELETE: // delete ;)
                     $result = $this->db->delete($query['table'], $query['at']); // at is an array
-                    echo $this->db->last_query();
+                    // echo $this->db->last_query();
                     // $result = $this->db->update($query['table'], ['active'=>0],$query['at']); // at is an array
                     break;
             }
         }
-
+        
         return $result;
     }
 
@@ -188,9 +188,9 @@ class Model extends CI_Model {
                     $config1['maintain_ratio'] = FALSE;
                     $config1['width'] = 400;
                     $config1['height'] = 300;
-                        
+
                     $this->load->library('image_lib', $config1);
-                    //resize 
+                    //resize
                     @$this->image_lib->resize();
                 }
             }
