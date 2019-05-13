@@ -320,6 +320,10 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         </div>
 
                         <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Qty</label>
+                                <input type="text" class="form-control input-sm" id="qty-material" name="qty-material" placeholder="Qty" onkeyup="perhitunganMaterial()">
+                            </div>
                             <div class="form-group rumus2 rumus3" style="display:none;">
                                 <label>L</label>
                                 <input type="text" class="form-control input-sm" id="length-material" name="length-material" placeholder="L" onkeyup="perhitunganMaterial()">
@@ -335,10 +339,6 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                             <div class="form-group rumus1 rumus2 rumus3" style="display:none;">
                                 <label>t / &#8960;</label>
                                 <input type="text" class="form-control input-sm" id="diameter-material" name="diameter-material" placeholder="t / &#8960;" onkeyup="perhitunganMaterial()">
-                            </div>
-                            <div class="form-group">
-                                <label>Qty</label>
-                                <input type="text" class="form-control input-sm" id="qty-material" name="qty-material" placeholder="Qty" onkeyup="perhitunganMaterial()">
                             </div>
                             <div class="form-group">
                                 <label>Weight</label>

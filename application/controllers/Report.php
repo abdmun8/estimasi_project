@@ -53,37 +53,12 @@ class Report extends Quotation
                 $val_oe = $value->total;
         }
 
-        // labour
-        $group_labour = $this->db->select('j.*, SUM(j.hour * j.rate) as total',false)
-            ->where(['j.id_header' => $id, 'tipe_item' => 'item'])
-            ->group_by('j.id_labour')
-            ->get('labour j')
-            ->result();
-
-        $val_pl = 0;
-        $val_me = 0;
-        $val_ee = 0;
-        $val_fbr = 0; //30003
-        $val_mach = 0; //30004
-        $val_paint = 0; //30010
-        $val_ma = 0;
-        $val_ea = 0;
-        $val_fc = 0;
-        $val_sft = 0;
-        // print_r($group_labour);die;
-        foreach ($group_labour as $key => $value) {
-            if($value->id_labour == '40006')
-                $val_pl = $value->total;
-
-            if($value->id_labour == '30010')
-                $val_paint = $value->hour;
-
-            if($value->id_labour == '30003')
-                $val_fbr = $value->hour;
-
-            if($value->id_labour == '30004')
-                $val_mach = $value->hour;
-        }
+        $val_rm = $this->db->select('SUM(r.weight * m.price) as total', false)
+            ->join('mrawmaterial m', 'm.item_code = r.item_code', 'left')
+            ->where(['id_header' => $id])
+            ->get('rawmaterial r')
+            // echo $this->db->last_query();
+            ->row()->total;
 
         $section_name_temp = [];
         $section_qty_temp = [];
@@ -305,6 +280,27 @@ class Report extends Quotation
         $this->pdf->Ln(0);
         $this->pdf->Cell(205,4,'Rp',0 ,0,'C');
 
+        // get budget internal labour
+        $qIL = $this->db->select('TRIM(accno) as accno, TRIM(`desc`) as `desc`, 0 as total', true)
+            ->get_where('akunbg', ['accno >' => '3000', 'accno <' => '4000']);
+        $qILCount = $qIL->num_rows();
+        $qILRes = $qIL->result_array();
+
+        $sqlLabour = "SELECT a.accno, a.`desc`, lg.hour, lg.rate, lg.total
+            FROM akunbg a
+            LEFT JOIN
+            (
+                SELECT id_labour, SUM(`hour`) as `hour`, `rate`, SUM(`hour` * rate) AS total
+                FROM `labour`
+                WHERE `id_header` = '7' AND `tipe_item` = 'item'
+                GROUP BY `id_labour`) AS lg
+            ON a.accno = lg.id_labour
+            where a.accno > 30000 and a.accno < 40000 order by total desc, a.accno asc";
+        $qLabour = $this->db->query($sqlLabour);
+        $rLabour = $qLabour->result_array();
+
+        // var_dump($rLabour);
+        // die;
         /*Row 8*/
         /* Row 8 Left*/
         $this->pdf->Ln(4);
@@ -315,12 +311,25 @@ class Report extends Quotation
         $this->pdf->Cell(30,4,isset($section_total_temp[6]) ? number_format($section_total_temp[6]) : '',1 ,0,'R');
 
         /* Row 8 Right*/
-        $this->pdf->Cell(5);
-        $this->pdf->Cell(50,4,'PROJECT LEADER',1 ,0);
-        $this->pdf->Cell(20,4,$val_pl,1 ,0,'R');
-        $this->pdf->Cell(10);
-        $this->pdf->Cell(30,4,'125.000',1 ,0,'R');
-        $this->pdf->Cell(0,4,number_format($val_pl *125000),1 ,0,'R');
+        if(isset($rLabour[0]) && (int) $rLabour[0]['total'] > 0)
+            $this->createRowIL($rLabour[0], 5);
+        $val_pl = 0;
+        $val_me = 0;
+        $val_ee = 0;
+        $val_fbr = 0; //30003
+        $val_mach = 0; //30004
+        $val_paint = 0; //30010
+        $val_ma = 0;
+        $val_ea = 0;
+        $val_fc = 0;
+        $val_sft = 0;
+        // $this->pdf->Cell(5);
+        // $this->pdf->Cell(50,4,'PROJECT LEADER',1 ,0);
+        // $this->pdf->Cell(20,4,$val_pl,1 ,0,'R');
+        // $this->pdf->Cell(10);
+        // $this->pdf->Cell(30,4,'125.000',1 ,0,'R');
+        // $this->pdf->Cell(0,4,number_format($val_pl *125000),1 ,0,'R');
+
 
         // Row 8 Rp
         $this->pdf->Ln(0);
@@ -328,13 +337,13 @@ class Report extends Quotation
         $this->pdf->Ln(0);
         $this->pdf->Cell(205,4,'Rp',0 ,0,'C');
         $this->pdf->Ln(0);
-        $this->pdf->Cell(415,4,'MH',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(435,4,'{x}',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(450,4,'Rp',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(495,4,'Rp',0 ,0,'C');
+        // $this->pdf->Cell(415,4,'MH',0 ,0,'C');
+        // $this->pdf->Ln(0);
+        // $this->pdf->Cell(435,4,'{x}',0 ,0,'C');
+        // $this->pdf->Ln(0);
+        // $this->pdf->Cell(450,4,'Rp',0 ,0,'C');
+        // $this->pdf->Ln(0);
+        // $this->pdf->Cell(495,4,'Rp',0 ,0,'C');
 
         /*Row 9*/
         /* Row 9 Left*/
@@ -346,26 +355,14 @@ class Report extends Quotation
         $this->pdf->Cell(30,4,isset($section_total_temp[7]) ? number_format($section_total_temp[7]) : '',1 ,0,'R');
 
         /* Row 9 Right*/
-        $this->pdf->Cell(5);
-        $this->pdf->Cell(50,4,'MECHANICAL ENGINEERING',1 ,0);
-        $this->pdf->Cell(20,4,$val_me,1 ,0,'R');
-        $this->pdf->Cell(10);
-        $this->pdf->Cell(30,4,'125.000',1 ,0,'R');
-        $this->pdf->Cell(0,4,number_format($val_me *125000),1 ,0,'R');
+        if(isset($rLabour[1]) && (int) $rLabour[1]['total'] > 0)
+            $this->createRowIL($rLabour[1], 5);
 
         // Row 9 Rp
         $this->pdf->Ln(0);
         $this->pdf->Cell(145,4,'Rp',0 ,0,'C');
         $this->pdf->Ln(0);
         $this->pdf->Cell(205,4,'Rp',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(415,4,'MH',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(435,4,'{x}',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(450,4,'Rp',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(495,4,'Rp',0 ,0,'C');
 
         /*Row 10*/
         /* Row 10 Left*/
@@ -377,12 +374,8 @@ class Report extends Quotation
         $this->pdf->Cell(30,4,isset($section_total_temp[8]) ? number_format($section_total_temp[8]) : '',1 ,0,'R');
 
         /* Row 10 Right*/
-        $this->pdf->Cell(5);
-        $this->pdf->Cell(50,4,'ELECTRICAL ENGGINEERING',1 ,0);
-        $this->pdf->Cell(20,4,$val_ee,1 ,0,'R');
-        $this->pdf->Cell(10);
-        $this->pdf->Cell(30,4,'125.000',1 ,0,'R');
-        $this->pdf->Cell(0,4,number_format($val_ee *125000),1 ,0,'R');
+        if(isset($rLabour[2]) && (int) $rLabour[2]['total'] > 0)
+            $this->createRowIL($rLabour[2], 5);
 
         // Row 10 Rp
         $this->pdf->Ln(0);
@@ -390,13 +383,6 @@ class Report extends Quotation
         $this->pdf->Ln(0);
         $this->pdf->Cell(205,4,'Rp',0 ,0,'C');
         $this->pdf->Ln(0);
-        $this->pdf->Cell(415,4,'MH',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(435,4,'{x}',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(450,4,'Rp',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(495,4,'Rp',0 ,0,'C');
 
         /*Row 11*/
         /* Row 11 Left*/
@@ -408,6 +394,8 @@ class Report extends Quotation
         $this->pdf->Cell(30,4,isset($section_total_temp[9]) ? number_format($section_total_temp[9]) : '',1 ,0,'R');
 
         /* Row 11 Right*/
+        if(isset($rLabour[3]) && (int) $rLabour[3]['total'] > 0)
+            $this->createRowIL($rLabour[3], 5);
 
         // Row 11 Rp
         $this->pdf->Ln(0);
@@ -425,26 +413,14 @@ class Report extends Quotation
         $this->pdf->Cell(30,4,isset($section_total_temp[10]) ? number_format($section_total_temp[10]) : '',1 ,0,'R');
 
         /* Row 12 Right*/
-        $this->pdf->Cell(5);
-        $this->pdf->Cell(50,4,'FABRICATION',1 ,0);
-        $this->pdf->Cell(20,4,intval($val_fbr),1 ,0,'R');
-        $this->pdf->Cell(10);
-        $this->pdf->Cell(30,4,'75.000',1 ,0,'R');
-        $this->pdf->Cell(0,4,number_format($val_fbr *75000),1 ,0,'R');
+        if(isset($rLabour[4]) && (int) $rLabour[4]['total'] > 0)
+            $this->createRowIL($rLabour[4], 5);
 
         // Row 12 Rp
         $this->pdf->Ln(0);
         $this->pdf->Cell(145,4,'Rp',0 ,0,'C');
         $this->pdf->Ln(0);
         $this->pdf->Cell(205,4,'Rp',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(415,4,'MH',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(435,4,'{x}',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(450,4,'Rp',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(495,4,'Rp',0 ,0,'C');
 
 
         /*Row 13*/
@@ -457,26 +433,14 @@ class Report extends Quotation
         $this->pdf->Cell(30,4,isset($section_total_temp[11]) ? number_format($section_total_temp[11]) : '',1 ,0,'R');
 
         /* Row 13 Right*/
-        $this->pdf->Cell(5);
-        $this->pdf->Cell(50,4,'MACHINING',1 ,0);
-        $this->pdf->Cell(20,4,intval($val_mach),1 ,0,'R');
-        $this->pdf->Cell(10);
-        $this->pdf->Cell(30,4,'75.000',1 ,0,'R');
-        $this->pdf->Cell(0,4,number_format($val_mach *75000),1 ,0,'R');
+        if(isset($rLabour[5]) && (int) $rLabour[5]['total'] > 0)
+            $this->createRowIL($rLabour[5], 5);
 
         // Row 13 Rp
         $this->pdf->Ln(0);
         $this->pdf->Cell(145,4,'Rp',0 ,0,'C');
         $this->pdf->Ln(0);
         $this->pdf->Cell(205,4,'Rp',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(415,4,'MH',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(435,4,'{x}',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(450,4,'Rp',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(495,4,'Rp',0 ,0,'C');
 
         /*Row 14*/
         /* Row 14 Left*/
@@ -488,26 +452,14 @@ class Report extends Quotation
         $this->pdf->Cell(30,4,isset($section_total_temp[12]) ? number_format($section_total_temp[12]) : '',1 ,0,'R');
 
         /* Row 14 Right*/
-        $this->pdf->Cell(5);
-        $this->pdf->Cell(50,4,'PAINTING',1 ,0);
-        $this->pdf->Cell(20,4,intval($val_paint),1 ,0,'R');
-        $this->pdf->Cell(10);
-        $this->pdf->Cell(30,4,'75.000',1 ,0,'R');
-        $this->pdf->Cell(0,4,number_format($val_paint * 75000),1 ,0,'R');
+        if(isset($rLabour[6]) && (int) $rLabour[6]['total'] > 0)
+            $this->createRowIL($rLabour[6], 5);
 
         // Row 14 Rp
         $this->pdf->Ln(0);
         $this->pdf->Cell(145,4,'Rp',0 ,0,'C');
         $this->pdf->Ln(0);
         $this->pdf->Cell(205,4,'Rp',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(415,4,'MH',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(435,4,'{x}',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(450,4,'Rp',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(495,4,'Rp',0 ,0,'C');
 
         /*Row 15*/
         /* Row 15 Left*/
@@ -519,26 +471,14 @@ class Report extends Quotation
         $this->pdf->Cell(30,4,isset($section_total_temp[13]) ? number_format($section_total_temp[13]) : '',1 ,0,'R');
 
         /* Row 15 Right*/
-        $this->pdf->Cell(5);
-        $this->pdf->Cell(50,4,'MECHANICAL ASSEMBLING',1 ,0);
-        $this->pdf->Cell(20,4,intval($val_ma),1 ,0,'R');
-        $this->pdf->Cell(10);
-        $this->pdf->Cell(30,4,'75.000',1 ,0,'R');
-        $this->pdf->Cell(0,4,number_format($val_ma *75000),1 ,0,'R');
+        if(isset($rLabour[7]) && (int) $rLabour[7]['total'] > 0)
+            $this->createRowIL($rLabour[7], 5);
 
         // Row 15 Rp
         $this->pdf->Ln(0);
         $this->pdf->Cell(145,4,'Rp',0 ,0,'C');
         $this->pdf->Ln(0);
         $this->pdf->Cell(205,4,'Rp',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(415,4,'MH',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(435,4,'{x}',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(450,4,'Rp',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(495,4,'Rp',0 ,0,'C');
 
         /*Row 15*/
         /* Row 15 Left*/
@@ -550,26 +490,14 @@ class Report extends Quotation
         $this->pdf->Cell(30,4,isset($section_total_temp[14]) ? number_format($section_total_temp[14]) : '',1 ,0,'R');
 
         /* Row 15 Right*/
-        $this->pdf->Cell(5);
-        $this->pdf->Cell(50,4,'ELECTRICAL ASSEMBLING',1 ,0);
-        $this->pdf->Cell(20,4,intval($val_ea),1 ,0,'R');
-        $this->pdf->Cell(10);
-        $this->pdf->Cell(30,4,'75.000',1 ,0,'R');
-        $this->pdf->Cell(0,4,number_format($val_ea *75000),1 ,0,'R');
+        if(isset($rLabour[8]) && (int) $rLabour[8]['total'] > 0)
+            $this->createRowIL($rLabour[8], 5);
 
         // Row 15 Rp
         $this->pdf->Ln(0);
         $this->pdf->Cell(145,4,'Rp',0 ,0,'C');
         $this->pdf->Ln(0);
         $this->pdf->Cell(205,4,'Rp',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(415,4,'MH',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(435,4,'{x}',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(450,4,'Rp',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(495,4,'Rp',0 ,0,'C');
 
         /*Row 16*/
         /* Row 16 Left*/
@@ -581,7 +509,8 @@ class Report extends Quotation
         $this->pdf->Cell(30,4,isset($section_total_temp[15]) ? number_format($section_total_temp[15]) : '',1 ,0,'R');
 
         /* Row 16 Right*/
-
+        if(isset($rLabour[9]) && (int) $rLabour[9]['total'] > 0)
+            $this->createRowIL($rLabour[9], 5);
         // Row 16 Rp
         $this->pdf->Ln(0);
         $this->pdf->Cell(145,4,'Rp',0 ,0,'C');
@@ -598,26 +527,14 @@ class Report extends Quotation
         $this->pdf->Cell(30,4,isset($section_total_temp[16]) ? number_format($section_total_temp[16]) : '',1 ,0,'R');
 
         /* Row 17 Right*/
-        $this->pdf->Cell(5);
-        $this->pdf->Cell(50,4,'FARO CHECKING',1 ,0);
-        $this->pdf->Cell(20,4,$val_fc,1 ,0,'R');
-        $this->pdf->Cell(10);
-        $this->pdf->Cell(30,4,'125.000',1 ,0,'R');
-        $this->pdf->Cell(0,4,number_format($val_fc *125000),1 ,0,'R');
+        if(isset($rLabour[10]) && (int) $rLabour[10]['total'] > 0)
+            $this->createRowIL($rLabour[10], 5);
 
         // Row 17 Rp
         $this->pdf->Ln(0);
         $this->pdf->Cell(145,4,'Rp',0 ,0,'C');
         $this->pdf->Ln(0);
         $this->pdf->Cell(205,4,'Rp',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(415,4,'MH',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(435,4,'{x}',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(450,4,'Rp',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(495,4,'Rp',0 ,0,'C');
 
         /*Row 18*/
         /* Row 18 Left*/
@@ -629,26 +546,16 @@ class Report extends Quotation
         $this->pdf->Cell(30,4,isset($section_total_temp[17]) ? number_format($section_total_temp[17]) : '',1 ,0,'R');
 
         /* Row 18 Right*/
-        $this->pdf->Cell(5);
-        $this->pdf->Cell(50,4,'SAFETY',1 ,0);
-        $this->pdf->Cell(20,4,$val_sft,1 ,0,'R');
-        $this->pdf->Cell(10);
-        $this->pdf->Cell(30,4,'125.000',1 ,0,'R');
-        $this->pdf->Cell(0,4,number_format($val_sft *125000),1 ,0,'R');
+        if(isset($rLabour[11]) && (int) $rLabour[11]['total'] > 0)
+            $this->createRowIL($rLabour[11], 5);
+
+        // $this->createRowIL($val_fc);
 
         // Row 18 Rp
         $this->pdf->Ln(0);
         $this->pdf->Cell(145,4,'Rp',0 ,0,'C');
         $this->pdf->Ln(0);
         $this->pdf->Cell(205,4,'Rp',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(415,4,'MH',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(435,4,'{x}',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(450,4,'Rp',0 ,0,'C');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(495,4,'Rp',0 ,0,'C');
 
         /*Row 19*/
         /* Row 19 Left*/
@@ -660,7 +567,8 @@ class Report extends Quotation
         $this->pdf->Cell(30,4,isset($section_total_temp[18]) ? number_format($section_total_temp[18]) : '',1 ,0,'R');
 
         /* Row 19 Right*/
-
+        if(isset($rLabour[12]) && (int) $rLabour[12]['total'] > 0)
+            $this->createRowIL($rLabour[12], 5);
         // Row 19 Rp
         $this->pdf->Ln(0);
         $this->pdf->Cell(145,4,'Rp',0 ,0,'C');
@@ -677,7 +585,8 @@ class Report extends Quotation
         $this->pdf->Cell(30,4,isset($section_total_temp[19]) ? number_format($section_total_temp[19]) : '',1 ,0,'R');
 
         /* Row 20 Right*/
-
+        if(isset($rLabour[13]) && (int) $rLabour[13]['total'] > 0)
+            $this->createRowIL($rLabour[13], 5);
         // Row 20 Rp
         $this->pdf->Ln(0);
         $this->pdf->Cell(145,4,'Rp',0 ,0,'C');
@@ -745,8 +654,28 @@ class Report extends Quotation
 
         $this->pdf->Output( 'quotation_report.pdf' , 'I' );
 	}
+
+    function createRowIL($arr, $offset = 0){
+        $this->pdf->Cell($offset);
+        $this->pdf->Cell(50,4,strtoupper($arr['desc']),1 ,0);
+        $this->pdf->Cell(20,4,$arr['hour'],1 ,0,'R');
+        $this->pdf->Cell(10);
+        $this->pdf->Cell(30,4,number_format((int) $arr['rate']),1 ,0,'R');
+        $this->pdf->Cell(0,4,number_format($arr['total']),1 ,0,'R');
+
+        $this->pdf->Ln(0);
+        $this->pdf->Cell(415,4,'MH',0 ,0,'C');
+        $this->pdf->Ln(0);
+        $this->pdf->Cell(435,4,'{x}',0 ,0,'C');
+        $this->pdf->Ln(0);
+        $this->pdf->Cell(450,4,'Rp',0 ,0,'C');
+        $this->pdf->Ln(0);
+        $this->pdf->Cell(495,4,'Rp',0 ,0,'C');
+    }
 }
 
 /*
 * application/controllers/Report.php
 */
+
+// UNTUK ROW INTERNAL LABOUR DISEDIAKAN SPACE SEBANYAK 13 LINE @abdmun8

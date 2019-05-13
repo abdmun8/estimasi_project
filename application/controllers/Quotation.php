@@ -443,7 +443,12 @@ class Quotation extends CI_Controller {
     }
 
     public function getKategori(){
-        $obj = $this->db->select('accno as id, TRIM(`desc`) as text', false)->where_in('header', ['10000','20000'])->get('akunbg')->result();
+        $obj = $this->db->select('accno as id, TRIM(`desc`) as text', false)
+			->where_in('header', ['10000','20000'])
+			->having('accno <>', '10001')
+			->having('accno <>', '10006')
+			->get('akunbg')
+			->result();
         echo json_encode($obj);
     }
 

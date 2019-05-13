@@ -60,7 +60,7 @@ class Mrawmaterialmodel extends Model {
         $density = array(
             'field' => 'density-input',
             'label' => 'Density',
-            'rules' => 'decimal|required|max_length[10]'
+            'rules' => 'decimal|required|max_length[15]'
         );
 
         $price = array(
