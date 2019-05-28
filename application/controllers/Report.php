@@ -20,9 +20,9 @@ class Report extends Quotation
         // order planning
         $grup_kategori = $this->db->select('j.*, SUM(j.qty * j.harga) as total, TRIM(a.desc) as `desc`',false)
             ->where(['j.id_header' => $id, 'tipe_item' => 'item'])
-            ->join('akunbg a','j.kategori = a.accno')
+            ->join('sgedb.akunbg a','j.kategori = a.accno')
             ->group_by('j.kategori')
-            ->get('part_jasa j')
+            ->get('quotation.part_jasa j')
             ->result();
 
         // $total_rwm = $this->db->selec
@@ -282,16 +282,16 @@ class Report extends Quotation
 
         // get budget internal labour
         $qIL = $this->db->select('TRIM(accno) as accno, TRIM(`desc`) as `desc`, 0 as total', true)
-            ->get_where('akunbg', ['accno >' => '3000', 'accno <' => '4000']);
+            ->get_where('sgedb.akunbg', ['accno >' => '3000', 'accno <' => '4000']);
         $qILCount = $qIL->num_rows();
         $qILRes = $qIL->result_array();
 
         $sqlLabour = "SELECT a.accno, a.`desc`, lg.hour, lg.rate, lg.total
-            FROM akunbg a
+            FROM sgedb.akunbg a
             LEFT JOIN
             (
                 SELECT id_labour, SUM(`hour`) as `hour`, `rate`, SUM(`hour` * rate) AS total
-                FROM `labour`
+                FROM quotation.`labour`
                 WHERE `id_header` = '7' AND `tipe_item` = 'item'
                 GROUP BY `id_labour`) AS lg
             ON a.accno = lg.id_labour
