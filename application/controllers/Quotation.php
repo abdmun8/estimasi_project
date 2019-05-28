@@ -1,54 +1,56 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Quotation extends CI_Controller {
-	private $identity; // store session
+class Quotation extends CI_Controller
+{
+    private $identity; // store session
+    private $sgedb;
 
-	public function __construct()
+    public function __construct()
     {
-	    parent::__construct();
-	    $this->identity = $this->session->userdata('identity');
+        parent::__construct();
+        $this->identity = $this->session->userdata('identity');
         $this->load->model('Quotation_model', 'quotation');
         $this->load->library('form_validation');
-	}
+        $this->sgedb = $this->load->database('sgedb', TRUE);
+    }
 
-	public function index($id = NULL)
+    public function index($id = NULL)
     {
         $data = [];
-        if (!$this->ion_auth->logged_in())
-        {
+        if (!$this->ion_auth->logged_in()) {
             redirect('auth/login', 'refresh');
         }
 
         $data['param'] = $id;
 
-        $this->load->view('cms/_detail_quotation',$data);
-	}
+        $this->load->view('cms/_detail_quotation', $data);
+    }
 
-	public function getDataHeader($id = NULL, $json = true)
+    public function getDataHeader($id = NULL, $json = true)
     {
         $code = 1;
         $object = [];
         $message = '';
-        if($id != NULL){
+        if ($id != NULL) {
             // $object = $this->model->getRecord(['table'=>'header','where'=>['id'=>$id]]);
-			$object = $this->db->select('header.*, personal.nama as pic_name, customer.nama as customer_name', false)
-				->join('customer', 'header.customer = customer.custid')
-				->join('personal', 'header.pic_marketing = personal.id_personalia')
-				->where('id', $id)
-				->get('header')
-				->row();
-        }else{
+            $object = $this->db->select('quotation.header.*, sgedb.personal.nama as pic_name, sgedb.customer.nama as customer_name', false)
+                ->join('sgedb.customer', 'quotation.header.customer = sgedb.customer.custid')
+                ->join('sgedb.personal', 'quotation.header.pic_marketing = sgedb.personal.id_personalia')
+                ->where('id', $id)
+                ->get('quotation.header')
+                ->row();
+        } else {
             // $object = $this->model->getList(['table'=>'header']);
-			$object = $this->db->select('header.*, personal.nama as pic_name, customer.nama as customer_name', false)
-				->join('customer', 'header.customer = customer.custid')
-				->join('personal', 'header.pic_marketing = personal.id_personalia')
-				->get('header')
-				->result();
+            $object = $this->db->select('quotation.header.*, sgedb.personal.nama as pic_name, sgedb.customer.nama as customer_name', false)
+                ->join('customer', 'quotation.header.customer = sgedb.customer.custid')
+                ->join('personal', 'quotation.header.pic_marketing = sgedb.personal.id_personalia')
+                ->get('quotation.header')
+                ->result();
         }
 
-		if(!$json)
-			return $object;
+        if (!$json)
+            return $object;
 
         echo json_encode(array('data' => array(
             'code' => $code,
@@ -68,33 +70,32 @@ class Quotation extends CI_Controller {
     {
         $object = [];
         $data = [];
-        if($id_header != NULL){
-            if($id_part == NULL){
+        if ($id_header != NULL) {
+            if ($id_part == NULL) {
                 $object = $this->db->query('SELECT
                             *,
                             (SELECT
                                     tipe_item
                                 FROM
-                                    part_jasa p
+                                    quotation.part_jasa p
                                 WHERE
                                     p.id = j.id_parent) AS tipe_parent,
                             k.desc AS nama_kategori
                         FROM
-                            `part_jasa` j
+                            quotation.`part_jasa` j
                                 LEFT JOIN
-                            `akunbg` k ON j.kategori = k.accno
+                            `sgedb`.`akunbg` k ON j.kategori = k.accno
                         WHERE
-                            j.id_header ="'.$id_header.'"')->result_array();
+                            j.id_header ="' . $id_header . '"')->result_array();
                 $data = $this->countTotal($object);
-            }else{
+            } else {
                 $data = $this->db->get_where('part_jasa', ['id_header' => $id_header, 'id' => $id_part])->row_array();
             }
         }
 
-		if(!$json)
-			return $data;
+        if (!$json)
+            return $data;
         echo json_encode($data);
-
     }
 
     /* Get data for labour tab*/
@@ -102,8 +103,8 @@ class Quotation extends CI_Controller {
     {
         $object = [];
         $data = [];
-        if($id_header != NULL){
-            if($id_labour == NULL){
+        if ($id_header != NULL) {
+            if ($id_labour == NULL) {
                 // $object = $this->db->get_where('v_labour', ['id_header' => $id_header])->result_array();
                 $object = $this->db->query('SELECT
                     `l`.*,
@@ -116,10 +117,10 @@ class Quotation extends CI_Controller {
                         FROM
                             `labour` `l`
                         WHERE
-                            l.id_header ="'.$id_header.'"')->result_array();
+                            l.id_header ="' . $id_header . '"')->result_array();
 
                 $data = $this->countTotal($object, 'labour');
-            }else{
+            } else {
                 $data = $this->db->get_where('v_labour', ['id_header' => $id_header, 'id' => $id_labour])->row_array();
                 // $data['rate'] = $data['rate'];
             }
@@ -132,11 +133,11 @@ class Quotation extends CI_Controller {
     {
         $object = [];
         $data = [];
-        if($id_header != NULL){
-            if($id_material == NULL){
+        if ($id_header != NULL) {
+            if ($id_material == NULL) {
                 $object = $this->db->get_where('v_rawmaterial', ['id_header' => $id_header])->result_array();
                 $data = $this->countTotal($object, 'rawmaterial');
-            }else{
+            } else {
                 $data = $this->db->get_where('v_rawmaterial', ['id_header' => $id_header, 'id' => $id_material])->row_array();
             }
         }
@@ -161,49 +162,49 @@ class Quotation extends CI_Controller {
         $temp_parent_section = [];
         $temp_parent_object = [];
 
-        if(count($array) > 0){
+        if (count($array) > 0) {
 
 
-            if($tipe == 'part'){
+            if ($tipe == 'part') {
                 $col = ['qty', 'harga'];
-            }elseif($tipe == 'labour'){
+            } elseif ($tipe == 'labour') {
                 $col = ['hour', 'rate'];
-            }else{
+            } else {
                 $col = ['price', 'weight'];
             }
 
             foreach ($array as $key => $item) {
                 $item['total'] = 0;
-                if($item['tipe_item'] == 'item'){
+                if ($item['tipe_item'] == 'item') {
 
                     $item['total'] = ($item[$col[0]] * $item[$col[1]]);
                     $item[$col[0]] = intval($item[$col[0]]);
-                    if($col[1] == 'weight'){
+                    if ($col[1] == 'weight') {
                         $item[$col[1]] = $item[$col[1]];
-                    }else{
+                    } else {
                         $item[$col[1]] = intval($item[$col[1]]);
                     }
 
-                    if($item['tipe_parent'] == 'section'){
+                    if ($item['tipe_parent'] == 'section') {
                         array_push($temp_parent_section, ['id_parent' => $item['id_parent'], 'total' => $item['total']]);
                     }
 
-                    if($item['tipe_parent'] == 'object'){
+                    if ($item['tipe_parent'] == 'object') {
                         array_push($temp_parent_object, ['id_parent' => $item['id_parent'], 'total' => $item['total']]);
                     }
 
                     $data_item[] = $item;
                 }
 
-                if($item['tipe_item'] == 'sub_object'){
+                if ($item['tipe_item'] == 'sub_object') {
                     $temp_sub_obj[] = $item;
                 }
 
-                if($item['tipe_item'] == 'object'){
+                if ($item['tipe_item'] == 'object') {
                     $temp_obj[] = $item;
                 }
 
-                if($item['tipe_item'] == 'section'){
+                if ($item['tipe_item'] == 'section') {
                     $temp_section[] = $item;
                 }
             }
@@ -213,8 +214,8 @@ class Quotation extends CI_Controller {
             foreach ($temp_sub_obj as $key => $so) {
                 $so['total'] = 0;
                 foreach ($data_item as $key => $item) {
-                    if($so['tipe_item'] == 'sub_object'){
-                        if($item['id_parent'] == $so['id']){
+                    if ($so['tipe_item'] == 'sub_object') {
+                        if ($item['id_parent'] == $so['id']) {
                             $so['total'] += $item['total'];
                         }
                     }
@@ -227,8 +228,8 @@ class Quotation extends CI_Controller {
             foreach ($temp_obj as $key => $object) {
                 $object['total'] = 0;
                 foreach ($data_sub_obj as $key => $so) {
-                    if($object['tipe_item'] == 'object'){
-                        if($so['id_parent'] == $object['id']){
+                    if ($object['tipe_item'] == 'object') {
+                        if ($so['id_parent'] == $object['id']) {
                             $object['total'] += $so['total'];
                         }
                     }
@@ -243,7 +244,7 @@ class Quotation extends CI_Controller {
                 //     $object['total'] += $temp_parent_object[$key]['total'];
                 // }
                 foreach ($temp_parent_object as  $value) {
-                    if($value['id_parent'] == $object['id']){
+                    if ($value['id_parent'] == $object['id']) {
                         $object['total'] += $value['total'];
                     }
                 }
@@ -253,8 +254,8 @@ class Quotation extends CI_Controller {
             foreach ($temp_section as $key => $section) {
                 $section['total'] = 0;
                 foreach ($new_object as $key => $object) {
-                    if($section['tipe_item'] == 'section'){
-                        if($object['id_parent'] == $section['id']){
+                    if ($section['tipe_item'] == 'section') {
+                        if ($object['id_parent'] == $section['id']) {
                             $section['total'] += $object['total'];
                         }
                     }
@@ -266,7 +267,7 @@ class Quotation extends CI_Controller {
             foreach ($data_section as $key => $section) {
 
                 foreach ($temp_parent_section as  $value) {
-                    if($value['id_parent'] == $section['id']){
+                    if ($value['id_parent'] == $section['id']) {
                         $section['total'] += $value['total'];
                     }
                 }
@@ -274,11 +275,9 @@ class Quotation extends CI_Controller {
             }
 
             $new_data = array_merge($data_item, $data_sub_obj, $new_object, $new_section);
-
-            }
+        }
         // print_r($new_data);
         return $new_data;
-
     }
 
     /* saving general info */
@@ -296,18 +295,16 @@ class Quotation extends CI_Controller {
             $delimiter = '- ';
             $this->form_validation->set_error_delimiters($delimiter, '');
             $message = validation_errors();
+        } else {
 
-        }else{
+            if ($action == 1) {
 
-            if($action == 1){
-
-                if( $this->quotation->insertGeneralInfo() == TRUE){
+                if ($this->quotation->insertGeneralInfo() == TRUE) {
                     $code = 1;
                     $last_id = $this->db->insert_id();
                 }
-
-            }else{
-                if( $this->quotation->udpateGeneralInfo() == TRUE ){
+            } else {
+                if ($this->quotation->udpateGeneralInfo() == TRUE) {
                     $code = 1;
                     $last_id = $this->input->post('id_header');
                 }
@@ -317,7 +314,7 @@ class Quotation extends CI_Controller {
         echo json_encode(array('data' => array(
             'code' => $code,
             'message' => $message
-        ),'last_id'=>$last_id));
+        ), 'last_id' => $last_id));
     }
 
     public function saveItem()
@@ -325,33 +322,34 @@ class Quotation extends CI_Controller {
         // print_r($this->input->post());die;
         $code = 0;
         $message = '';
-        $default_dept_labour = ['ENGINEERING','PRODUCTION'];
+        $default_dept_labour = ['ENGINEERING', 'PRODUCTION'];
         $action = $this->input->post('action-item');
         // $this->db->trans_begin();
-        if($action == 1){
-            if( $this->quotation->insertDetailPart() == TRUE){
+        if ($action == 1) {
+            if ($this->quotation->insertDetailPart() == TRUE) {
                 $code = 1;
                 $tipe_item = '';
                 $id_parent_lb = 0;
                 $id_parent_rm = 0;
                 $id_temp = 0;
                 $last_id = $this->db->insert_id();
-                if( $this->input->post('tipe_item-item') != 'item'){
-                    if( $this->input->post('tipe_item-item') == 'section' ){
+                if ($this->input->post('tipe_item-item') != 'item') {
+                    if ($this->input->post('tipe_item-item') == 'section') {
                         $tipe_item = 'section';
-                    }elseif ( $this->input->post('tipe_item-item') == 'object' ) {
+                    } elseif ($this->input->post('tipe_item-item') == 'object') {
                         $tipe_item = 'object';
                         $id_temp = $this->db->get_where('part_jasa', ['id' => $last_id])->row()->id_parent;
                         $id_parent_lb = $this->db->get_where('labour', ['id_part_jasa' => $id_temp])->row()->id;
                         $id_parent_rm = $this->db->get_where('rawmaterial', ['id_part_jasa' => $id_temp])->row()->id;
-                    }else{
+                    } else {
                         $tipe_item = 'sub_object';
                         $id_temp = $this->db->get_where('part_jasa', ['id' => $last_id])->row()->id_parent;
                         $id_parent_lb = $this->db->get_where('labour', ['id_part_jasa' => $id_temp])->row()->id;
                         $id_parent_rm = $this->db->get_where('rawmaterial', ['id_part_jasa' => $id_temp])->row()->id;
                     }
 
-                    $this->db->insert('labour',
+                    $this->db->insert(
+                        'labour',
                         [
                             'id_header' => $this->input->post('id_header-item'),
                             'tipe_item' => $tipe_item,
@@ -364,7 +362,8 @@ class Quotation extends CI_Controller {
 
                     $last_id_labour = $this->db->insert_id();
 
-                    $this->db->insert('rawmaterial',
+                    $this->db->insert(
+                        'rawmaterial',
                         [
                             'id_header' => $this->input->post('id_header-item'),
                             'tipe_item' => $tipe_item,
@@ -379,9 +378,9 @@ class Quotation extends CI_Controller {
 
                     // $this->db->trans_rollback();
                     $default = $this->db->get('default_labour')->result_array();
-                    for ($i=0; $i < count($default_dept_labour); $i++) {
+                    for ($i = 0; $i < count($default_dept_labour); $i++) {
                         foreach ($default as $key => $value) {
-                            if($value['name'] == $default_dept_labour[$i]){
+                            if ($value['name'] == $default_dept_labour[$i]) {
                                 $field = [
                                     'id_header' => $this->input->post('id_header-item'),
                                     'tipe_item' => 'item',
@@ -401,9 +400,8 @@ class Quotation extends CI_Controller {
                     }
                 }
             }
-
-        }else{
-            if( $this->quotation->udpateDetailPart() == TRUE ){
+        } else {
+            if ($this->quotation->udpateDetailPart() == TRUE) {
                 $code = 1;
             }
         }
@@ -418,17 +416,16 @@ class Quotation extends CI_Controller {
         $code = 0;
         $message = '';
         $action = $this->input->post('action-labour');
-        if($action == 1){
+        if ($action == 1) {
 
-                if( $this->quotation->insertDetailLabour() == TRUE){
-                    $code = 1;
-                }
-
-            }else{
-                if( $this->quotation->udpateDetailLabour() == TRUE ){
-                    $code = 1;
-                }
+            if ($this->quotation->insertDetailLabour() == TRUE) {
+                $code = 1;
             }
+        } else {
+            if ($this->quotation->udpateDetailLabour() == TRUE) {
+                $code = 1;
+            }
+        }
         echo json_encode(array('data' => array(
             'code' => $code,
             'message' => $message
@@ -437,52 +434,57 @@ class Quotation extends CI_Controller {
 
     public function getItemCode()
     {
-        $obj = $this->db->select('stcd, CONCAT( TRIM(nama)," (",stcd,")" ) as name, TRIM(spek) as spek, TRIM(maker) as maker, TRIM(uom) as uom, TRIM(nama) as nama, harga', false)->get('v_item')->result();
+        $obj = $this->sgedb->select('lp.stcd, CONCAT( TRIM(mstchd.nama)," (",mstchd.stcd,")" ) as name, TRIM(mstchd.spek) as spek, TRIM(mstchd.maker) as maker, TRIM(mstchd.uom) as uom, TRIM(mstchd.nama) as nama, (lp.lastprice * 1.1) as harga', false)
+            ->join('last_price lp', 'mstchd.stcd = lp.stcd')
+            ->get('mstchd')->result();
 
         echo json_encode($obj);
     }
 
-    public function getKategori(){
-        $obj = $this->db->select('accno as id, TRIM(`desc`) as text', false)
-			->where_in('header', ['10000','20000'])
-			->having('accno <>', '10001')
-			->having('accno <>', '10006')
-			->get('akunbg')
-			->result();
+    public function getKategori()
+    {
+        $obj = $this->sgedb->select('accno as id, TRIM(`desc`) as text', false)
+            ->where_in('header', ['10000', '20000'])
+            ->having('accno <>', '10001')
+            ->having('accno <>', '10006')
+            ->get('akunbg')
+            ->result();
         echo json_encode($obj);
     }
 
-    public function getCustomer(){
-        $obj = $this->db->select('custid as id, TRIM(`nama`) as text', false)->get('customer')->result();
+    public function getCustomer()
+    {
+        $obj = $this->sgedb->select('custid as id, TRIM(`nama`) as text', false)->get('customer')->result();
         echo json_encode($obj);
     }
 
-    public function getPIC(){
-        $obj = $this->db->select('id_personalia as id, TRIM(`nama`) as text', false)->like('departemen','MKTG')->get('personal')->result();
+    public function getPIC()
+    {
+        $obj = $this->sgedb->select('id_personalia as id, TRIM(`nama`) as text', false)->like('departemen', 'MKTG')->get('personal')->result();
         echo json_encode($obj);
     }
 
-    public function delItem(){
+    public function delItem()
+    {
         $code = 0;
         $msg = 'Terjadi kesalahan!';
         $post = $this->input->post();
 
 
-        if($post['tipe_item'] != 'item'){
+        if ($post['tipe_item'] != 'item') {
             $child = $this->db->get_where($post['table'], ['id_parent' => $post['id']])->num_rows();
 
-            if($child > 0){
+            if ($child > 0) {
 
                 $msg = 'Hapus sub terlebih dahulu';
-                echo json_encode(['data'=>['code'=>$code,'message'=>$msg]]);
+                echo json_encode(['data' => ['code' => $code, 'message' => $msg]]);
                 return;
-
-            }else{
+            } else {
 
                 $this->db->trans_begin();
                 $del = $this->db->delete($post['table'], ['id' => $post['id']]);
 
-                if($del){
+                if ($del) {
                     // cek total hour labour
                     $parent_labour = $this->db->get_where('labour', ['id_part_jasa' => $post['id']])->row();
                     $total_labour = $this->db->select('SUM(hour) as total', false)->get_where('labour', ['id_parent' => $parent_labour->id])->row()->total;
@@ -491,11 +493,11 @@ class Quotation extends CI_Controller {
                     $parent_material = $this->db->get_where('rawmaterial', ['id_part_jasa' => $post['id']])->row();
                     $child_material = $this->db->get_where('rawmaterial', ['id_parent' => $parent_material->id])->num_rows();
 
-                    if(intval($total_labour) > 0 || $child_material > 0){
+                    if (intval($total_labour) > 0 || $child_material > 0) {
                         $this->db->trans_rollback();
                         $msg = 'Set jumlah hour (labour) menjadi 0 dahulu <br> dan hapus sub material!';
                         $code = 0;
-                    }else{
+                    } else {
                         $this->db->where('id', $parent_labour->id);
                         $this->db->or_where('id_parent', $parent_labour->id);
                         $delLabour = $this->db->delete('labour');
@@ -504,11 +506,11 @@ class Quotation extends CI_Controller {
                         $this->db->or_where('id_parent', $parent_material->id);
                         $dellMaterial = $this->db->delete('rawmaterial');
                         // echo $this->db->last_query();
-                        if($delLabour && $dellMaterial){
+                        if ($delLabour && $dellMaterial) {
                             $this->db->trans_commit();
                             $code = 1;
                             $msg = '';
-                        }else{
+                        } else {
                             $this->db->trans_rollback();
                             $code = 0;
                             $msg = 'gagal Hapus data!';
@@ -516,17 +518,16 @@ class Quotation extends CI_Controller {
                     }
                 }
             }
-
-        }else{
+        } else {
 
             $this->db->trans_begin();
             $del = $this->db->delete($post['table'], ['id' => $post['id']]);
             // echo $this->db->last_query();
-            if($del){
+            if ($del) {
                 $this->db->trans_commit();
                 $code = 1;
                 $msg = '';
-            }else{
+            } else {
                 $this->db->trans_rollback();
                 $code = 0;
                 $msg = 'Tidak dapat menghapus data!';
@@ -534,29 +535,30 @@ class Quotation extends CI_Controller {
         }
 
 
-        echo json_encode(['data'=>['code'=>$code,'message'=>$msg]]);
+        echo json_encode(['data' => ['code' => $code, 'message' => $msg]]);
     }
 
-    public function saveHourLabour(){
+    public function saveHourLabour()
+    {
         $code = 0;
         $last_value = 0;
         $id_object = 0;
         $id_section = 0;
         $this->db->update('labour', ['hour' => $this->input->post('hour')], ['id' => $this->input->post('id')]);
         $item = $this->db->get_where('labour', ['id' => $this->input->post('id')])->row();
-        if( $this->db->affected_rows() > 0){
+        if ($this->db->affected_rows() > 0) {
             $code = 1;
-        }else{
+        } else {
             $last_value = $item->hour;
         }
 
         $parent = $this->db->get_where('labour', ['id' => $item->id_parent])->row();
 
-        if( $parent->tipe_item != 'section'){
+        if ($parent->tipe_item != 'section') {
 
-            if($parent->tipe_item == 'object'){
+            if ($parent->tipe_item == 'object') {
                 $id_section = $this->db->get_where('labour', ['id' => $item->id_parent])->row()->id_parent;
-            }else{
+            } else {
                 $id_object = $this->db->get_where('labour', ['id' => $item->id_parent])->row()->id_parent;
                 $id_section = $this->db->get_where('labour', ['id' => $id_object])->row()->id_parent;
             }
@@ -577,25 +579,24 @@ class Quotation extends CI_Controller {
         echo json_encode($obj);
     }
 
-    public function saveMaterial(){
+    public function saveMaterial()
+    {
         $code = 0;
         $message = '';
         $action = $this->input->post('action-material');
-        if($action == 1){
+        if ($action == 1) {
 
-                if( $this->quotation->insertMaterial() == TRUE){
-                    $code = 1;
-                }
-
-            }else{
-                if( $this->quotation->udpateMaterial() == TRUE ){
-                    $code = 1;
-                }
+            if ($this->quotation->insertMaterial() == TRUE) {
+                $code = 1;
             }
+        } else {
+            if ($this->quotation->udpateMaterial() == TRUE) {
+                $code = 1;
+            }
+        }
         echo json_encode(array('data' => array(
             'code' => $code,
             'message' => $message
         )));
     }
-
 }
