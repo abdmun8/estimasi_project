@@ -434,7 +434,7 @@ class Quotation extends CI_Controller
 
     public function getItemCode()
     {
-        $obj = $this->sgedb->select('lp.stcd, CONCAT( TRIM(mstchd.nama)," (",mstchd.stcd,")" ) as name, TRIM(mstchd.spek) as spek, TRIM(mstchd.maker) as maker, TRIM(mstchd.uom) as uom, TRIM(mstchd.nama) as nama, (lp.lastprice * 1.1) as harga', false)
+        $obj = $this->sgedb->select('lp.stcd, CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," [",mstchd.stcd,"]" ) as name, TRIM(mstchd.spek) as spek, TRIM(mstchd.maker) as maker, TRIM(mstchd.uom) as uom, TRIM(mstchd.nama) as nama, (lp.lastprice * 1.1) as harga', false)
             ->join('last_price lp', 'mstchd.stcd = lp.stcd')
             ->get('mstchd')->result();
 
