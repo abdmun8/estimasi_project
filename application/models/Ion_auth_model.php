@@ -890,6 +890,7 @@ class Ion_auth_model extends CI_Model
 	 */
 	public function login($identity, $password, $remember=FALSE)
 	{
+		
 		$this->trigger_events('pre_login');
 
 		if (empty($identity) || empty($password))
@@ -919,9 +920,10 @@ class Ion_auth_model extends CI_Model
 
 		if ($query->num_rows() === 1)
 		{
-			$user = $query->row();
-
-			if ($this->verify_password($password, $user->password, $identity))
+			$user = $query->row();			
+			// using md5
+			if (md5($password) == $user->password)
+			// if ($this->verify_password($password, $user->password, $identity))
 			{
 				if ($user->active == 0)
 				{

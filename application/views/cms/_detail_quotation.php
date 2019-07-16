@@ -573,7 +573,14 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 title: 'Item Code',
                 width: '150',
                 align: "left",
-                visible: true
+                visible: true,
+                formatter: function(value, row, index){
+                    console.log(row.tipe_item)
+                    if (row.tipe_item != 'item') {
+                        return '';
+                    }
+                    return value;
+                }
             },
             {
                 field: 'item_name',

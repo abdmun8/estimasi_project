@@ -18,7 +18,7 @@ class Usersmodel extends Model {
      
         if ($inputs['password-input'] != "") {
             $this->load->model('Ion_auth_model');
-            $fields['password'] = $this->Ion_auth_model->_set_encrypt($this->session->userdata('identity'), $inputs['password-input']);
+            $fields['password'] = md5($inputs['password-input']);
 
         }
 
