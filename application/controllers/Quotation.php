@@ -107,7 +107,7 @@ class Quotation extends CI_Controller
             if ($id_labour == NULL) {
                 // $object = $this->db->get_where('v_labour', ['id_header' => $id_header])->result_array();
                 $object = $this->db->query('SELECT
-                    `l`.*,
+                    `l`.*,id as opsi,
                             (SELECT
                                     tipe_item
                                 FROM
@@ -117,13 +117,20 @@ class Quotation extends CI_Controller
                         FROM
                             `labour` `l`
                         WHERE
-                            l.id_header ="' . $id_header . '"')->result_array();
+                            l.id_header ="' . $id_header . '" ')->result_array();
 
-                $data = $this->countTotal($object, 'labour');
+                // $data = $this->countTotal($object, 'labour');
+                $temp = $this->countTotal($object, 'labour');
+                $data = array_filter($temp, function($v){
+                    if($v['tipe_item'] != 'item'){
+                        return $v;
+                    }
+                });
             } else {
                 $data = $this->db->get_where('v_labour', ['id_header' => $id_header, 'id' => $id_labour])->row_array();
                 // $data['rate'] = $data['rate'];
             }
+            // echo $this->db->last_query();die;
         }
 
         echo json_encode($data);
@@ -445,7 +452,7 @@ class Quotation extends CI_Controller
     {
         $obj = $this->sgedb->select('accno as id, TRIM(`desc`) as text', false)
             ->where_in('header', ['10000', '20000'])
-            ->having('accno <>', '10001')
+            // ->having('accno <>', '10001')
             ->having('accno <>', '10006')
             ->get('akunbg')
             ->result();
@@ -598,5 +605,21 @@ class Quotation extends CI_Controller
             'code' => $code,
             'message' => $message
         )));
+    }
+
+    public function getDetailLabourByHeader($id_header,$id_parent,$type){
+        $data = [];
+        $temp = $this->db->get_where('v_labour', ['id_header' => $id_header, 'id_parent' => $id_parent, 'tipe_name_view' => $type, 'tipe_item' => 'item'])->result_array();
+        $no = 0;
+        foreach ($temp as $key => $value) {
+            $value['no'] = ++$no;
+            $total = $value['hour'] * $value['rate'];
+            $value['rate'] = number_format($value['rate']);
+            $value['hour'] = intval($value['hour']);
+            $value['total'] = number_format($total);
+            $data[] = $value;
+        }
+        // echo $this->db->last_query();
+        echo json_encode(['data' => $data]);
     }
 }
