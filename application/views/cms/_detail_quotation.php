@@ -399,7 +399,6 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                    <button onclick="addToTableDetail()" type="button" class="btn btn-primary btn-manage-detail">Save</button>
                 </div>
             </div>
             <!-- /.modal-content -->
@@ -1021,7 +1020,18 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         title: 'Name',
                         width: '300',
                         align: "left",
-                        visible: true
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item == 'section') {
+                                return '<span>' + value + '</span>';
+                            } else if (row.tipe_item == 'object') {
+                                return '<span>' + addSpace(3) + value + '</span>';
+                            } else if (row.tipe_item == 'sub_object') {
+                                return '<span>' + addSpace(6) + value + '</span>';
+                            } else {
+                                return '';
+                            }
+                        }
                     },
                     {
                         field: 'item_code',
