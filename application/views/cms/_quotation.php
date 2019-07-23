@@ -1,11 +1,10 @@
-
 <?php
 //default value
 $id = null;
 if ($param != null) {
     $user = $this->model->getRecord(array(
         'table' => 'users', 'where' => array('id' => $param)
-        ));
+    ));
     if ($user) {
         $id  = $user->id;
     }
@@ -39,7 +38,7 @@ if ($param != null) {
                         <li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="alert(1)">CSV</a></li>
                     </ul>
                 </li> -->
-                <button type="button" class="btn btn-default pull-right btn-sm" style="margin-right: 10px;" onclick="refreshTable()"><i class="fa fa-refresh" ></i> Refresh</button>
+                <button type="button" class="btn btn-default pull-right btn-sm" style="margin-right: 10px;" onclick="refreshTable()"><i class="fa fa-refresh"></i> Refresh</button>
             </div>
             <div class="table-responsive">
                 <table id="table-data" class="table table-bordered table-striped table-hover table-condensed">
@@ -63,17 +62,51 @@ if ($param != null) {
         </div>
     </div>
 </div>
+
+<!-- Modal Detail Labour -->
+<div class="modal fade" id="modal-detail" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Input Qty Per Section</h4>
+            </div>
+            <div class="modal-body">
+                <div class="box box-default">
+                    <div class="box-body table-responsive">
+                        <table id="table-input-section-qty" class="table table-bordered table-striped table-hover table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Section</th>
+                                    <th>Qty</th>
+                                    <th>action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /End modal Detail Labour -->
 <script>
-
-
-
-
-    $(document).ready(function () {
+    var tableData, tableSection;
+    $(document).ready(function() {
         // CKEDITOR.replace('alamat-input');
         getDataTable();
+        getDataSection(null)
         <?php
-        if($param != null) {
-            echo 'getData("'. $param .'");';
+        if ($param != null) {
+            echo 'getData("' . $param . '");';
             echo 'setActiveTab("data-form-tab");';
         }
         ?>
@@ -83,7 +116,7 @@ if ($param != null) {
             singleDatePicker: true,
             showDropdowns: true,
             minYear: 2018,
-            maxYear: parseInt(moment().format('YYYY'),10),
+            maxYear: parseInt(moment().format('YYYY'), 10),
             locale: {
                 format: 'DD-MM-YYYY'
             }
@@ -92,13 +125,13 @@ if ($param != null) {
 
     });
 
-    function printQuotation(id){
-        window.open(base_url + 'report/quotationreport/'+id)
+    function printQuotation(id) {
+        window.open(base_url + 'report/quotationreport/' + id)
     }
 
 
     function newForm() {
-        loadContent(base_url + "view/_quotation", function () {
+        loadContent(base_url + "view/_quotation", function() {
             setActiveTab("data-form-tab");
         });
     }
@@ -109,32 +142,56 @@ if ($param != null) {
         } else {
             tableData = $('#table-data').DataTable({
                 "ajax": base_url + 'objects/header',
-                "columns": [
-                   {"data": "no"},
-                   {"data": "inquiry_no"},
-                   {"data": "project_name"},
-                   {"data": "qty"},
-                   {"data": "customer"},
-                   {"data": "pic_marketing"},
-                   {"data": "start_date"},
-                   {"data": "finish_date"},
-                   {"data": "duration"},
-                   {"data": "aksi", "width": "15%"}
-               ],
+                "columns": [{
+                        "data": "no"
+                    },
+                    {
+                        "data": "inquiry_no"
+                    },
+                    {
+                        "data": "project_name"
+                    },
+                    {
+                        "data": "qty"
+                    },
+                    {
+                        "data": "customer"
+                    },
+                    {
+                        "data": "pic_marketing"
+                    },
+                    {
+                        "data": "start_date"
+                    },
+                    {
+                        "data": "finish_date"
+                    },
+                    {
+                        "data": "duration"
+                    },
+                    {
+                        "data": "aksi",
+                        "width": "20%"
+                    }
+                ],
                 "ordering": true,
                 "deferRender": true,
-                "columnDefs" : [
-                    {
-                        "targets" : 8,
-                        "render" : function( data, type, row, meta ){
+                "columnDefs": [{
+                        "targets": 8,
+                        "render": function(data, type, row, meta) {
                             var diff = calcDiffDateToMonth(formatDate(row.start_date), formatDate(row.finish_date))
                             return diff + ' MONTH';
                         },
                     },
-                    {"targets" : 9, "className" : "text-center"}
+                    {
+                        "targets": 9,
+                        "className": "text-center"
+                    }
                 ],
-                "order": [[0, "asc"]],
-                "fnDrawCallback": function (oSettings) {
+                "order": [
+                    [0, "asc"]
+                ],
+                "fnDrawCallback": function(oSettings) {
                     utilsDataTable();
                 }
             });
@@ -142,19 +199,26 @@ if ($param != null) {
     }
 
     function utilsDataTable() {
-        $("#table-data .editBtn").on("click",function() {
+        $("#table-data .editBtn").on("click", function() {
             openWindow(base_url + 'quotation/' + $(this).attr('href').substring(1));
             // loadContent(base_url + 'view/_quotation/' + $(this).attr('href').substring(1));
         });
 
-        $("#table-data .removeBtn").on("click",function() {
+        $("#table-data .editQtyBtn").on("click", function() {
+            refreshTableSection($(this).attr('href').substring(1));
+            $("#modal-detail").modal('show');
+        });
+
+
+
+        $("#table-data .removeBtn").on("click", function() {
             confirmDelete($(this).attr('href').substring(1));
         });
     }
 
     function saving() {
         // CKupdate();
-        loading('loading',true);
+        loading('loading', true);
         setTimeout(function() {
             $.ajax({
                 url: base_url + 'manage',
@@ -163,22 +227,23 @@ if ($param != null) {
                 type: 'POST',
                 cache: false,
                 success: function(json) {
-                    loading('loading',false);
+                    loading('loading', false);
                     if (json.data.code === 0) {
                         if (json.data.message == '') {
-                            genericAlert('Penyimpanan data gagal!', 'error','Error');
+                            genericAlert('Penyimpanan data gagal!', 'error', 'Error');
                         } else {
-                            genericAlert(json.data.message, 'warning','Peringatan');
+                            genericAlert(json.data.message, 'warning', 'Peringatan');
                         }
                     } else {
-                        var page ='_quotation/';
+                        var page = '_quotation/';
                         page += json.data.last_id;
-                        genericAlert('Penyimpanan data berhasil', 'success','Sukses');
+                        genericAlert('Penyimpanan data berhasil', 'success', 'Sukses');
                         loadContent(base_url + 'view/' + page);
                     }
-                }, error: function () {
-                    loading('loading',false);
-                    genericAlert('Terjadi kesalahan!', 'error','Error');
+                },
+                error: function() {
+                    loading('loading', false);
+                    genericAlert('Terjadi kesalahan!', 'error', 'Error');
                 }
             });
         }, 100);
@@ -186,7 +251,7 @@ if ($param != null) {
 
     function getData(idx) {
         $.ajax({
-            url: base_url + 'get_data_header/'+idx,
+            url: base_url + 'get_data_header/' + idx,
             dataType: 'json',
             type: 'POST',
             cache: false,
@@ -211,73 +276,155 @@ if ($param != null) {
         });
     }
 
-    function confirmDelete(n){
+    function confirmDelete(n) {
         swal({
-            title: "Konfirmasi Hapus",
-            text: "Apakah anda yakin akan menghapus data ini?",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonClass: "btn-danger",
-            confirmButtonText: " Ya",
-            closeOnConfirm: false
-        },
-        function(){
-            loading('loading',true);
-            setTimeout(function() {
-                $.ajax({
-                    url: base_url + 'manage',
-                    data: 'model-input=quotation&action-input=3&key-input=id&value-input='+n,
-                    dataType: 'json',
-                    type: 'POST',
-                    cache: false,
-                    success: function(json){
-                        loading('loading',false);
-                        if (json.data.code === 1) {
-                            genericAlert('Hapus data berhasil','success','Sukses');
-                            refreshTable();
-                        } else if(json.data.code === 2){
-                            genericAlert('Hapus data gagal!','error','Error');
-                        } else{
-                            genericAlert(json.data.message,'warning','Perhatian');
+                title: "Konfirmasi Hapus",
+                text: "Apakah anda yakin akan menghapus data ini?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn-danger",
+                confirmButtonText: " Ya",
+                closeOnConfirm: false
+            },
+            function() {
+                loading('loading', true);
+                setTimeout(function() {
+                    $.ajax({
+                        url: base_url + 'manage',
+                        data: 'model-input=quotation&action-input=3&key-input=id&value-input=' + n,
+                        dataType: 'json',
+                        type: 'POST',
+                        cache: false,
+                        success: function(json) {
+                            loading('loading', false);
+                            if (json.data.code === 1) {
+                                genericAlert('Hapus data berhasil', 'success', 'Sukses');
+                                refreshTable();
+                            } else if (json.data.code === 2) {
+                                genericAlert('Hapus data gagal!', 'error', 'Error');
+                            } else {
+                                genericAlert(json.data.message, 'warning', 'Perhatian');
+                            }
+                        },
+                        error: function() {
+                            loading('loading', false);
+                            genericAlert('Tidak dapat hapus data!', 'error', 'Error');
                         }
-                    },
-                    error: function () {
-                        loading('loading',false);
-                        genericAlert('Tidak dapat hapus data!','error', 'Error');
-                    }
-                });
-            }, 100);
-        });
+                    });
+                }, 100);
+            });
     }
 
-    function refreshTable(){
+    function refreshTable() {
         tableData.ajax.url(base_url + '/objects/header').load();
     }
 
-    function CKupdate(){
-        for ( instance in CKEDITOR.instances )
+    function CKupdate() {
+        for (instance in CKEDITOR.instances)
             CKEDITOR.instances[instance].updateElement();
     }
 
-    function calcDate(){
+    function calcDate() {
         var start = $("#start_date").val();
         var end = $("#finish_date").val();
-        var diff = calcDiffDateToMonth(start,end);
+        var diff = calcDiffDateToMonth(start, end);
         $("#duration").val(diff + ' MONTH');
     }
 
+    function getDataSection(id_header = '') {
+        if ($.fn.dataTable.isDataTable('#table-input-section-qty')) {
+            tableSection = $('#table-input-section-qty').DataTable();
+        } else {
+            tableSection = $('#table-input-section-qty').DataTable({
+                "ajax": base_url + 'quotation/get_section/' + id_header,
+                "columns": [{
+                        "data": "no"
+                    },
+                    {
+                        "data": "tipe_name"
+                    },
+                    {
+                        "data": "qty",
+                        "width": "25%"
+                    },
+                    {
+                        "data": "aksi",
+                        "width": "20%"
+                    }
+                ],
+                "ordering": true,
+                "deferRender": true,
+                "columnDefs": [
+                    // {
+                    //     "targets": 8,
+                    //     "render": function(data, type, row, meta) {
+                    //         var diff = calcDiffDateToMonth(formatDate(row.start_date), formatDate(row.finish_date))
+                    //         return diff + ' MONTH';
+                    //     },
+                    // },
+                    // {
+                    //     "targets": 9,
+                    //     "className": "text-center"
+                    // }
+                ],
+                "order": [
+                    [0, "asc"]
+                ],
+                "fnDrawCallback": function(oSettings) {
+                    // utilsDataTable();
+                }
+            });
+        }
+    }
 
+    function refreshTableSection(id_header) {
+        tableSection.ajax.url(base_url + 'quotation/get_section/' + id_header).load();
+    }
 
-    function openWindow(url){
+    function openWindow(url) {
         var params = [
-            'height='+screen.height,
-            'width='+screen.width,
+            'height=' + screen.height,
+            'width=' + screen.width,
             'fullscreen=yes' // only works in IE, but here for completeness
         ].join(',');
-             // and any other options from
-             // https://developer.mozilla.org/en/DOM/window.open
+        // and any other options from
+        // https://developer.mozilla.org/en/DOM/window.open
 
         var popup = window.open(url, 'popup_window', params);
-        popup.moveTo(0,0);
+        popup.moveTo(0, 0);
+    }
+
+    function editQtySection(o, id) {
+        let oldValue = $(o).parent().siblings()[2].innerHTML
+        $(o).parent().siblings()[2].innerHTML = "<input min='0' id='input-section-qty' style='width:100px;' type='number' value='" + oldValue + "' />"
+        $(".save-qty-section"+id+"").css('display','inline')
+        $(".edit-qty-section"+id+"").css('display','none')
+    }
+
+    function saveQtySection(o, id) {
+        let value = $("#input-section-qty").val()
+        $(o).parent().siblings()[2].innerHTML = value;
+        $(".save-qty-section"+id+"").css('display','none')
+        $(".edit-qty-section"+id+"").css('display','inline')
+        loading('loading', true);
+        setTimeout(function() {
+            $.ajax({
+                url: base_url + 'quotation/save_section_qty',
+                data: {qty: value, id: id},
+                dataType: 'json',
+                type: 'POST',
+                cache: false,
+                success: function(json) {
+                    loading('loading', false);
+                    if (json.success == 1) {
+                        notify('success', 'Qty berhasil disimpan');
+                    }
+                },
+                error: function() {
+                    loading('loading', false);
+                    notify('danger', 'Terjadi Kesalahan!');
+                }
+            });
+        }, 100);
     }
 </script>

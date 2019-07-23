@@ -269,6 +269,7 @@ class Retriever extends CI_Controller {
 				$linkBtn = '<a href="#' . $record->id . '" class="btn btn-xs btn-info pickBtn" title="Pilih"><i class="fa fa-thumb-tack"></i> Pilih</a>';
 			} else if ($picker == 'no') {
 				$linkBtn = ' <a href="#' . $record->id . '" class="btn btn-xs btn-primary editBtn" title="Edit"><i class="fa fa-edit"></i> Edit</a>';
+				$linkBtn .= ' <a href="#' . $record->id . '" class="btn btn-xs btn-primary editQtyBtn" title="Edit Qty Sect"><i class="fa fa-edit"></i> Qty Sect</a>';
 				$linkBtn .= ' <a href="#' . $record->id . '" class="btn btn-xs btn-danger removeBtn" title="Hapus"><i class="fa fa-trash-o"></i> Hapus</a>';
 				$linkBtn .= ' <a onclick="printQuotation('.$record->id.'); return false;" href="#" class="btn btn-xs btn-success " title="Print"><i class="fa fa-print"></i> Print</a>';
 			}

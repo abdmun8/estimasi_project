@@ -622,4 +622,25 @@ class Quotation extends CI_Controller
         // echo $this->db->last_query();
         echo json_encode(['data' => $data]);
     }
+
+    public function getSection($id_header){
+        $data = [];
+        $result = $this->db->get_where('rawmaterial',['tipe_item' => 'section', 'id_header' => $id_header])->result_array();
+        // echo $this->db->last_query();
+        $no = 0;
+        foreach ($result as $key => $value) {
+            $no = ++$no;
+            $value['no'] = $no;
+            $value['aksi'] = "<button onclick='editQtySection(this, {$value['id']})' class='btn btn-xs btn-primary edit-qty-section{$value['id']}'><i class='fa fa-edit'></i> Edit</button>
+            <button style='display:none;' onclick='saveQtySection(this, {$value['id']})' class='btn btn-xs btn-success save-qty-section{$value['id']}'><i class='fa fa-check'></i> Save</button>";
+            $data[] = $value;
+        }
+        echo json_encode(['data' => $data]);
+    }
+
+    function saveSectionQty(){
+        $post = $this->input->post();
+        $this->db->update('rawmaterial',['qty' => $post['qty']],['id' => $post['id']]);
+        echo json_encode(['code' => 1, 'success' => true]);
+    }
 }

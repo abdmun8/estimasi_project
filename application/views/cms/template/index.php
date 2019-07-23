@@ -25,6 +25,7 @@
 
     <!-- daterange picker -->
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/bootstrap-daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/animate.css/animate.css">
 
 
     <!--[if lt IE 9]>
@@ -146,7 +147,7 @@
 <script src="<?php echo base_url();?>assets/cms/input-mask/jquery.inputmask.date.extensions.js"></script>
 <script src="<?php echo base_url();?>assets/cms/input-mask/jquery.inputmask.extensions.js"></script>
 
-
+<script src="<?php echo base_url(); ?>assets/cms/bootstrap-notify/bootstrap-notify.js"></script>
 <script src="<?php echo base_url();?>assets/cms/js/app.min.js"></script>
 <script>
     let statemenu="dashboard";
