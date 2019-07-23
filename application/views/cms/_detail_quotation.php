@@ -1935,7 +1935,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             }
         }
 
-        function refreshTableDetail(id_header) {
+        function refreshTableDetail(id_header, type) {
             tableDetailLabour.ajax.url(base_url + 'quotation/get_detail_by_header/' + <?= $param ?> + '/' + id_header + '/' + type, ).load();
         }
     </script>

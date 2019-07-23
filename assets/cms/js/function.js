@@ -21,7 +21,7 @@ function formatDate(date, to_indo = true){
 
 /* notify */
 
-function notify(type, msg){
+function notify(type, msg, delay = 100){
     $.notify({
         // options
         message: msg ,
@@ -29,7 +29,7 @@ function notify(type, msg){
     },{
         // settings
         type: type,
-        delay: 100,
+        delay: delay,
     });
 }
 

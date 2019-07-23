@@ -68,6 +68,7 @@ if ($param != null) {
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
+                <div id="loading1"></div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">Input Qty Per Section</h4>
@@ -158,7 +159,7 @@ if ($param != null) {
                         "data": "customer"
                     },
                     {
-                        "data": "pic_marketing"
+                        "data": "nama"
                     },
                     {
                         "data": "start_date"
@@ -406,7 +407,7 @@ if ($param != null) {
         $(o).parent().siblings()[2].innerHTML = value;
         $(".save-qty-section"+id+"").css('display','none')
         $(".edit-qty-section"+id+"").css('display','inline')
-        loading('loading', true);
+        loading('loading1', true);
         setTimeout(function() {
             $.ajax({
                 url: base_url + 'quotation/save_section_qty',
@@ -415,14 +416,10 @@ if ($param != null) {
                 type: 'POST',
                 cache: false,
                 success: function(json) {
-                    loading('loading', false);
-                    if (json.success == 1) {
-                        notify('success', 'Qty berhasil disimpan');
-                    }
+                    loading('loading1', false);
                 },
                 error: function() {
-                    loading('loading', false);
-                    notify('danger', 'Terjadi Kesalahan!');
+                    loading('loading1', false);
                 }
             });
         }, 100);

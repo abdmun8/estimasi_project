@@ -36,7 +36,7 @@ class Retriever extends CI_Controller {
 				// Master Data
 				//Quotation
 				case 'header':
-					$query['table'] = 'header';
+					$query['table'] = 'v_header';
 					break;
 				case 'karyawan':
 					$query['table'] = 'v_karyawan';
@@ -87,7 +87,7 @@ class Retriever extends CI_Controller {
 					// Master Data
 					// Quotation
 					case 'header':
-						$query['table'] = 'header';
+						$query['table'] = 'v_header';
 						break;
 					case 'karyawan':
 						$query['table'] = 'v_karyawan';
@@ -282,6 +282,7 @@ class Retriever extends CI_Controller {
 				'inquiry_no' => $record->inquiry_no,
 				'customer' => $record->customer,
 				'pic_marketing' => $record->pic_marketing,
+				'nama' => $record->nama,
 				'start_date' => $record->start_date,
 				'finish_date' => $record->finish_date,
 				'duration' => '',
