@@ -643,4 +643,9 @@ class Quotation extends CI_Controller
         $this->db->update('rawmaterial',['qty' => $post['qty']],['id' => $post['id']]);
         echo json_encode(['code' => 1, 'success' => true]);
     }
+
+    public function printPartPerSection($id_header){
+        $data = $this->getDataPart($id_header, NULL, false);
+        $this->load->view('report/quotation_part',['data' => $data]);
+    }
 }

@@ -149,6 +149,10 @@
 
 <script src="<?php echo base_url(); ?>assets/cms/bootstrap-notify/bootstrap-notify.js"></script>
 <script src="<?php echo base_url();?>assets/cms/js/app.min.js"></script>
+<!-- Sheet JS-->
+<script src="<?php echo base_url();?>assets/cms/js/app.min.js"></script>
+<script src="<?php echo base_url();?>assets/cms/js/sheet-js/shim.min.js"></script>
+<script src="<?php echo base_url();?>assets/cms/js/sheet-js/xlsx.full.min.js"></script>
 <script>
     let statemenu="dashboard";
     $(document).ready(function(){

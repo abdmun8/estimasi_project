@@ -164,6 +164,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 <div id="demo-toolbar" class="btn-group" role="group" aria-label="...">
                     <button id="addBtn" type="button" class="btn btn-default" onclick="showModalInput('section')">Add Section</button>
                     <button id="expandAllBtn" type="button" class="btn btn-default">Expand/Collapse All</button>
+                    <button id="print-part-section" onclick="printPart('<?= $param ?>')" type="button" class="btn btn-default">Print</button>
                 </div>
                 <table id="demo"></table>
             </section>
@@ -621,9 +622,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         if (row.tipe_item == 'section') {
                             return '<span class="label label-success">' + value + '</span>';
                         } else if (row.tipe_item == 'object') {
-                            return '<span class="label label-primary">' + value + '</span>';
+                            return addSpace(3) +'<span class="label label-primary">' +  value + '</span>';
                         } else if (row.tipe_item == 'sub_object') {
-                            return '<span class="label label-warning">' + value + '</span>';
+                            return addSpace(6) +'<span class="label label-warning">' +  value + '</span>';
                         } else {
                             return '';
                         }
@@ -820,9 +821,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         if (row.tipe_item == 'section') {
                             return '<span class="label label-success">' + value + '</span>';
                         } else if (row.tipe_item == 'object') {
-                            return '<span class="label label-primary">' + value + '</span>';
+                            return addSpace(3)+'<span class="label label-primary">' +  value + '</span>';
                         } else if (row.tipe_item == 'sub_object') {
-                            return '<span class="label label-warning">' + value + '</span>';
+                            return addSpace(6)+'<span class="label label-warning">'+  value + '</span>';
                         } else {
                             return '';
                         }
@@ -1006,9 +1007,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         if (row.tipe_item == 'section') {
                             return '<span class="label label-success">' + value + '</span>';
                         } else if (row.tipe_item == 'object') {
-                            return '<span class="label label-primary">' + value + '</span>';
+                            return addSpace(3)+'<span class="label label-primary">' +  value + '</span>';
                         } else if (row.tipe_item == 'sub_object') {
-                            return '<span class="label label-warning">' + value + '</span>';
+                            return addSpace(6)+'<span class="label label-warning">' +  value + '</span>';
                         } else {
                             return '';
                         }
@@ -1937,6 +1938,11 @@ $satuan = $this->db->get_where('tblsatuan')->result();
 
         function refreshTableDetail(id_header, type) {
             tableDetailLabour.ajax.url(base_url + 'quotation/get_detail_by_header/' + <?= $param ?> + '/' + id_header + '/' + type, ).load();
+        }
+
+        // print
+        function printPart(id_header) {
+            window.open(base_url + 'quotation/print_part_persection/' + id_header);
         }
     </script>
 </body>

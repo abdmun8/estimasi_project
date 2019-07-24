@@ -90,9 +90,11 @@ $route['quotation/get_data_part'] = 'Quotation/getDataPart';
 $route['quotation/get_data_part/(:num)'] = 'Quotation/getDataPart/$1';
 $route['quotation/get_data_part/(:num)/(:num)'] = 'Quotation/getDataPart/$1/$2';
 $route['quotation/save_item'] = 'Quotation/saveitem';
+$route['quotation/get_kategori'] = 'Quotation/getKategori';
 $route['quotation/save_gen_info'] = 'Quotation/saveGeneralInfo';
 $route['quotation/get_item_code'] = 'Quotation/getItemCode';
-$route['quotation/get_kategori'] = 'Quotation/getKategori';
+$route['quotation/print_part_persection/(:num)'] = 'Quotation/printPartPerSection/$1';
+
 
 
 /* labour */
