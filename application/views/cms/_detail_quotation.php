@@ -184,6 +184,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             <section class="">
                 <div id="labour-toolbar" class="btn-group" role="group" aria-label="...">
                     <button id="expandAllBtnLabour" type="button" class="btn btn-default">Expand/Collapse All</button>
+                    <button onclick="printReportLabour('<?=$param?>')" id="btn-print-labour" type="button" class="btn btn-default"><i class="fa fa-print"></i> Print</button>
                 </div>
                 <table id="labour_table"></table>
             </section>
@@ -832,12 +833,12 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 {
                     field: 'opsi',
                     title: 'Detail',
-                    width: '120',
+                    width: '130',
                     align: "center",
                     visible: true,
                     formatter: function(value, row, index) {
-                        return `<button onclick="showModalDetailLabour(${value},'ENGINEERING')" class="btn btn-xs btn-primary">ENG</button>
-                                <button onclick="showModalDetailLabour(${value},'PRODUCTION')" class="btn btn-xs btn-primary">PROD</button>`;
+                        return `<button onclick="showModalDetailLabour(${value},'ENGINEERING')" class="btn btn-xs btn-info"><i class="fa fa-plus"></i> ENG</button>
+                                <button onclick="showModalDetailLabour(${value},'PRODUCTION')" class="btn btn-xs btn-info"><i class="fa fa-plus"></i> PROD</button>`;
                     }
                 },
 
@@ -1936,6 +1937,10 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         // print
         function printPart(id_header) {
             window.open(base_url + 'quotation/print_part_persection/' + id_header);
+        }
+
+        function printReportLabour(id_header) {
+            window.open(base_url + 'quotation/print_labour/' + id_header);
         }
     </script>
 </body>

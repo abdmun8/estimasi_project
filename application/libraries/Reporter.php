@@ -85,6 +85,25 @@ class Reporter
         return $new;
     }
 
+    public function findChildLabour($v){
+        $hour = $v['tipe_item'] != 'item' ? '' : $v['hour'];
+        $rate = $v['tipe_item'] != 'item' ? '' : $v['rate'];
+        $new = [
+            'id' =>  $v['id'],
+            'id_parent' =>  $v['id_parent'],
+            'id_header' =>  $v['id_header'],
+            'tipe_id' =>  $v['tipe_id'],
+            'tipe_name' =>  $v['tipe_name'],
+            'id_labour' =>  $v['id_labour'],
+            'aktivitas' =>  $v['aktivitas'],
+            'hour' =>  $hour,
+            'rate' =>  $rate,
+            'total' =>  $v['total'],
+            'tipe_item' =>  $v['tipe_item'],
+        ];
+        return $new;
+    }
+
     public function getStructure($data, $functionName)
     {
         $arrId = [];
