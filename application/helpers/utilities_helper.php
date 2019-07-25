@@ -80,3 +80,21 @@ function createSequence($code, $length, $number){
 	$sequence = sprintf('%0'.$length.'d', $number);
 	return $code.$sequence;
 }
+
+function addSpace($v, $value)
+    {
+        $num_space = 0;
+        if ($v == 'object') {
+            $num_space = 2;
+        } else if ($v == 'sub_object') {
+            $num_space = 4;
+        } else {
+            $num_space = 0;
+        }
+        $space = '';
+        for ($i = 0; $i < $num_space; $i++) {
+            $space .= ' ';
+        }
+        return $space . $value;
+    }
+

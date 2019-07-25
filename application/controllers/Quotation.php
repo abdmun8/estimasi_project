@@ -13,6 +13,7 @@ class Quotation extends CI_Controller
         $this->load->model('Quotation_model', 'quotation');
         $this->load->library('form_validation');
         $this->sgedb = $this->load->database('sgedb', TRUE);
+        $this->load->library('reporter');
     }
 
     public function index($id = NULL)
@@ -99,7 +100,7 @@ class Quotation extends CI_Controller
     }
 
     /* Get data for labour tab*/
-    public function getDataLabour($id_header = NULL, $id_labour = NULL)
+    public function getDataLabour($id_header = NULL, $id_labour = NULL, $json = TRUE)
     {
         $object = [];
         $data = [];
@@ -133,10 +134,13 @@ class Quotation extends CI_Controller
             // echo $this->db->last_query();die;
         }
 
-        echo json_encode($data);
+        if($json)
+            echo json_encode($data);
+        else
+            return $data;
     }
 
-    function getDataMaterial($id_header = NULL, $id_material = NULL)
+    function getDataMaterial($id_header = NULL, $id_material = NULL, $json = TRUE)
     {
         $object = [];
         $data = [];
@@ -149,7 +153,10 @@ class Quotation extends CI_Controller
             }
         }
         // print_r($data);
-        echo json_encode($data);
+        if($json)
+            echo json_encode($data);
+        else
+            return $data;
     }
 
     /* count item to parent */
@@ -645,7 +652,10 @@ class Quotation extends CI_Controller
     }
 
     public function printPartPerSection($id_header){
-        $data = $this->getDataPart($id_header, NULL, false);
-        $this->load->view('report/quotation_part',['data' => $data]);
+        $rowTitle = $this->db->get_where('header',['id' => $id_header])->row();
+        $title = "Quot-".$rowTitle->inquiry_no."-".$rowTitle->project_name."-".$rowTitle->customer."-".date('dmY');
+        $dataPart = $this->getDataPart($id_header, NULL, false);
+        $dataMaterial = $this->getDataMaterial($id_header, NULL, false);
+        $this->load->view('report/quotation_part',['part' => $dataPart, 'material' => $dataMaterial,'title' => $title]);
     }
 }

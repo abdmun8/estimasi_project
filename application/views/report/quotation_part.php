@@ -10,118 +10,21 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 
 require_once 'vendor/autoload.php';
 
-function typeCheck($v)
-{
-    if ($v == 'section') {
-        return 'CCFFE8';
-    } else if ($v == 'object') {
-        return 'C5DEED';
-    } else if ($v == 'sub_object') {
-        return 'FBE1B6';
-    } else {
-        return 'FFFFFF';
-    }
-}
-
-function getKategori($k)
-{
-    if ($k == '')
-        return '';
-    $kategori = [
-        "10001" => "RAW MATERIAL",
-        "10002" => "ELECTRIC STD PART",
-        "10003" => "MECHANIC STD PART",
-        "10004" => "PNEUMATIC STD PART",
-        "10005" => "HYDRAULIC STD PART",
-        "20001" => "JASA SPECIAL PROCESS",
-        "40003" => "Import"
-    ];
-    return $kategori[$k];
-}
-
-function addSpace($v, $value)
-{
-    $num_space = 0;
-    if ($v == 'item') {
-        $num_space = 9;
-    } else if ($v == 'object') {
-        $num_space = 3;
-    } else if ($v == 'sub_object') {
-        $num_space = 6;
-    } else {
-        $num_space = 0;
-    }
-    $space = '';
-    for ($i = 0; $i < $num_space; $i++) {
-        $space .= ' ';
-    }
-    return $space . $value;
-}
-
-function findChild($v)
-{
-    $new = [];
-    $harga = $v['tipe_item'] !== 'item' ? '' : $v['harga'];
-    $qty = $v['tipe_item'] != 'item' ? '' : $v['qty'];
-    $item_code = $v['tipe_item'] != 'item' ? '' : $v['item_code'];
-    $new = [
-        'tipe_id' =>  $v['tipe_id'],
-        'tipe_name' =>  $v['tipe_name'],
-        'item_code' =>  $item_code,
-        'item_name' =>  $v['item_name'],
-        'spec' =>  $v['spec'],
-        'merk' =>  $v['merk'],
-        'satuan' =>  $v['satuan'],
-        'harga' =>  $harga,
-        'qty' =>  $qty,
-        'total' =>  $v['total'],
-        'kategori' =>  getKategori($v['kategori']),
-        'tipe_item' =>  $v['tipe_item']
-    ];
-    return $new;
-}
-
-$arrHeader = [
-    'tipe_id' => 'Section / Object',
-    'tipe_name' => 'Name',
-    'item_code' => 'Item Code',
-    'item_name' => 'Item Name',
-    'spec' => 'Spec',
-    'merk' => 'Merk',
-    'satuan' => 'Satuan',
-    'harga' => 'Harga',
-    'qty' => 'Qty',
-    'total' => 'Total',
-    'kategori' => 'Kategori'
+$arrHeaderPart = [
+    'Section / Object',
+    'Name',
+    'Item Code',
+    'Item Name',
+    'Spec',
+    'Merk',
+    'Satuan',
+    'Harga',
+    'Qty',
+    'Total',
+    'Kategori'
 ];
 
-$arrId = [];
-$arrData = [];
-foreach ($data as $key => $s) {
-    if ($s['tipe_item'] == 'section') {
-        $arrData[] = findChild($s);
-        array_push($arrId, $s['id']);
-        foreach ($data as $key => $o) {
-            if ($o['id_parent'] == $s['id'] && !in_array($o['id'], $arrId)) {
-                $arrData[] = findChild($o);
-                array_push($arrId, $o['id']);
-                foreach ($data as $key => $so) {
-                    if ($so['id_parent'] == $o['id'] && !in_array($so['id'], $arrId)) {
-                        $arrData[] = findChild($so);
-                        array_push($arrId, $so['id']);
-                        foreach ($data as $key => $i) {
-                            if ($i['id_parent'] == $so['id'] && !in_array($i['id'], $arrId)) {
-                                $arrData[] = findChild($i);
-                                array_push($arrId, $i['id']);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
+$dataPart = $this->reporter->getStructure($part, 'findChildPart');
 
 // print_r($arrData);
 // Create new Spreadsheet object
@@ -133,47 +36,49 @@ $activeSheet->setCellValue('A1', 'Detail Part & Jasa');
 $activeSheet->getStyle("A1")->getFont()->setSize(16);
 
 //output headers
-$activeSheet->fromArray($arrHeader, NULL, 'A3');
-$activeSheet->getStyle('A3:K3')->applyFromArray(
-    [
-        'fill' => [
-            'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_GRADIENT_LINEAR,
-            'rotation' => 90,
-            'startColor' => [
-                'argb' => 'EEEEEEEE',
-            ],
-            'endColor' => [
-                'argb' => 'EEEEEEEE',
-            ],
+$headerStyle = [
+    'fill' => [
+        'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_GRADIENT_LINEAR,
+        'rotation' => 90,
+        'startColor' => [
+            'argb' => 'EEEEEEEE',
         ],
-        'borders' => [
-            'allBorders' => [
-                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                'color' => ['argb' => '00000000'],
-            ],
+        'endColor' => [
+            'argb' => 'EEEEEEEE',
         ],
-        'font'  => [
-            'bold'  =>  true,
-            'size' => 10
-        ]
+    ],
+    'borders' => [
+        'allBorders' => [
+            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+            'color' => ['argb' => '00000000'],
+        ],
+    ],
+    'font'  => [
+        'bold'  =>  true,
+        'size' => 10
     ]
-);
+];
+$activeSheet->fromArray($arrHeaderPart, NULL, 'A3');
+$activeSheet->getStyle('A3:K3')->applyFromArray($headerStyle);
 
-foreach ($arrData as $key => $domain) {
+// Looping part & jasa
+
+$row = 0;
+foreach ($dataPart as $key => $part) {
     $row = (int) $key + 4;
-    $color = typeCheck($domain['tipe_item']);
+    $color = $this->reporter->typeCheck($part['tipe_item']);
 
-    $activeSheet->setCellValue('A' . $row, addSpace($domain['tipe_item'], $domain['tipe_id']));
-    $activeSheet->setCellValue('B' . $row, addSpace($domain['tipe_item'], $domain['tipe_name']));
-    $activeSheet->setCellValue('C' . $row, $domain['item_code']);
-    $activeSheet->setCellValue('D' . $row, $domain['item_name']);
-    $activeSheet->setCellValue('E' . $row, $domain['spec']);
-    $activeSheet->setCellValue('F' . $row, $domain['merk']);
-    $activeSheet->setCellValue('G' . $row, $domain['satuan']);
-    $activeSheet->setCellValue('H' . $row, $domain['harga']);
-    $activeSheet->setCellValue('I' . $row, $domain['qty']);
-    $activeSheet->setCellValue('J' . $row, $domain['total']);
-    $activeSheet->setCellValue('K' . $row, $domain['kategori']);
+    $activeSheet->setCellValue('A' . $row, addSpace($part['tipe_item'], $part['tipe_id']));
+    $activeSheet->setCellValue('B' . $row, addSpace($part['tipe_item'], $part['tipe_name']));
+    $activeSheet->setCellValue('C' . $row, $part['item_code']);
+    $activeSheet->setCellValue('D' . $row, $part['item_name']);
+    $activeSheet->setCellValue('E' . $row, $part['spec']);
+    $activeSheet->setCellValue('F' . $row, $part['merk']);
+    $activeSheet->setCellValue('G' . $row, $part['satuan']);
+    $activeSheet->setCellValue('H' . $row, $part['harga']);
+    $activeSheet->setCellValue('I' . $row, $part['qty']);
+    $activeSheet->setCellValue('J' . $row, $part['total']);
+    $activeSheet->setCellValue('K' . $row, $part['kategori']);
     $activeSheet->getStyle("H$row")->getNumberFormat()
         ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
     $activeSheet->getStyle("J$row")->getNumberFormat()
@@ -204,11 +109,88 @@ foreach ($arrData as $key => $domain) {
     );
 }
 
+// print_r($material);die;
+// Material
+$arrHeaderMaterial = [
+    'Section / Object',
+    'Name',
+    'Item Code',
+    'Item Name',
+    'Units',
+    'Qty',
+    'Materials',
+    'Length',
+    'Weight',
+    'Height',
+    'Diameter',
+    'Density',
+    'Weight Total',
+    'Total',
+];
+$row += 3;
+$activeSheet->setCellValue("A$row", 'Detail Raw Material');
+$activeSheet->getStyle("A$row")->getFont()->setSize(16);
+$dataMaterial = $this->reporter->getStructure($material, 'findChildMaterial');
+// Header Material
 
+$row+=2;
+$activeSheet->fromArray($arrHeaderMaterial, NULL, "A$row");
+$activeSheet->getStyle("A$row:N$row")->applyFromArray($headerStyle);
+
+foreach ($dataMaterial as $key => $part) {
+    // var_dump($part);die;
+    $row ++;
+    $color = $this->reporter->typeCheck($part['tipe_item']);
+
+    $activeSheet->setCellValue('A' . $row, addSpace($part['tipe_item'], $part['tipe_id']));
+    $activeSheet->setCellValue('B' . $row, addSpace($part['tipe_item'], $part['tipe_name']));
+    $activeSheet->setCellValue('C' . $row, $part['item_code']);
+    $activeSheet->setCellValue('D' . $row, $part['part_name']);
+    $activeSheet->setCellValue('E' . $row, $part['units']);
+    $activeSheet->setCellValue('F' . $row, $part['qty']);
+    $activeSheet->setCellValue('G' . $row, $part['materials']);
+    $activeSheet->setCellValue('H' . $row, $part['l']);
+    $activeSheet->setCellValue('I' . $row, $part['w']);
+    $activeSheet->setCellValue('J' . $row, $part['h']);
+    $activeSheet->setCellValue('K' . $row, $part['t']);
+    $activeSheet->setCellValue('L' . $row, $part['density']);
+    $activeSheet->setCellValue('M' . $row, $part['weight']);
+    $activeSheet->setCellValue('N' . $row, $part['total']);
+    // $activeSheet->getStyle("H$row")->getNumberFormat()
+    //     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+    // $activeSheet->getStyle("J$row")->getNumberFormat()
+    //     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+    $activeSheet->getStyle("A$row:N$row")->applyFromArray(
+        [
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_GRADIENT_LINEAR,
+                'rotation' => 90,
+                'startColor' => [
+                    'argb' => $color,
+                ],
+                'endColor' => [
+                    'argb' => $color,
+                ],
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'startColor' => ['argb' => '00000000'],
+                ],
+            ],
+            'font'  => [
+                'size' => 9,
+                'name' => 'Calibri',
+            ]
+        ]
+    );
+}
+
+// print_r($spreadsheet);die;
 
 // Redirect output to a client's web browser (Xlsx)
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-header('Content-Disposition: attachment;filename="part_jasa.xlsx"');
+header('Content-Disposition: attachment;filename="'.$title.'.xlsx"');
 header('Cache-Control: max-age=0');
 
 $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
