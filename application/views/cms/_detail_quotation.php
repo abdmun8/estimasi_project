@@ -149,6 +149,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                     </select>
                                 </div>
                             </div>
+                            <button id="print-part-section" style="margin-left: 10px;" onclick="printPart('<?= $param ?>')" type="button" class="btn btn-info pull-right"><i class="fa fa-print"></i> Print</button>
                             <button type="button" class="btn btn-success pull-right" onclick="saving();"><i class="fa fa-save"></i> Save</button>
                             <button type="button" class="btn btn-default pull-right" onclick="newForm();" style="margin-right: 10px;"><i class="fa fa-plus"></i> New</button>
                             <input type="hidden" id="id_header" name="id_header" value="" />
@@ -163,8 +164,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             <section class="">
                 <div id="demo-toolbar" class="btn-group" role="group" aria-label="...">
                     <button id="addBtn" type="button" class="btn btn-default" onclick="showModalInput('section')">Add Section</button>
-                    <button id="expandAllBtn" type="button" class="btn btn-default">Expand/Collapse All</button>
-                    <button id="print-part-section" onclick="printPart('<?= $param ?>')" type="button" class="btn btn-default">Print</button>
+                    <button id="expandAllBtn" type="button" class="btn btn-default">Expand/Collapse All</button>                    
                 </div>
                 <table id="demo"></table>
             </section>
@@ -1063,10 +1063,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     align: "right",
                     visible: true,
                     formatter: function(value, row, index) {
-                        if (value == 0) {
-                            return '';
-                        }
-                        return value;
+                        if (row.tipe_item == 'item')
+                            return value;
+                        return '';
                     }
                 },
                 {
@@ -1083,10 +1082,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     align: "right",
                     visible: true,
                     formatter: function(value, row, index) {
-                        if (value == 0) {
-                            return '';
-                        }
-                        return value;
+                        if (row.tipe_item == 'item')
+                            return value;
+                        return '';
                     }
                 },
                 {
@@ -1096,10 +1094,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     align: "right",
                     visible: true,
                     formatter: function(value, row, index) {
-                        if (value == 0) {
-                            return '';
-                        }
-                        return value;
+                        if (row.tipe_item == 'item')
+                            return value;
+                        return '';
                     }
                 },
                 {
@@ -1109,10 +1106,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     align: "right",
                     visible: true,
                     formatter: function(value, row, index) {
-                        if (value == 0) {
-                            return '';
-                        }
-                        return value;
+                        if (row.tipe_item == 'item')
+                            return value;
+                        return '';
                     }
                 },
                 {
@@ -1122,10 +1118,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     align: "right",
                     visible: true,
                     formatter: function(value, row, index) {
-                        if (value == 0) {
-                            return '';
-                        }
-                        return value;
+                        if (row.tipe_item == 'item')
+                            return value;
+                        return '';
                     }
                 },
                 {
@@ -1135,10 +1130,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     align: "right",
                     visible: true,
                     formatter: function(value, row, index) {
-                        if (value == 0) {
-                            return '';
-                        }
-                        return value * 1;
+                        if (row.tipe_item == 'item')
+                            return value;
+                        return '';
                     }
                 },
                 {
@@ -1148,10 +1142,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     align: "right",
                     visible: true,
                     formatter: function(value, row, index) {
-                        // if(value == 0){
-                        //     return '';
-                        // }
-                        return value * 1;
+                        if (row.tipe_item == 'item')
+                            return value * 1;
+                        return '';
                     }
                 },
                 {

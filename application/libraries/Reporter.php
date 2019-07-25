@@ -57,8 +57,13 @@ class Reporter
     public function findChildMaterial($v)
     {
         $new = [];
-        // $harga = $v['tipe_item'] !== 'item' ? '' : $v['harga'];
         $qty = $v['tipe_item'] != 'item' ? '' : $v['qty'];
+        $l = $v['tipe_item'] != 'item' ? '' : $v['l'];
+        $w = $v['tipe_item'] != 'item' ? '' : $v['w'];
+        $h = $v['tipe_item'] != 'item' ? '' : $v['h'];
+        $t = $v['tipe_item'] != 'item' ? '' : $v['t'];
+        $density = $v['tipe_item'] != 'item' ? '' : $v['density'];
+        $weight = $v['tipe_item'] != 'item' ? '' : $v['weight'];
         $item_code = $v['tipe_item'] != 'item' ? '' : $v['item_code'];
         $new = [
             'tipe_id' =>  $v['tipe_id'],
@@ -66,14 +71,14 @@ class Reporter
             'item_code' =>  $item_code,
             'part_name' =>  $v['part_name'],
             'units' =>  $v['units'],
-            'qty' =>  $v['qty'],
+            'qty' =>  $qty,
             'materials' =>  $v['materials'],
-            'l' =>  $v['l'],
-            'w' =>  $v['w'],
-            'h' =>  $v['h'],
-            't' =>  $v['t'],
-            'density' =>  $v['density'],
-            'weight' =>  $v['weight'],
+            'l' =>  $l,
+            'w' =>  $w,
+            'h' =>  $h,
+            't' =>  $t,
+            'density' =>  $density,
+            'weight' =>  $weight,
             'total' =>  $v['total'],
             'tipe_item' =>  $v['tipe_item'],
         ];
