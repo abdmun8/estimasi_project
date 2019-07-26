@@ -74,14 +74,14 @@ class Quotation extends CI_Controller
         if ($id_header != NULL) {
             if ($id_part == NULL) {
                 $object = $this->db->query('SELECT
-                            *,
+                            j.*,
                             (SELECT
                                     tipe_item
                                 FROM
                                     quotation.part_jasa p
                                 WHERE
                                     p.id = j.id_parent) AS tipe_parent,
-                            k.desc AS nama_kategori
+                            k.`desc` AS nama_kategori
                         FROM
                             quotation.`part_jasa` j
                                 LEFT JOIN
@@ -93,7 +93,7 @@ class Quotation extends CI_Controller
                 $data = $this->db->get_where('part_jasa', ['id_header' => $id_header, 'id' => $id_part])->row_array();
             }
         }
-
+        // echo $this->db->last_query();die;
         if (!$json)
             return $data;
         echo json_encode($data);
@@ -658,10 +658,10 @@ class Quotation extends CI_Controller
         echo json_encode(['code' => 1, 'success' => true]);
     }
 
-    public function printPartPerSection($id_header)
+    public function printPart($id_header)
     {
         $rowTitle = $this->db->get_where('header', ['id' => $id_header])->row();
-        $title = "Quot-" . $rowTitle->inquiry_no . "-" . $rowTitle->project_name . "-" . $rowTitle->customer . "-" . date('dmY');
+        $title = "Quot-Part-" . $rowTitle->inquiry_no . "-" . $rowTitle->project_name . "-" . $rowTitle->customer . "-" . date('dmY');
         $dataPart = $this->getDataPart($id_header, NULL, false);
         $dataMaterial = $this->getDataMaterial($id_header, NULL, false);
         $this->load->view('report/quotation_part', ['part' => $dataPart, 'material' => $dataMaterial, 'title' => $title]);
@@ -670,8 +670,18 @@ class Quotation extends CI_Controller
     public function printLabour($id_header)
     {
         $rowTitle = $this->db->get_where('header', ['id' => $id_header])->row();
-        $title = "Quot-" . $rowTitle->inquiry_no . "-" . $rowTitle->project_name . "-" . $rowTitle->customer . "-" . date('dmY');
+        $title = "Quot-Labour-" . $rowTitle->inquiry_no . "-" . $rowTitle->project_name . "-" . $rowTitle->customer . "-" . date('dmY');
         $dataLabour = $this->getDataLabour($id_header, NULL, false, false);
         $this->load->view('report/quotation_labour', ['labour' => $dataLabour, 'title' => $title]);
+    }
+
+    public function printSummary($id_header)
+    {
+        $rowTitle = $this->db->get_where('header', ['id' => $id_header])->row();
+        $title = "Quot-Summary" . $rowTitle->inquiry_no . "-" . $rowTitle->project_name . "-" . $rowTitle->customer . "-" . date('dmY');
+        $dataPart = $this->getDataPart($id_header, NULL, false);
+        $dataMaterial = $this->getDataMaterial($id_header, NULL, false);
+        $dataLabour = $this->getDataLabour($id_header, NULL, false, false);
+        $this->load->view('report/quotation_summary', ['part' => $dataPart, 'material' => $dataMaterial, 'labour' => $dataLabour, 'title' => $title, 'inquiry_no' => $rowTitle->inquiry_no]);
     }
 }

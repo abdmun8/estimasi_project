@@ -38,6 +38,9 @@ class Reporter
         $qty = $v['tipe_item'] != 'item' ? '' : $v['qty'];
         $item_code = $v['tipe_item'] != 'item' ? '' : $v['item_code'];
         $new = [
+            'id' =>  $v['id'],
+            'id_parent' =>  $v['id_parent'],
+            'id_header' =>  $v['id_header'],
             'tipe_id' =>  $v['tipe_id'],
             'tipe_name' =>  $v['tipe_name'],
             'item_code' =>  $item_code,
@@ -66,6 +69,9 @@ class Reporter
         $weight = $v['tipe_item'] != 'item' ? '' : $v['weight'];
         $item_code = $v['tipe_item'] != 'item' ? '' : $v['item_code'];
         $new = [
+            'id' =>  $v['id'],
+            'id_parent' =>  $v['id_parent'],
+            'id_part_jasa' =>  $v['id_part_jasa'],
             'tipe_id' =>  $v['tipe_id'],
             'tipe_name' =>  $v['tipe_name'],
             'item_code' =>  $item_code,
@@ -91,6 +97,7 @@ class Reporter
         $new = [
             'id' =>  $v['id'],
             'id_parent' =>  $v['id_parent'],
+            'id_part_jasa' =>  $v['id_part_jasa'],
             'id_header' =>  $v['id_header'],
             'tipe_id' =>  $v['tipe_id'],
             'tipe_name' =>  $v['tipe_name'],
@@ -103,6 +110,8 @@ class Reporter
         ];
         return $new;
     }
+
+    // public function 
 
     public function getStructure($data, $functionName)
     {
@@ -134,5 +143,47 @@ class Reporter
         }
 
         return $arrData;
+    }
+
+    public function getStructureTree($data)
+    {
+        $arrId = [];
+        $struct = [];
+        $arrData = [];
+        $n = 0;
+        foreach ($data as $key => $s) {
+            $struct[$n] = [];
+            if ($s['tipe_item'] == 'section') {
+                $arrData[] = $s;
+                array_push($arrId, $s['id']);
+                array_push($struct[$n],$s['id']);
+                foreach ($data as $key => $o) {
+                    if ($o['id_parent'] == $s['id'] && !in_array($o['id'], $arrId) && $o['tipe_item'] != 'item') {
+                        $arrData[] = $o;
+                        array_push($arrId, $o['id']);
+                        array_push($struct[$n], $o['id']);
+                        foreach ($data as $key => $so) {
+                            if ($so['id_parent'] == $o['id'] && !in_array($so['id'], $arrId) && $so['tipe_item'] != 'item') {
+                                $arrData[] = $so;
+                                array_push($arrId, $so['id']);
+                                array_push($struct[$n], $so['id']);
+                                // foreach ($data as $key => $i) {
+                                //     if ($i['id_parent'] == $so['id'] && !in_array($i['id'], $arrId)) {
+                                //         $arrData[] = $i;
+                                //         array_push($arrId, $i['id']);
+                                //     }
+                                // }
+                            }
+                        }
+                    }
+                }
+            }
+            if(count($struct[$n]) > 0){
+                $n++;
+            }
+            // var_dump($struct);die;
+        }
+
+        return $struct;
     }
 }

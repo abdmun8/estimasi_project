@@ -149,9 +149,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                     </select>
                                 </div>
                             </div>
-                            <button id="print-part-section" style="margin-left: 10px;" onclick="printPart('<?= $param ?>')" type="button" class="btn btn-info pull-right"><i class="fa fa-print"></i> Print</button>
-                            <button type="button" class="btn btn-success pull-right" onclick="saving();"><i class="fa fa-save"></i> Save</button>
-                            <button type="button" class="btn btn-default pull-right" onclick="newForm();" style="margin-right: 10px;"><i class="fa fa-plus"></i> New</button>
+                            <button title="Export Summary" id="print-part-section" style="margin-left: 10px;" onclick="exportExcel('summary','<?= $param ?>')" type="button" class="btn btn-default pull-right"><i class="fa fa-file-excel-o"></i> Summary</button>
+                            <button title="Save Record" type="button" class="btn btn-default pull-right" onclick="saving();"><i class="fa fa-save"></i> Save</button>
+                            <button title="New Record" type="button" class="btn btn-default pull-right" onclick="newForm();" style="margin-right: 10px;"><i class="fa fa-plus"></i> New</button>
                             <input type="hidden" id="id_header" name="id_header" value="" />
                             <input type="hidden" id="action" name="action" value="1" />
                         </div>
@@ -164,7 +164,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             <section class="">
                 <div id="demo-toolbar" class="btn-group" role="group" aria-label="...">
                     <button id="addBtn" type="button" class="btn btn-default" onclick="showModalInput('section')">Add Section</button>
-                    <button id="expandAllBtn" type="button" class="btn btn-default">Expand/Collapse All</button>                    
+                    <button id="expandAllBtn" type="button" class="btn btn-default">Expand/Collapse All</button>
+                    <button title="Export Part, jasa & Raw Material" onclick="exportExcel('part','<?= $param ?>')" id="btn-print-labour" type="button" class="btn btn-default"><i class="fa fa-file-excel-o"></i> Export</button>
                 </div>
                 <table id="demo"></table>
             </section>
@@ -175,6 +176,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             <section class="">
                 <div id="material-toolbar" class="btn-group" role="group" aria-label="...">
                     <button id="expandAllBtnMaterial" type="button" class="btn btn-default">Expand/Collapse All</button>
+                    <button title="Export Part, jasa & Raw Material" onclick="exportExcel('part','<?= $param ?>')" id="btn-print-labour" type="button" class="btn btn-default"><i class="fa fa-file-excel-o"></i> Export</button>
                 </div>
                 <table id="material_table"></table>
             </section>
@@ -184,7 +186,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             <section class="">
                 <div id="labour-toolbar" class="btn-group" role="group" aria-label="...">
                     <button id="expandAllBtnLabour" type="button" class="btn btn-default">Expand/Collapse All</button>
-                    <button onclick="printReportLabour('<?=$param?>')" id="btn-print-labour" type="button" class="btn btn-default"><i class="fa fa-print"></i> Print</button>
+                    <button title="Export Detail Labour" onclick="exportExcel('labour','<?= $param ?>')" id="btn-print-labour" type="button" class="btn btn-default"><i class="fa fa-file-excel-o"></i> Export</button>
                 </div>
                 <table id="labour_table"></table>
             </section>
@@ -623,9 +625,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         if (row.tipe_item == 'section') {
                             return '<span class="label label-success">' + value + '</span>';
                         } else if (row.tipe_item == 'object') {
-                            return addSpace(3) +'<span class="label label-primary">' +  value + '</span>';
+                            return addSpace(3) + '<span class="label label-primary">' + value + '</span>';
                         } else if (row.tipe_item == 'sub_object') {
-                            return addSpace(6) +'<span class="label label-warning">' +  value + '</span>';
+                            return addSpace(6) + '<span class="label label-warning">' + value + '</span>';
                         } else {
                             return '';
                         }
@@ -822,9 +824,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         if (row.tipe_item == 'section') {
                             return '<span class="label label-success">' + value + '</span>';
                         } else if (row.tipe_item == 'object') {
-                            return addSpace(3)+'<span class="label label-primary">' +  value + '</span>';
+                            return addSpace(3) + '<span class="label label-primary">' + value + '</span>';
                         } else if (row.tipe_item == 'sub_object') {
-                            return addSpace(6)+'<span class="label label-warning">'+  value + '</span>';
+                            return addSpace(6) + '<span class="label label-warning">' + value + '</span>';
                         } else {
                             return '';
                         }
@@ -832,7 +834,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 },
                 {
                     field: 'opsi',
-                    title: 'Detail',
+                    title: 'Labour',
                     width: '130',
                     align: "center",
                     visible: true,
@@ -1008,9 +1010,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         if (row.tipe_item == 'section') {
                             return '<span class="label label-success">' + value + '</span>';
                         } else if (row.tipe_item == 'object') {
-                            return addSpace(3)+'<span class="label label-primary">' +  value + '</span>';
+                            return addSpace(3) + '<span class="label label-primary">' + value + '</span>';
                         } else if (row.tipe_item == 'sub_object') {
-                            return addSpace(6)+'<span class="label label-warning">' +  value + '</span>';
+                            return addSpace(6) + '<span class="label label-warning">' + value + '</span>';
                         } else {
                             return '';
                         }
@@ -1826,7 +1828,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         // group kategori
         function switchCodeToCategory(cd) {
             var codes = [{
-                    code: ['ATK', 'CNS', 'RMT', 'SNS', 'PPG', 'OFF', 'INV'],
+                    code: ['ATK', 'CNS', 'RMT', 'PPG', 'OFF', 'INV'],
                     value: '10001'
                 },
                 {
@@ -1840,6 +1842,10 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 {
                     code: ['PNU', 'PNE'],
                     value: '10004'
+                },
+                {
+                    code: ['SNS'],
+                    value: '20001'
                 },
             ];
             let val = '';
@@ -1934,13 +1940,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             tableDetailLabour.ajax.url(base_url + 'quotation/get_detail_by_header/' + <?= $param ?> + '/' + id_header + '/' + type, ).load();
         }
 
-        // print
-        function printPart(id_header) {
-            window.open(base_url + 'quotation/print_part_persection/' + id_header);
-        }
-
-        function printReportLabour(id_header) {
-            window.open(base_url + 'quotation/print_labour/' + id_header);
+        // Export Excel
+        function exportExcel(report = 'summary',id_header) {
+            window.open(base_url + `quotation/print_${report}/` + id_header);
         }
     </script>
 </body>

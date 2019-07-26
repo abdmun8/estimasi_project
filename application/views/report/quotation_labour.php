@@ -46,9 +46,6 @@ $dataParent = array_filter($labour, function($item){
 
 $dataSort = $this->reporter->getStructure($dataParent, 'findChildLabour');
 
-// print_r(array_values($dataSort));
-// die;
-
 $newData = [];
 
 foreach (array_values($dataSort) as $key => $value) {
