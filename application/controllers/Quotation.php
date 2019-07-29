@@ -638,7 +638,7 @@ class Quotation extends CI_Controller
     public function getSection($id_header)
     {
         $data = [];
-        $result = $this->db->get_where('rawmaterial', ['tipe_item' => 'section', 'id_header' => $id_header])->result_array();
+        $result = $this->db->get_where('part_jasa', ['tipe_item' => 'section', 'id_header' => $id_header])->result_array();
         // echo $this->db->last_query();
         $no = 0;
         foreach ($result as $key => $value) {
@@ -654,7 +654,7 @@ class Quotation extends CI_Controller
     function saveSectionQty()
     {
         $post = $this->input->post();
-        $this->db->update('rawmaterial', ['qty' => $post['qty']], ['id' => $post['id']]);
+        $this->db->update('part_jasa', ['qty' => $post['qty']], ['id' => $post['id']]);
         echo json_encode(['code' => 1, 'success' => true]);
     }
 
@@ -675,13 +675,35 @@ class Quotation extends CI_Controller
         $this->load->view('report/quotation_labour', ['labour' => $dataLabour, 'title' => $title]);
     }
 
-    public function printSummary($id_header)
+    public function printSummary($id_header, $return = FALSE)
     {
         $rowTitle = $this->db->get_where('header', ['id' => $id_header])->row();
         $title = "Quot-Summary" . $rowTitle->inquiry_no . "-" . $rowTitle->project_name . "-" . $rowTitle->customer . "-" . date('dmY');
         $dataPart = $this->getDataPart($id_header, NULL, false);
         $dataMaterial = $this->getDataMaterial($id_header, NULL, false);
         $dataLabour = $this->getDataLabour($id_header, NULL, false, false);
-        $this->load->view('report/quotation_summary', ['part' => $dataPart, 'material' => $dataMaterial, 'labour' => $dataLabour, 'title' => $title, 'inquiry_no' => $rowTitle->inquiry_no]);
+        $summary = $this->reporter->getDataSummary($dataPart, $dataMaterial, $dataLabour);
+        if ($return) {
+            return $summary;
+        } else {
+            $this->load->view('report/quotation_summary', ['summary' => $summary, 'title' => $title, 'inquiry_no' => $rowTitle->inquiry_no]);
+        }
+    }
+
+    public function saveAllowance()
+    {
+        $post = $this->input->post();
+        $this->db->update(
+            'header',
+            ['allowance' => $post['allowance']],
+            ['id' => $post['id']]
+        );
+        echo json_encode(['code' => 1, 'success' => true]);
+    }
+
+    public function getAmountAllowance(){
+        $get = $this->input->get();
+        $amount = $this->db->get_where('header', ['id' => $get['id']])->row()->allowance;
+        echo json_encode(['data' => $amount, 'code' => 1, 'success' => true]);
     }
 }

@@ -108,6 +108,8 @@ $route['quotation/del_item'] = 'Quotation/delItem';
 $route['quotation/save_hour'] = 'Quotation/saveHourLabour';
 $route['quotation/get_section/(:any)'] = 'Quotation/getSection/$1';
 $route['quotation/save_section_qty'] = 'Quotation/saveSectionQty';
+$route['quotation/save_allowance'] = 'Quotation/saveAllowance';
+$route['quotation/get_amount_allowance'] = 'Quotation/getAmountAllowance';
 $route['quotation/get_detail_by_header/(:any)/(:any)/(:any)'] = 'Quotation/getDetailLabourByHeader/$1/$2/$3';
 
 /* Material */

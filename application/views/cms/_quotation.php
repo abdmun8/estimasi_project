@@ -50,6 +50,7 @@ if ($param != null) {
                             <th>Qty</th>
                             <th>Customer</th>
                             <th>PIC Marketing</th>
+                            <th>Allowance</th>
                             <th>Start Date</th>
                             <th>Finish Date</th>
                             <th>Duration</th>
@@ -99,6 +100,36 @@ if ($param != null) {
     <!-- /.modal-dialog -->
 </div>
 <!-- /End modal Detail Labour -->
+
+<!-- Modal Detail Labour -->
+<div class="modal fade" id="modal-allowance" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div id="loading1"></div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Input Allowance</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="allowance-input" class="col-md-4 control-label">Allowance</label>
+                    <div class="col-md-8">
+                        <input type="number" min="0" class="form-control" id="allowance-input" name="allowance-input" placeholder="Allowance" />
+                    </div>
+                    <input type="text" id="id_header-allowance" hidden>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success pull-right" onclick="saveAllowance()">Save</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /End modal Detail Labour -->
 <script>
     var tableData, tableSection;
     $(document).ready(function() {
@@ -128,6 +159,32 @@ if ($param != null) {
 
     function printQuotation(id) {
         window.open(base_url + 'report/quotationreport/' + id)
+    }
+
+    function saveAllowance() {
+        let allowance = $("#allowance-input").val();
+        let id_header = $("#id_header-allowance").val();
+        loading('loading1', true);
+        setTimeout(function() {
+            $.ajax({
+                url: base_url + 'quotation/save_allowance',
+                data: {
+                    allowance: allowance,
+                    id: id_header
+                },
+                dataType: 'json',
+                type: 'POST',
+                cache: false,
+                success: function(json) {
+                    refreshTable();
+                    loading('loading1', false);
+                    $("#modal-allowance").modal('hide')
+                },
+                error: function() {
+                    loading('loading1', false);
+                }
+            });
+        }, 100);
     }
 
 
@@ -160,6 +217,9 @@ if ($param != null) {
                     },
                     {
                         "data": "nama"
+                    },
+                    {
+                        "data": "allowance"
                     },
                     {
                         "data": "start_date"
@@ -208,6 +268,20 @@ if ($param != null) {
         $("#table-data .editQtyBtn").on("click", function() {
             refreshTableSection($(this).attr('href').substring(1));
             $("#modal-detail").modal('show');
+        });
+
+        $("#table-data .editAllowanceBtn").on("click", function() {
+            // refreshTableSection($(this).attr('href').substring(1));
+            let id = $(this).attr('href').substring(1);
+            $.get(base_url + 'quotation/get_amount_allowance', {
+                id: id
+            }, (response) => {
+                if (response.data) {
+                    $("#allowance-input").val(response.data)
+                }
+            }, 'json')
+            $("#id_header-allowance").val(id);
+            $("#modal-allowance").modal('show');
         });
 
 
@@ -398,20 +472,23 @@ if ($param != null) {
     function editQtySection(o, id) {
         let oldValue = $(o).parent().siblings()[2].innerHTML
         $(o).parent().siblings()[2].innerHTML = "<input min='0' id='input-section-qty' style='width:100px;' type='number' value='" + oldValue + "' />"
-        $(".save-qty-section"+id+"").css('display','inline')
-        $(".edit-qty-section"+id+"").css('display','none')
+        $(".save-qty-section" + id + "").css('display', 'inline')
+        $(".edit-qty-section" + id + "").css('display', 'none')
     }
 
     function saveQtySection(o, id) {
         let value = $("#input-section-qty").val()
         $(o).parent().siblings()[2].innerHTML = value;
-        $(".save-qty-section"+id+"").css('display','none')
-        $(".edit-qty-section"+id+"").css('display','inline')
+        $(".save-qty-section" + id + "").css('display', 'none')
+        $(".edit-qty-section" + id + "").css('display', 'inline')
         loading('loading1', true);
         setTimeout(function() {
             $.ajax({
                 url: base_url + 'quotation/save_section_qty',
-                data: {qty: value, id: id},
+                data: {
+                    qty: value,
+                    id: id
+                },
                 dataType: 'json',
                 type: 'POST',
                 cache: false,
