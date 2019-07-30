@@ -51,7 +51,7 @@ $newData = [];
 foreach (array_values($dataSort) as $key => $value) {
     array_push($newData, $value);
     $sql = "SELECT
-            `l`.*,id AS opsi, 
+            `l`.*, sum(l.`hour`) as total_hour, id AS opsi, 
             (
         SELECT
             tipe_item
@@ -65,8 +65,10 @@ foreach (array_values($dataSort) as $key => $value) {
             l.id_header ='{$value['id_header']}' AND l.id_parent = '{$value['id']}' AND l.tipe_item = 'item' GROUP BY id_labour ORDER BY l.tipe_name";
 
     $data = $this->db->query($sql)->result_array();
+    // echo $this->db->last_query();
     if(count($data) > 0){
         foreach ($data as $key => $item) {
+            $item['hour'] = $item['total_hour'];
             $item['tipe_id'] = $item['tipe_item'] == 'item' ? '' : $item['tipe_id'];
             array_push($newData, $item);
         }
@@ -74,7 +76,9 @@ foreach (array_values($dataSort) as $key => $value) {
 }
 
 
-// print_r($newData);die;
+// print_r($newData);
+// echo $this->db->last_query();
+// die;
 // $dataLabour = $this->reporter->getStructure($newData, 'findChildLabour');
 
 // print_r($arrData);

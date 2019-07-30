@@ -156,8 +156,8 @@ foreach ($dataMaterial as $key => $part) {
     $activeSheet->setCellValue('L' . $row, $part['density']);
     $activeSheet->setCellValue('M' . $row, $part['weight']);
     $activeSheet->setCellValue('N' . $row, $part['total']);
-    // $activeSheet->getStyle("H$row")->getNumberFormat()
-    //     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+    $activeSheet->getStyle("N$row")->getNumberFormat()
+        ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
     // $activeSheet->getStyle("J$row")->getNumberFormat()
     //     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
     $activeSheet->getStyle("A$row:N$row")->applyFromArray(

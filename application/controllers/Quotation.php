@@ -196,11 +196,11 @@ class Quotation extends CI_Controller
                 if ($item['tipe_item'] == 'item') {
 
                     $item['total'] = ($item[$col[0]] * $item[$col[1]]);
-                    $item[$col[0]] = intval($item[$col[0]]);
+                    $item[$col[0]] = floatval($item[$col[0]]);
                     if ($col[1] == 'weight') {
                         $item[$col[1]] = $item[$col[1]];
                     } else {
-                        $item[$col[1]] = intval($item[$col[1]]);
+                        $item[$col[1]] = floatval($item[$col[1]]);
                     }
 
                     if ($item['tipe_parent'] == 'section') {
