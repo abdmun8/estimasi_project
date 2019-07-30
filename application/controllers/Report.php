@@ -70,8 +70,7 @@ class Report extends Quotation
         foreach ($summary as $key => $item) {
             $qty = $item['qty'];
             $part = $item['total_rm'] + $item['total_elc'] + $item['total_pnu'] + $item['total_hyd'] + $item['total_mch'] + $item['total_sub'];
-            $eng = $item['total_eng'];
-            $total += (($qty * $part) + $eng);
+            $total += ($qty * $part);
         }
         return $total;
     }
