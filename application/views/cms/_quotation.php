@@ -238,14 +238,14 @@ if ($param != null) {
                 "ordering": true,
                 "deferRender": true,
                 "columnDefs": [{
-                        "targets": 8,
+                        "targets": 9,
                         "render": function(data, type, row, meta) {
                             var diff = calcDiffDateToMonth(formatDate(row.start_date), formatDate(row.finish_date))
                             return diff + ' MONTH';
                         },
                     },
                     {
-                        "targets": 9,
+                        "targets": 10,
                         "className": "text-center"
                     }
                 ],

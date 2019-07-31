@@ -123,8 +123,8 @@ foreach ($newData as $key => $part) {
     $row = (int) $key + 4;
     $color = $this->reporter->typeCheck($part['tipe_item']);
 
-    $activeSheet->setCellValue('A' . $row, addSpace($part['tipe_item'], $part['tipe_id']));
-    $activeSheet->setCellValue('B' . $row, addSpace($part['tipe_item'], $part['tipe_name']));
+    $activeSheet->setCellValue('A' . $row, $part['tipe_id']);
+    $activeSheet->setCellValue('B' . $row, $part['tipe_name']);
     $activeSheet->setCellValue('C' . $row, $part['id_labour']);
     $activeSheet->setCellValue('D' . $row, $part['aktivitas']);
     $activeSheet->setCellValue('E' . $row, $part['hour']);

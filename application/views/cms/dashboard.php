@@ -12,7 +12,6 @@
 <!-- Main content -->
 <section class="content">
 
-
 </section><!-- /.content -->
 </div><!-- /.content-wrapper -->
 </div>

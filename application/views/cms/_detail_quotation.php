@@ -42,6 +42,27 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         .nav-tabs .active {
             font-weight: bolder;
         }
+
+        blink {
+            animation: blinker 0.6s linear infinite;
+            color: #1c87c9;
+        }
+
+        @keyframes blinker {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        .blink-one {
+            animation: blinker-one 1s linear infinite;
+        }
+
+        @keyframes blinker-one {
+            0% {
+                opacity: 0;
+            }
+        }
     </style>
     <script>
         var base_url = '<?php echo base_url(); ?>';
@@ -256,7 +277,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                     <input type="text" class="form-control input-sm" id="merk-item" name="merk-item" placeholder="Merk">
                                 </div>
                                 <div class="form-group only_item">
-                                    <label for="harga-item">Harga</label>
+                                    <label for="harga-item">Harga  <span style="font-size:12px;font-style:italic;font-weight:normal; color:red;" class="blink-one" id="remark-harga"></span></label>
                                     <input type="text" class="form-control input-sm" id="harga-item" name="harga-item" placeholder="Price">
                                 </div>
                                 <div class="form-group only_item">
@@ -475,9 +496,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         $("#satuan-item").val(o.uom);
                         $("#item_name-item").val(o.nama);
                         $("#harga-item").val(parseInt(o.harga));
-
                         $("#kategori-item").val(katval);
                         $("#kategori-item").trigger('change')
+                        $("#remark-harga").text(o.remark);
                     }
                 });
             }, 'json');
@@ -515,6 +536,14 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     data: data
                 });
             }, 'json');
+
+            /* get Satuan */
+            // $.get(base_url + 'quotation/get_kategori', function(data) {
+            //     $("#kategori-item").select2({
+            //         placeholder: 'Pilih Satuan',
+            //         data: data
+            //     });
+            // }, 'json');
 
             <?php
             if ($param != null) {
@@ -1323,6 +1352,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
          * @action : add = 1 || edit = 2
          */
         function showModalInput(title, id = '', id_parent = '', sub = false, action = 'add') {
+            $("#remark-harga").text('');
+            $("#item_code").val('');
             $("#tipe_id-item").parent().removeClass('has-error');
             $("#harga-item").parent().removeClass('has-error');
             $("#qty-item").parent().removeClass('has-error');
@@ -1443,6 +1474,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         $("#tipe_name-item").val(json.tipe_name);
                         $("#tipe_item-item").val(json.tipe_item);
                         $("#id-item").val(json.id);
+                        $("#remark-harga").text(json.remark_harga);
                     }
                 });
 
@@ -1560,7 +1592,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             }
 
 
-            var data = $("#form-input-item").serialize() + '&harga-item-clean=' + harga;
+            var data = $("#form-input-item").serialize() + '&harga-item-clean=' + harga +'&remark-harga='+ $("#remark-harga").text();
             setTimeout(function() {
                 $.ajax({
                     url: base_url + 'quotation/save_item',

@@ -197,6 +197,7 @@ class Reporter
     public function getDataSummary($part, $material, $labour)
     {
 
+        // var_dump($part);die;
         $dataSectionPart = array_filter($part, function ($item) {
             return $item['tipe_item'] == 'section';
         });
@@ -331,29 +332,48 @@ class Reporter
             $temp['qty'] = $value['qty'];
             $temp['tipe_id'] = $value['tipe_id'];
             $temp['tipe_name'] = $value['tipe_name'];
-            foreach ($storedPart as $key => $part) {
-                if ($value['id'] == $part['id_section']) {
-                    $temp['total_rm'] = $part['total_rm'];
-                    $temp['total_elc'] = $part['total_elc'];
-                    $temp['total_pnu'] = $part['total_pnu'];
-                    $temp['total_hyd'] = $part['total_hyd'];
-                    $temp['total_mch'] = $part['total_mch'];
-                    $temp['total_sub'] = $part['total_sub'];
+
+            if($storedPart){
+                foreach ($storedPart as $key => $part) {
+                    if ($value['id'] == $part['id_section']) {
+                        $temp['total_rm'] = $part['total_rm'];
+                        $temp['total_elc'] = $part['total_elc'];
+                        $temp['total_pnu'] = $part['total_pnu'];
+                        $temp['total_hyd'] = $part['total_hyd'];
+                        $temp['total_mch'] = $part['total_mch'];
+                        $temp['total_sub'] = $part['total_sub'];
+                    }
                 }
+            }else{
+                $temp['total_rm'] = 0;
+                $temp['total_elc'] = 0;
+                $temp['total_pnu'] = 0;
+                $temp['total_hyd'] = 0;
+                $temp['total_mch'] = 0;
+                $temp['total_sub'] = 0;
+            }
+            // var_dump($dataSectionPart);die;
+            if($storedMaterial){
+                foreach ($storedMaterial as $key => $material) {
+                    if ($value['id'] == $material['id_part_jasa']) {
+                        $temp['total_rm'] += $material['total'];
+                    }
+                }
+            }else{
+                $temp['total_rm'] += 0;
             }
 
-            foreach ($storedMaterial as $key => $material) {
-                if ($value['id'] == $material['id_part_jasa']) {
-                    $temp['total_rm'] += $material['total'];
+            if($storedLabour){
+                foreach ($storedLabour as $key => $labour) {
+                    // var_dump($labour);die;
+                    if ($value['id'] == $labour['id_part_jasa']) {
+                        $temp['total_eng'] = $labour['total_eng'];
+                        $temp['total_prod'] = $labour['total_prod'];
+                    }
                 }
-            }
-
-            foreach ($storedLabour as $key => $labour) {
-                // var_dump($labour);die;
-                if ($value['id'] == $labour['id_part_jasa']) {
-                    $temp['total_eng'] = $labour['total_eng'];
-                    $temp['total_prod'] = $labour['total_prod'];
-                }
+            }else{
+                $temp['total_eng'] = 0;
+                $temp['total_prod'] = 0;
             }
             $data[] = $temp;
         }

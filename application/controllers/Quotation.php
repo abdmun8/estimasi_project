@@ -14,6 +14,7 @@ class Quotation extends CI_Controller
         $this->load->library('form_validation');
         $this->sgedb = $this->load->database('sgedb', TRUE);
         $this->load->library('reporter');
+        
     }
 
     public function index($id = NULL)
@@ -35,18 +36,18 @@ class Quotation extends CI_Controller
         $message = '';
         if ($id != NULL) {
             // $object = $this->model->getRecord(['table'=>'header','where'=>['id'=>$id]]);
-            $object = $this->db->select('quotation.header.*, sgedb.personal.nama as pic_name, sgedb.customer.nama as customer_name', false)
-                ->join('sgedb.customer', 'quotation.header.customer = sgedb.customer.custid')
-                ->join('sgedb.personal', 'quotation.header.pic_marketing = sgedb.personal.id_personalia')
+            $object = $this->db->select("{$this->db->database}.header.*, sgedb.personal.nama as pic_name, sgedb.customer.nama as customer_name", false)
+                ->join('sgedb.customer', "{$this->db->database}.header.customer = sgedb.customer.custid")
+                ->join('sgedb.personal', "{$this->db->database}.header.pic_marketing = sgedb.personal.id_personalia")
                 ->where('id', $id)
-                ->get('quotation.header')
+                ->get("{$this->db->database}.header")
                 ->row();
         } else {
             // $object = $this->model->getList(['table'=>'header']);
-            $object = $this->db->select('quotation.header.*, sgedb.personal.nama as pic_name, sgedb.customer.nama as customer_name', false)
-                ->join('customer', 'quotation.header.customer = sgedb.customer.custid')
-                ->join('personal', 'quotation.header.pic_marketing = sgedb.personal.id_personalia')
-                ->get('quotation.header')
+            $object = $this->db->select("{$this->db->database}.header.*, sgedb.personal.nama as pic_name, sgedb.customer.nama as customer_name", false)
+                ->join('customer', "{$this->db->database}.header.customer = sgedb.customer.custid")
+                ->join('personal', "{$this->db->database}.header.pic_marketing = sgedb.personal.id_personalia")
+                ->get("{$this->db->database}.header")
                 ->result();
         }
 
@@ -73,21 +74,21 @@ class Quotation extends CI_Controller
         $data = [];
         if ($id_header != NULL) {
             if ($id_part == NULL) {
-                $object = $this->db->query('SELECT
+                $object = $this->db->query("SELECT
                             j.*,
                             (SELECT
                                     tipe_item
                                 FROM
-                                    quotation.part_jasa p
+                                    {$this->db->database}.part_jasa p
                                 WHERE
                                     p.id = j.id_parent) AS tipe_parent,
                             k.`desc` AS nama_kategori
                         FROM
-                            quotation.`part_jasa` j
+                            {$this->db->database}.`part_jasa` j
                                 LEFT JOIN
                             `sgedb`.`akunbg` k ON j.kategori = k.accno
                         WHERE
-                            j.id_header ="' . $id_header . '"')->result_array();
+                            j.id_header ='$id_header'")->result_array();
                 $data = $this->countTotal($object);
             } else {
                 $data = $this->db->get_where('part_jasa', ['id_header' => $id_header, 'id' => $id_part])->row_array();
@@ -452,9 +453,10 @@ class Quotation extends CI_Controller
 
     public function getItemCode()
     {
-        $obj = $this->sgedb->select('lp.stcd, CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," [",mstchd.stcd,"]" ) as name, TRIM(mstchd.spek) as spek, TRIM(mstchd.maker) as maker, TRIM(mstchd.uom) as uom, TRIM(mstchd.nama) as nama, (lp.lastprice * 1.1) as harga', false)
-            ->join('last_price lp', 'mstchd.stcd = lp.stcd')
+        $obj = $this->sgedb->select('lp.stcd, CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," [",mstchd.stcd,"]" ) as name, TRIM(mstchd.spek) as spek, TRIM(mstchd.maker) as maker, TRIM(mstchd.uom) as uom, TRIM(mstchd.nama) as nama, (lp.mkt) as harga, lp.remark', false)
+            ->join('msprice lp', 'mstchd.stcd = lp.stcd')
             ->get('mstchd')->result();
+            // echo $this->db->last_query();
 
         echo json_encode($obj);
     }
@@ -466,6 +468,17 @@ class Quotation extends CI_Controller
             // ->having('accno <>', '10001')
             ->having('accno <>', '10006')
             ->get('akunbg')
+            ->result();
+        echo json_encode($obj);
+    }
+
+    public function getUnit()
+    {
+        $obj = $this->sgedb->select('accno as id, TRIM(`desc`) as text', false)
+            ->where_in('header', ['10000', '20000'])
+            // ->having('accno <>', '10001')
+            ->having('accno <>', '10006')
+            ->get('akunbg') 
             ->result();
         echo json_encode($obj);
     }
@@ -730,7 +743,7 @@ class Quotation extends CI_Controller
                 $no = $data->parent_seq . '.' . $cur;
                 break;
         }
-        
+
         echo json_encode(['data' => $no]);
     }
 }
