@@ -27,21 +27,21 @@ class Report extends Quotation
         }
         $this->pdf->Ln(4);
         $this->pdf->Cell(8, 4, $no, 1, 0, 'C');
-        $this->pdf->Cell(32, 4, isset($item['tipe_name']) ? $item['tipe_name'] : '', 1, 0);
+        $this->pdf->Cell(42, 4, isset($item['tipe_name']) ? $item['tipe_name'] : '', 1, 0);
         $this->pdf->Cell(8, 4, isset($qty) ? $qty : '', 1, 0, 'C');
-        $this->pdf->Cell(26, 4, isset($part) ? number_format($part) : '', 1, 0, 'R');
-        $this->pdf->Cell(26, 4, isset($eng) ? number_format($eng) : '', 1, 0, 'R');
-        $this->pdf->Cell(30, 4, isset($total) ? number_format($total) : '', 1, 0, 'R');
+        $this->pdf->Cell(24, 4, isset($part) ? number_format($part) : '', 1, 0, 'R');
+        $this->pdf->Cell(24, 4, isset($eng) ? number_format($eng) : '', 1, 0, 'R');
+        $this->pdf->Cell(24, 4, isset($total) ? number_format($total) : '', 1, 0, 'R');
     }
 
     function createLeftRowRp()
     {
         $this->pdf->Ln(0);
-        $this->pdf->Cell(102, 4, 'Rp', 0, 0, 'C');
+        $this->pdf->Cell(121, 4, 'Rp', 0, 0, 'C');
         $this->pdf->Ln(0);
-        $this->pdf->Cell(154, 4, 'Rp', 0, 0, 'C');
+        $this->pdf->Cell(169, 4, 'Rp', 0, 0, 'C');
         $this->pdf->Ln(0);
-        $this->pdf->Cell(205, 4, 'Rp', 0, 0, 'C');
+        $this->pdf->Cell(217, 4, 'Rp', 0, 0, 'C');
     }
 
     function createRightRowRp()
@@ -194,19 +194,19 @@ class Report extends Quotation
         /*Row 1*/
         $this->pdf->Ln(4);
         $this->pdf->Cell(8, 8, 'NO', 1, 0, 'C');
-        $this->pdf->Cell(32, 8, 'PART NAME', 1, 0, 'C');
+        $this->pdf->Cell(42, 8, 'PART NAME', 1, 0, 'C');
         $this->pdf->Cell(8, 4, 'QTY', 'TR', 0, 'C');
-        $this->pdf->Cell(26, 4, 'COST PART', 'TR', 0, 'C');
-        $this->pdf->Cell(26, 4, 'COST ENG', 'TR', 0, 'C');
-        $this->pdf->Cell(30, 4, 'COST TOTAL', 'TR', 0, 'C');
+        $this->pdf->Cell(24, 4, 'COST PART', 'TR', 0, 'C');
+        $this->pdf->Cell(24, 4, 'COST ENG', 'TR', 0, 'C');
+        $this->pdf->Cell(24, 4, 'COST TOTAL', 'TR', 0, 'C');
 
         $this->pdf->Ln(4);
         $this->pdf->Cell(8, 8, '', 0, 0, 'C');
-        $this->pdf->Cell(32, 8, '', 0, 0, 'C');
+        $this->pdf->Cell(42, 8, '', 0, 0, 'C');
         $this->pdf->Cell(8, 4, '(A)', 'R', 0, 'C');
-        $this->pdf->Cell(26, 4, '(B)', 'R', 0, 'C');
-        $this->pdf->Cell(26, 4, '(C)', 'R', 0, 'C');
-        $this->pdf->Cell(30, 4, '(A*B)+C', 'R', 0, 'C');
+        $this->pdf->Cell(24, 4, '(B)', 'R', 0, 'C');
+        $this->pdf->Cell(24, 4, '(C)', 'R', 0, 'C');
+        $this->pdf->Cell(24, 4, '(A*B)+C', 'R', 0, 'C');
 
         /* Content*/       
 
@@ -560,11 +560,11 @@ class Report extends Quotation
         // $this->createLeftRow(20, $item);
         $this->pdf->Ln(4);
         $this->pdf->Cell(8, 4, 20, 1, 0, 'C');
-        $this->pdf->Cell(32, 4, 'Allowance', 1, 0);
+        $this->pdf->Cell(42, 4, 'Allowance', 1, 0);
         $this->pdf->Cell(8, 4, '', 1, 0, 'C');
-        $this->pdf->Cell(26, 4, number_format($tot_alw), 1, 0, 'R');
-        $this->pdf->Cell(26, 4, 0, 1, 0, 'R');
-        $this->pdf->Cell(30, 4, number_format($tot_alw), 1, 0, 'R');
+        $this->pdf->Cell(24, 4, number_format($tot_alw), 1, 0, 'R');
+        $this->pdf->Cell(24, 4, 0, 1, 0, 'R');
+        $this->pdf->Cell(24, 4, number_format($tot_alw), 1, 0, 'R');
 
         /* Row 20 Right*/
         $this->createLeftRowRp();

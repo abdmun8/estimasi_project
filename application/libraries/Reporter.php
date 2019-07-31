@@ -332,48 +332,43 @@ class Reporter
             $temp['qty'] = $value['qty'];
             $temp['tipe_id'] = $value['tipe_id'];
             $temp['tipe_name'] = $value['tipe_name'];
+            $temp['total_rm'] = 0;
+            $temp['total_elc'] = 0;
+            $temp['total_pnu'] = 0;
+            $temp['total_hyd'] = 0;
+            $temp['total_mch'] = 0;
+            $temp['total_sub'] = 0;
+            $temp['total_eng'] = 0;
+            $temp['total_prod'] = 0;
 
-            if($storedPart){
-                foreach ($storedPart as $key => $part) {
-                    if ($value['id'] == $part['id_section']) {
-                        $temp['total_rm'] = $part['total_rm'];
-                        $temp['total_elc'] = $part['total_elc'];
-                        $temp['total_pnu'] = $part['total_pnu'];
-                        $temp['total_hyd'] = $part['total_hyd'];
-                        $temp['total_mch'] = $part['total_mch'];
-                        $temp['total_sub'] = $part['total_sub'];
-                    }
+            foreach ($storedPart as $key => $part) {
+                if ($value['id'] == $part['id_section']) {
+                    $temp['total_rm'] = isset($part['total_rm']) ? $part['total_rm'] : 0;
+                    $temp['total_elc'] = isset($part['total_elc']) ? $part['total_elc'] : 0;
+                    $temp['total_pnu'] = isset($part['total_pnu']) ? $part['total_pnu'] : 0;
+                    $temp['total_hyd'] = isset($part['total_hyd']) ? $part['total_hyd'] : 0;
+                    $temp['total_mch'] = isset($part['total_mch']) ? $part['total_mch'] : 0;
+                    $temp['total_sub'] = isset($part['total_sub']) ? $part['total_sub'] : 0;
                 }
-            }else{
-                $temp['total_rm'] = 0;
-                $temp['total_elc'] = 0;
-                $temp['total_pnu'] = 0;
-                $temp['total_hyd'] = 0;
-                $temp['total_mch'] = 0;
-                $temp['total_sub'] = 0;
             }
-            // var_dump($dataSectionPart);die;
+
+            // var_dump($temp);
             if($storedMaterial){
                 foreach ($storedMaterial as $key => $material) {
                     if ($value['id'] == $material['id_part_jasa']) {
-                        $temp['total_rm'] += $material['total'];
+                        $temp['total_rm'] += isset($material['total']) ? $material['total'] : 0;
                     }
                 }
             }else{
                 $temp['total_rm'] += 0;
             }
 
-            if($storedLabour){
-                foreach ($storedLabour as $key => $labour) {
-                    // var_dump($labour);die;
-                    if ($value['id'] == $labour['id_part_jasa']) {
-                        $temp['total_eng'] = $labour['total_eng'];
-                        $temp['total_prod'] = $labour['total_prod'];
-                    }
+            foreach ($storedLabour as $key => $labour) {
+                // var_dump($labour);die;
+                if ($value['id'] == $labour['id_part_jasa']) {
+                    $temp['total_eng'] = isset($labour['total_eng']) ? $labour['total_eng'] : 0;
+                    $temp['total_prod'] = isset($labour['total_prod']) ? $labour['total_prod'] : 0;
                 }
-            }else{
-                $temp['total_eng'] = 0;
-                $temp['total_prod'] = 0;
             }
             $data[] = $temp;
         }
