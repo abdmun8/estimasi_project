@@ -241,7 +241,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                             <div class="col-md-6">
                                 <div class="form-group except_item">
                                     <label for="tipe_id-item">Id <span class="modal-title-input"></span></label>
-                                    <input type="text" class="form-control input-sm" id="tipe_id-item" name="tipe_id-item" placeholder="Id">
+                                    <input type="text" class="form-control input-sm" id="tipe_id-item" name="tipe_id-item" readonly placeholder="Id">
                                 </div>
                                 <div class="form-group except_item">
                                     <label for="tipe_name-item"><span class="modal-title-input"></span> Name</label>
@@ -1452,7 +1452,14 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 $("#tipe_item-item").parent().hide();
 
             } else {
-
+                if (title != 'item')
+                    $.get(base_url + 'quotation/get_counter_item', {
+                        'tipe_item': title,
+                        'id_parent': id,
+                        'id_header': id_header_tree
+                    }, (response) => {
+                        $("#tipe_id-item").val(response.data);
+                    }, 'json')
 
                 $("#form-input-item")[0].reset();
 
@@ -1941,7 +1948,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         }
 
         // Export Excel
-        function exportExcel(report = 'summary',id_header) {
+        function exportExcel(report = 'summary', id_header) {
             window.open(base_url + `quotation/print_${report}/` + id_header);
         }
     </script>

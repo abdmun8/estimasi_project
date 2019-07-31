@@ -701,9 +701,36 @@ class Quotation extends CI_Controller
         echo json_encode(['code' => 1, 'success' => true]);
     }
 
-    public function getAmountAllowance(){
+    public function getAmountAllowance()
+    {
         $get = $this->input->get();
         $amount = $this->db->get_where('header', ['id' => $get['id']])->row()->allowance;
         echo json_encode(['data' => $amount, 'code' => 1, 'success' => true]);
+    }
+
+    // get counter except item
+    public function getCounterItem()
+    {
+        $get = $this->input->get();
+        $sql = '';
+        $no = '';
+        switch ($get['tipe_item']) {
+            case 'section':
+                $sql = "SELECT max(tipe_id) as seq from part_jasa where id_header = '{$get['id_header']}' and tipe_item = '{$get['tipe_item']}' ";
+                $last = $this->db->query($sql)->row()->seq;
+                $no = (int) $last + 1;
+                break;
+            default:
+                $sql = "SELECT max(j.tipe_id) AS seq, k.tipe_id AS parent_seq from part_jasa j JOIN part_jasa k ON j.id_parent = k.id WHERE j.id_header = '{$get['id_header']}' AND j.tipe_item = '{$get['tipe_item']}' AND j.id_parent = '{$get['id_parent']}'";
+                $data = $this->db->query($sql)->row();
+                $seq = explode(".", $data->seq);
+                $cur = 1;
+                if (isset($seq[1]))
+                    $cur = (int) $seq[1] + 1;
+                $no = $data->parent_seq . '.' . $cur;
+                break;
+        }
+        
+        echo json_encode(['data' => $no]);
     }
 }

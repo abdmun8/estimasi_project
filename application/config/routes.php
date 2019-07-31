@@ -104,6 +104,7 @@ $route['quotation/get_data_labour/(:num)'] = 'Quotation/getDataLabour/$1';
 $route['quotation/get_data_labour/(:num)/(:num)'] = 'Quotation/getDataLabour/$1/$2';
 $route['quotation/save_labour'] = 'Quotation/saveLabour';
 
+$route['quotation/get_counter_item'] = 'Quotation/getCounterItem';
 $route['quotation/del_item'] = 'Quotation/delItem';
 $route['quotation/save_hour'] = 'Quotation/saveHourLabour';
 $route['quotation/get_section/(:any)'] = 'Quotation/getSection/$1';
@@ -119,6 +120,7 @@ $route['quotation/save_material'] = 'Quotation/saveMaterial';
 $route['quotation/get_material_code'] = 'Quotation/getMaterialCode';
 
 // Report
+
 
 
 // Master Data
