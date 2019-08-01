@@ -57,7 +57,8 @@ class Reporter
             'qty' =>  $qty,
             'total' =>  $v['total'],
             'kategori' =>  $this->getKategori($v['kategori']),
-            'tipe_item' =>  $v['tipe_item']
+            'tipe_item' =>  $v['tipe_item'],
+            'remark_harga' =>  $v['remark_harga']
         ];
         return $new;
     }
@@ -228,7 +229,7 @@ class Reporter
                 (SELECT
                         tipe_item
                     FROM
-                        quotation.part_jasa p
+                        {$this->_CI->db->database}.part_jasa p
                     WHERE
                         p.id = j.id_parent) AS tipe_parent,
                 k.`desc` AS nama_kategori, 
@@ -239,12 +240,12 @@ class Reporter
                 if(j.kategori = '10003',j.harga * qty,0) AS mch,
                 if(j.kategori = '20001',j.harga * qty,0) AS sub
             FROM
-                quotation.`part_jasa` j
+                {$this->_CI->db->database}.`part_jasa` j
                     LEFT JOIN
                 `sgedb`.`akunbg` k ON j.kategori = k.accno
             WHERE
                 
-            j.id_header = '{$value['id_header']}' AND j.id_parent IN('$parent') AND j.tipe_item = 'item') AS grouping GROUP BY id_section";
+            j.id_header = '{$value['id_header']}' AND j.id_parent IN('$parent') AND j.tipe_item = 'item' AND j.deleted = '0') AS grouping GROUP BY id_section";
 
             $data = $this->_CI->db->query($sql)->result_array();
             if (count($data) > 0) {

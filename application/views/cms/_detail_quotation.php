@@ -63,6 +63,10 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 opacity: 0;
             }
         }
+
+        .font14 {
+            font-size: .8em;
+        }
     </style>
     <script>
         var base_url = '<?php echo base_url(); ?>';
@@ -277,7 +281,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                     <input type="text" class="form-control input-sm" id="merk-item" name="merk-item" placeholder="Merk">
                                 </div>
                                 <div class="form-group only_item">
-                                    <label for="harga-item">Harga  <span style="font-size:12px;font-style:italic;font-weight:normal; color:red;" class="blink-one" id="remark-harga"></span></label>
+                                    <label for="harga-item">Harga <span style="font-size:12px;font-style:italic;font-weight:normal; color:red;" class="blink-one" id="remark-harga"></span></label>
                                     <input type="text" class="form-control input-sm" id="harga-item" name="harga-item" placeholder="Price">
                                 </div>
                                 <div class="form-group only_item">
@@ -504,6 +508,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             }, 'json');
 
             $("#tipe_item-item").change(function() {
+                $("#item_code").val('');
                 if (this.value == 'item') {
                     $(".except_item").hide();
                     $(".only_item").show();
@@ -638,6 +643,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     fixed: true,
                     formatter: function(value, row, index) {
                         var actions = [];
+                        if (row.deleted == 1)
+                            return '';
                         if (row.tipe_item !== 'item') {
                             actions.push('<a class="btn btn-info btn-xs " title="Tambah Sub" onclick="showModalInput(\'' + row.tipe_item + '\',' + row.id + ',' + row.id_parent + ',' + true + ')" href="#"><i class="fa fa-plus"></i></a> ');
                         }
@@ -652,11 +659,17 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     width: '200',
                     formatter: function(value, row, index) {
                         if (row.tipe_item == 'section') {
-                            return '<span class="label label-success">' + value + '</span>';
+                            if (row.deleted == 1)
+                                return '<strike class="label label-success font14">' + value + '</strike>';
+                            return '<span class="label label-success font14">' + value + '</span>';
                         } else if (row.tipe_item == 'object') {
-                            return addSpace(3) + '<span class="label label-primary">' + value + '</span>';
+                            if (row.deleted == 1)
+                                return addSpace(3) + '<strike class="label label-primary font14">' + value + '</strike>';
+                            return addSpace(3) + '<span class="label label-primary font14">' + value + '</span>';
                         } else if (row.tipe_item == 'sub_object') {
-                            return addSpace(6) + '<span class="label label-warning">' + value + '</span>';
+                            if (row.deleted == 1)
+                                return addSpace(6) + '<strike class="label label-warning font14">' + value + '</strike>';
+                            return addSpace(6) + '<span class="label label-warning font14">' + value + '</span>';
                         } else {
                             return '';
                         }
@@ -670,10 +683,16 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     visible: true,
                     formatter: function(value, row, index) {
                         if (row.tipe_item == 'section') {
+                            if (row.deleted == 1)
+                                return '<strike>' + value + '</strike>';
                             return '<span>' + value + '</span>';
                         } else if (row.tipe_item == 'object') {
+                            if (row.deleted == 1)
+                                return '<strike>' + addSpace(3) + value + '</strike>';
                             return '<span>' + addSpace(3) + value + '</span>';
                         } else if (row.tipe_item == 'sub_object') {
+                            if (row.deleted == 1)
+                                return '<strike>' + addSpace(6) + value + '</strike>';
                             return '<span>' + addSpace(6) + value + '</span>';
                         } else {
                             return '';
@@ -690,6 +709,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         if (row.tipe_item != 'item') {
                             return '';
                         }
+                        if (row.deleted == 1)
+                            return `<strike>${value}</strike>`;
                         return value;
                     }
                 },
@@ -698,21 +719,36 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     title: 'Item Name',
                     width: '300',
                     align: "left",
-                    visible: true
+                    visible: true,
+                    formatter: function(value, row, index) {
+                        if (row.deleted == 1)
+                            return `<strike>${value}</strike>`;
+                        return value;
+                    }
                 },
                 {
                     field: 'spec',
                     title: 'Spec',
-                    width: '100',
+                    width: '200',
                     align: "left",
                     visible: true,
+                    formatter: function(value, row, index) {
+                        if (row.deleted == 1)
+                            return `<strike>${value}</strike>`;
+                        return value;
+                    }
                 },
                 {
                     field: 'merk',
                     title: 'Merk',
-                    width: '100',
+                    width: '150',
                     align: "left",
                     visible: true,
+                    formatter: function(value, row, index) {
+                        if (row.deleted == 1)
+                            return `<strike>${value}</strike>`;
+                        return value;
+                    }
                 },
                 {
                     field: 'satuan',
@@ -720,17 +756,24 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     width: '100',
                     align: "left",
                     visible: true,
+                    formatter: function(value, row, index) {
+                        if (row.deleted == 1)
+                            return `<strike>${value}</strike>`;
+                        return value;
+                    }
                 },
                 {
                     field: 'harga',
                     title: 'Harga',
-                    width: '100',
+                    width: '120',
                     align: "right",
                     visible: true,
                     formatter: function(value, row, index) {
                         if (row.tipe_item != 'item') {
                             return '';
                         } else {
+                            if (row.deleted == 1)
+                                return `<strike class="total_harga">${value}</strike>`;
                             return '<span class="total_harga">' + value + '</span>';
                         }
                     }
@@ -744,6 +787,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         if (row.tipe_item != 'item') {
                             return '';
                         } else {
+                            if (row.deleted == 1)
+                                return `<strike>${value}</strike>`;
                             return value;
                         }
                     }
@@ -755,16 +800,25 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     align: "right",
                     formatter: function(value, row, index) {
                         if (row.tipe_item != 'item') {
+                            if (row.deleted == 1)
+                                return '<strike class="total_harga text-bold">' + value + '</strike>';
                             return '<span class="total_harga text-bold">' + value + '</span>';
                         }
+                        if (row.deleted == 1)
+                            return '<strike class="total_harga">' + value + '</strike>';
                         return '<span class="total_harga">' + value + '</span>';
                     }
                 },
                 {
                     field: 'nama_kategori',
                     title: 'Kategori',
-                    width: '150',
+                    width: '180',
                     align: "left",
+                    formatter: function(value, row, index) {
+                        if (row.tipe_item == 'item' && row.deleted == 1)
+                            return `<strike>${value}</strike>`;
+                        return value;
+                    }
                 }
 
             ],
@@ -851,11 +905,17 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     fixed: true,
                     formatter: function(value, row, index) {
                         if (row.tipe_item == 'section') {
-                            return '<span class="label label-success">' + value + '</span>';
+                            if (row.deleted == 1)
+                                return '<strike class="label label-success font14">' + value + '</strike>';
+                            return '<span class="label label-success font14">' + value + '</span>';
                         } else if (row.tipe_item == 'object') {
-                            return addSpace(3) + '<span class="label label-primary">' + value + '</span>';
+                            if (row.deleted == 1)
+                                return addSpace(3) + '<strike class="label label-primary font14">' + value + '</strike>';
+                            return addSpace(3) + '<span class="label label-primary font14">' + value + '</span>';
                         } else if (row.tipe_item == 'sub_object') {
-                            return addSpace(6) + '<span class="label label-warning">' + value + '</span>';
+                            if (row.deleted == 1)
+                                return addSpace(6) + '<strike class="label label-warning font14">' + value + '</strike>';
+                            return addSpace(6) + '<span class="label label-warning font14">' + value + '</span>';
                         } else {
                             return '';
                         }
@@ -868,6 +928,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     align: "center",
                     visible: true,
                     formatter: function(value, row, index) {
+                        if (row.deleted == 1)
+                            return '';
                         return `<button onclick="showModalDetailLabour(${value},'ENGINEERING')" class="btn btn-xs btn-info"><i class="fa fa-plus"></i> ENG</button>
                                 <button onclick="showModalDetailLabour(${value},'PRODUCTION')" class="btn btn-xs btn-info"><i class="fa fa-plus"></i> PROD</button>`;
                     }
@@ -881,70 +943,76 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     visible: true,
                     formatter: function(value, row, index) {
                         if (row.tipe_item == 'section') {
+                            if (row.deleted == 1)
+                                return '<strike>' + value + '</strike>';
                             return '<span>' + value + '</span>';
                         } else if (row.tipe_item == 'object') {
+                            if (row.deleted == 1)
+                                return '<strike>' + addSpace(3) + value + '</strike>';
                             return '<span>' + addSpace(3) + value + '</span>';
                         } else if (row.tipe_item == 'sub_object') {
+                            if (row.deleted == 1)
+                                return '<strike>' + addSpace(6) + value + '</strike>';
                             return '<span>' + addSpace(6) + value + '</span>';
                         } else {
                             return '';
                         }
                     }
                 },
-                {
-                    field: 'id_labour',
-                    title: 'Id Labour',
-                    width: '150',
-                    align: "left",
-                    visible: true
-                },
-                {
-                    field: 'aktivitas',
-                    title: 'Aktivitas',
-                    width: '150',
-                    align: "left",
-                    visible: true
-                },
-                {
-                    field: 'sub_aktivitas',
-                    title: 'Sub Aktivitas',
-                    width: '150',
-                    align: "left",
-                    visible: true
-                },
-                {
-                    field: 'hour',
-                    title: 'Hour',
-                    width: '100',
-                    align: "right",
-                    formatter: function(value, row, index) {
+                // {
+                //     field: 'id_labour',
+                //     title: 'Id Labour',
+                //     width: '150',
+                //     align: "left",
+                //     visible: true
+                // },
+                // {
+                //     field: 'aktivitas',
+                //     title: 'Aktivitas',
+                //     width: '150',
+                //     align: "left",
+                //     visible: true
+                // },
+                // {
+                //     field: 'sub_aktivitas',
+                //     title: 'Sub Aktivitas',
+                //     width: '150',
+                //     align: "left",
+                //     visible: true
+                // },
+                // {
+                //     field: 'hour',
+                //     title: 'Hour',
+                //     width: '100',
+                //     align: "right",
+                //     formatter: function(value, row, index) {
 
-                        if (row.tipe_item != 'item') {
-                            return '';
-                        } else {
-                            var actions = [];
-                            actions.push('<span id="valHour' + row.id + '">' + value + '</span>&nbsp;&nbsp;');
-                            actions.push('<button id="btnEdit' + row.id + '"class="btn btn-success btn-xs btnEdit" title="Edit" onclick="editHour(' + row.id + ')"><span id="iconHour' + row.id + '"><i class="fa fa-edit"></i></span></button> ');
+                //         if (row.tipe_item != 'item') {
+                //             return '';
+                //         } else {
+                //             var actions = [];
+                //             actions.push('<span id="valHour' + row.id + '">' + value + '</span>&nbsp;&nbsp;');
+                //             actions.push('<button id="btnEdit' + row.id + '"class="btn btn-success btn-xs btnEdit" title="Edit" onclick="editHour(' + row.id + ')"><span id="iconHour' + row.id + '"><i class="fa fa-edit"></i></span></button> ');
 
-                            actions.push('<button style="display:none;" id="btnSave' + row.id + '"class="btn btn-info btn-xs btnEdit" title="Save" onclick="saveHour(' + row.id + ',' + row.id_parent + ')"><i class="fa fa-check"></i></button> ');
-                            return actions.join('');
-                        }
-                    }
-                },
-                {
-                    field: 'rate',
-                    title: 'Rate',
-                    width: '100',
-                    align: "right",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item != 'item') {
-                            return '';
-                        } else {
-                            return '<span id="rateValue' + row.id + '" class="total_harga">' + value + '</span>';
-                        }
-                    }
-                },
+                //             actions.push('<button style="display:none;" id="btnSave' + row.id + '"class="btn btn-info btn-xs btnEdit" title="Save" onclick="saveHour(' + row.id + ',' + row.id_parent + ')"><i class="fa fa-check"></i></button> ');
+                //             return actions.join('');
+                //         }
+                //     }
+                // },
+                // {
+                //     field: 'rate',
+                //     title: 'Rate',
+                //     width: '100',
+                //     align: "right",
+                //     visible: true,
+                //     formatter: function(value, row, index) {
+                //         if (row.tipe_item != 'item') {
+                //             return '';
+                //         } else {
+                //             return '<span id="rateValue' + row.id + '" class="total_harga">' + value + '</span>';
+                //         }
+                //     }
+                // },
                 {
                     field: 'total',
                     title: 'Total',
@@ -952,9 +1020,13 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     align: "right",
                     formatter: function(value, row, index) {
                         if (row.tipe_item != 'item') {
-                            return '<span id="totalValue' + row.id + '" class="total_harga text-bold">' + value + '</span>';
+                            if (row.deleted == 1)
+                                return '<strike class="total_harga text-bold">' + value + '</strike>';
+                            return '<span class="total_harga text-bold">' + value + '</span>';
                         }
-                        return '<span id="totalValue' + row.id + '" class="total_harga">' + value + '</span>';
+                        if (row.deleted == 1)
+                            return '<strike class="total_harga">' + value + '</strike>';
+                        return '<span class="total_harga">' + value + '</span>';
                     }
                 }
 
@@ -1021,6 +1093,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     fixed: true,
                     formatter: function(value, row, index) {
                         var actions = [];
+                        if (row.deleted == 1)
+                            return ''
                         if (row.tipe_item === 'item') {
                             actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="addItemMaterial(' + row.id + ',' + row.id_parent + ',\'edit\')"><i class="fa fa-edit"></i></a> ');
                             actions.push('<a class="btn btn-danger btn-xs " title="Hapus" onclick="confirmDelete(' + row.id + ',\'rawmaterial\',\'' + row.tipe_item + '\')"><i class="fa fa-remove"></i></a>');
@@ -1037,11 +1111,17 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     fixed: true,
                     formatter: function(value, row, index) {
                         if (row.tipe_item == 'section') {
-                            return '<span class="label label-success">' + value + '</span>';
+                            if (row.deleted == 1)
+                                return '<strike class="label label-success font14">' + value + '</strike>';
+                            return '<span class="label label-success font14">' + value + '</span>';
                         } else if (row.tipe_item == 'object') {
-                            return addSpace(3) + '<span class="label label-primary">' + value + '</span>';
+                            if (row.deleted == 1)
+                                return addSpace(3) + '<strike class="label label-primary font14">' + value + '</strike>';
+                            return addSpace(3) + '<span class="label label-primary font14">' + value + '</span>';
                         } else if (row.tipe_item == 'sub_object') {
-                            return addSpace(6) + '<span class="label label-warning">' + value + '</span>';
+                            if (row.deleted == 1)
+                                return addSpace(6) + '<strike class="label label-warning font14">' + value + '</strike>';
+                            return addSpace(6) + '<span class="label label-warning font14">' + value + '</span>';
                         } else {
                             return '';
                         }
@@ -1057,36 +1137,77 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     visible: true,
                     formatter: function(value, row, index) {
                         if (row.tipe_item == 'section') {
+                            if (row.deleted == 1)
+                                return '<strike>' + value + '</strike>';
                             return '<span>' + value + '</span>';
                         } else if (row.tipe_item == 'object') {
+                            if (row.deleted == 1)
+                                return '<strike>' + addSpace(3) + value + '</strike>';
                             return '<span>' + addSpace(3) + value + '</span>';
                         } else if (row.tipe_item == 'sub_object') {
+                            if (row.deleted == 1)
+                                return '<strike>' + addSpace(6) + value + '</strike>';
                             return '<span>' + addSpace(6) + value + '</span>';
                         } else {
                             return '';
                         }
                     }
+                    // formatter: function(value, row, index) {
+                    //     if (row.tipe_item == 'section') {
+                    //         return '<span>' + value + '</span>';
+                    //     } else if (row.tipe_item == 'object') {
+                    //         return '<span>' + addSpace(3) + value + '</span>';
+                    //     } else if (row.tipe_item == 'sub_object') {
+                    //         return '<span>' + addSpace(6) + value + '</span>';
+                    //     } else {
+                    //         return '';
+                    //     }
+                    // }
                 },
                 {
                     field: 'item_code',
                     title: 'Item Code',
                     width: '150',
                     align: "left",
-                    visible: true
+                    visible: true,
+                    formatter: function(value, row, index) {
+                        if (row.tipe_item != 'item') {
+                            return '';
+                        }
+                        if (row.deleted == 1)
+                            return `<strike>${value}</strike>`;
+                        return value;
+                    }
                 },
                 {
                     field: 'part_name',
                     title: 'Part Name',
                     width: '150',
                     align: "left",
-                    visible: true
+                    visible: true,
+                    formatter: function(value, row, index) {
+                        if (row.tipe_item != 'item') {
+                            return '';
+                        }
+                        if (row.deleted == 1)
+                            return `<strike>${value}</strike>`;
+                        return value;
+                    }
                 },
                 {
                     field: 'units',
                     title: 'Units',
                     width: '150',
                     align: "left",
-                    visible: true
+                    visible: true,
+                    formatter: function(value, row, index) {
+                        if (row.tipe_item != 'item') {
+                            return '';
+                        }
+                        if (row.deleted == 1)
+                            return `<strike>${value}</strike>`;
+                        return value;
+                    }
                 },
                 {
                     field: 'qty',
@@ -1095,9 +1216,12 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     align: "right",
                     visible: true,
                     formatter: function(value, row, index) {
-                        if (row.tipe_item == 'item')
-                            return value;
-                        return '';
+                        if (row.tipe_item != 'item') {
+                            return '';
+                        }
+                        if (row.deleted == 1)
+                            return `<strike>${value}</strike>`;
+                        return value;
                     }
                 },
                 {
@@ -1105,7 +1229,15 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     title: 'Materials',
                     width: '150',
                     align: "left",
-                    visible: true
+                    visible: true,
+                    formatter: function(value, row, index) {
+                        if (row.tipe_item != 'item') {
+                            return '';
+                        }
+                        if (row.deleted == 1)
+                            return `<strike>${value}</strike>`;
+                        return value;
+                    }
                 },
                 {
                     field: 'l',
@@ -1114,9 +1246,12 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     align: "right",
                     visible: true,
                     formatter: function(value, row, index) {
-                        if (row.tipe_item == 'item')
-                            return value;
-                        return '';
+                        if (row.tipe_item != 'item') {
+                            return '';
+                        }
+                        if (row.deleted == 1)
+                            return `<strike>${value}</strike>`;
+                        return value;
                     }
                 },
                 {
@@ -1126,9 +1261,12 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     align: "right",
                     visible: true,
                     formatter: function(value, row, index) {
-                        if (row.tipe_item == 'item')
-                            return value;
-                        return '';
+                        if (row.tipe_item != 'item') {
+                            return '';
+                        }
+                        if (row.deleted == 1)
+                            return `<strike>${value}</strike>`;
+                        return value;
                     }
                 },
                 {
@@ -1138,9 +1276,12 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     align: "right",
                     visible: true,
                     formatter: function(value, row, index) {
-                        if (row.tipe_item == 'item')
-                            return value;
-                        return '';
+                        if (row.tipe_item != 'item') {
+                            return '';
+                        }
+                        if (row.deleted == 1)
+                            return `<strike>${value}</strike>`;
+                        return value;
                     }
                 },
                 {
@@ -1150,9 +1291,12 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     align: "right",
                     visible: true,
                     formatter: function(value, row, index) {
-                        if (row.tipe_item == 'item')
-                            return value;
-                        return '';
+                        if (row.tipe_item != 'item') {
+                            return '';
+                        }
+                        if (row.deleted == 1)
+                            return `<strike>${value}</strike>`;
+                        return value;
                     }
                 },
                 {
@@ -1162,9 +1306,12 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     align: "right",
                     visible: true,
                     formatter: function(value, row, index) {
-                        if (row.tipe_item == 'item')
-                            return value;
-                        return '';
+                        if (row.tipe_item != 'item') {
+                            return '';
+                        }
+                        if (row.deleted == 1)
+                            return `<strike>${value}</strike>`;
+                        return value;
                     }
                 },
                 {
@@ -1174,9 +1321,12 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     align: "right",
                     visible: true,
                     formatter: function(value, row, index) {
-                        if (row.tipe_item == 'item')
-                            return value * 1;
-                        return '';
+                        if (row.tipe_item != 'item') {
+                            return '';
+                        }
+                        if (row.deleted == 1)
+                            return `<strike>${value}</strike>`;
+                        return value;
                     }
                 },
                 {
@@ -1186,8 +1336,12 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     align: "right",
                     formatter: function(value, row, index) {
                         if (row.tipe_item != 'item') {
+                            if (row.deleted == 1)
+                                return '<strike id="totalValue' + row.id + '" class="total_harga text-bold">' + value + '</strike>';
                             return '<span id="totalValue' + row.id + '" class="total_harga text-bold">' + value + '</span>';
                         }
+                        if (row.deleted == 1)
+                            return '<strike id="totalValue' + row.id + '" class="total_harga">' + value + '</strike>';
                         return '<span id="totalValue' + row.id + '" class="total_harga">' + value + '</span>';
                     }
                 }
@@ -1591,8 +1745,12 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 }
             }
 
+            if($("#item_code-item").val() == ''){
+                $("#item_code").val('')
+            }
 
-            var data = $("#form-input-item").serialize() + '&harga-item-clean=' + harga +'&remark-harga='+ $("#remark-harga").text();
+
+            var data = $("#form-input-item").serialize() + '&harga-item-clean=' + harga + '&remark-harga=' + $("#remark-harga").text();
             setTimeout(function() {
                 $.ajax({
                     url: base_url + 'quotation/save_item',
@@ -1688,26 +1846,6 @@ $satuan = $this->db->get_where('tblsatuan')->result();
 
                     if (json.code == 1) {
                         notify('success', 'Sukses');
-                        // if (json.tipe_parent != 'section') {
-
-                        //     if (json.tipe_parent == 'object') {
-                        //         var total_section_old = $("#totalValue" + json.id_section + "").cleanVal() * 1;
-                        //         var total_section = (total - total_old) + total_section_old;
-                        //         var masked_section = $("#totalValue" + json.id_section + "").masked(total_section);
-                        //         $("#totalValue" + json.id_section + "").text(masked_section);
-
-                        //     } else {
-                        //         var total_object_old = $("#totalValue" + json.id_object + "").cleanVal() * 1;
-                        //         var total_object = (total - total_old) + total_object_old;
-                        //         var masked_object = $("#totalValue" + json.id_object + "").masked(total_object);
-                        //         $("#totalValue" + json.id_object + "").text(masked_object);
-
-                        //         var total_section_old = $("#totalValue" + json.id_section + "").cleanVal() * 1;
-                        //         var total_section = (total - total_old) + total_section_old;
-                        //         var masked_section = $("#totalValue" + json.id_section + "").masked(total_section);
-                        //         $("#totalValue" + json.id_section + "").text(masked_section);
-                        //     }
-                        // }
                         let dt = JSON.parse(localStorage.getItem('dataModalLabour'))
                         refreshTableDetail(dt.id_header, dt.type_input)
                         $('#labour_table').bootstrapTreeTable('refresh');
@@ -1900,7 +2038,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         function addSpace(num_of_space = 1) {
             var space = '';
             for (let index = 0; index < num_of_space; index++) {
-                space += '&nbsp'
+                space += `&nbsp`
             }
             return space
         }

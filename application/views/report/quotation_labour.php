@@ -62,7 +62,7 @@ foreach (array_values($dataSort) as $key => $value) {
         FROM
             `labour` `l`
         WHERE
-            l.id_header ='{$value['id_header']}' AND l.id_parent = '{$value['id']}' AND l.tipe_item = 'item' GROUP BY id_labour ORDER BY l.tipe_name";
+            l.id_header ='{$value['id_header']}' AND l.id_parent = '{$value['id']}' AND l.tipe_item = 'item' AND l.deleted = '0' GROUP BY id_labour ORDER BY l.tipe_name";
 
     $data = $this->db->query($sql)->result_array();
     // echo $this->db->last_query();
@@ -123,7 +123,7 @@ foreach ($newData as $key => $part) {
     $row = (int) $key + 4;
     $color = $this->reporter->typeCheck($part['tipe_item']);
 
-    $activeSheet->setCellValue('A' . $row, $part['tipe_id']);
+    $activeSheet->getCell('A' . $row)->setValueExplicit($part['tipe_item'] == 'item' ? '' : strval($part['tipe_id']), \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
     $activeSheet->setCellValue('B' . $row, $part['tipe_name']);
     $activeSheet->setCellValue('C' . $row, $part['id_labour']);
     $activeSheet->setCellValue('D' . $row, $part['aktivitas']);

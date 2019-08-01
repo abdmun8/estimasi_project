@@ -14,7 +14,6 @@ class Quotation extends CI_Controller
         $this->load->library('form_validation');
         $this->sgedb = $this->load->database('sgedb', TRUE);
         $this->load->library('reporter');
-        
     }
 
     public function index($id = NULL)
@@ -196,13 +195,13 @@ class Quotation extends CI_Controller
                 $item['total'] = 0;
                 if ($item['tipe_item'] == 'item') {
 
-                    $item['total'] = ($item[$col[0]] * $item[$col[1]]);
+                    /* Cek deleted */
+                    $item['total'] = 0;
+                    if (!$item['deleted'])
+                        $item['total'] = ($item[$col[0]] * $item[$col[1]]);
+
                     $item[$col[0]] = floatval($item[$col[0]]);
-                    if ($col[1] == 'weight') {
-                        $item[$col[1]] = $item[$col[1]];
-                    } else {
-                        $item[$col[1]] = floatval($item[$col[1]]);
-                    }
+                    $item[$col[1]] = floatval($item[$col[1]]);
 
                     if ($item['tipe_parent'] == 'section') {
                         array_push($temp_parent_section, ['id_parent' => $item['id_parent'], 'total' => $item['total']]);
@@ -456,7 +455,7 @@ class Quotation extends CI_Controller
         $obj = $this->sgedb->select('lp.stcd, CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," [",mstchd.stcd,"]" ) as name, TRIM(mstchd.spek) as spek, TRIM(mstchd.maker) as maker, TRIM(mstchd.uom) as uom, TRIM(mstchd.nama) as nama, (lp.mkt) as harga, lp.remark', false)
             ->join('msprice lp', 'mstchd.stcd = lp.stcd')
             ->get('mstchd')->result();
-            // echo $this->db->last_query();
+        // echo $this->db->last_query();
 
         echo json_encode($obj);
     }
@@ -478,7 +477,7 @@ class Quotation extends CI_Controller
             ->where_in('header', ['10000', '20000'])
             // ->having('accno <>', '10001')
             ->having('accno <>', '10006')
-            ->get('akunbg') 
+            ->get('akunbg')
             ->result();
         echo json_encode($obj);
     }
@@ -503,7 +502,7 @@ class Quotation extends CI_Controller
 
 
         if ($post['tipe_item'] != 'item') {
-            $child = $this->db->get_where($post['table'], ['id_parent' => $post['id']])->num_rows();
+            $child = $this->db->get_where($post['table'], ['id_parent' => $post['id'], 'deleted' => 0])->num_rows();
 
             if ($child > 0) {
 
@@ -513,17 +512,26 @@ class Quotation extends CI_Controller
             } else {
 
                 $this->db->trans_begin();
-                $del = $this->db->delete($post['table'], ['id' => $post['id']]);
+                /* Current using soft delete */
+                // $del = $this->db->delete($post['table'], ['id' => $post['id']]);
+                $del = $this->db->update($post['table'], ['deleted' => 1], ['id' => $post['id']]);
 
                 if ($del) {
                     // cek total hour labour
-                    $parent_labour = $this->db->get_where('labour', ['id_part_jasa' => $post['id']])->row();
-                    $total_labour = $this->db->select('SUM(hour) as total', false)->get_where('labour', ['id_parent' => $parent_labour->id])->row()->total;
+                    $parent_labour = $this->db->get_where('labour', ['id_part_jasa' => $post['id'], 'deleted' => 0])->row();
+                    $total_labour = $this->db->select('SUM(hour) as total', false)->get_where('labour', ['id_parent' => $parent_labour->id, 'deleted' => 0])->row()->total;
 
                     // cek child material
-                    $parent_material = $this->db->get_where('rawmaterial', ['id_part_jasa' => $post['id']])->row();
-                    $child_material = $this->db->get_where('rawmaterial', ['id_parent' => $parent_material->id])->num_rows();
+                    $parent_material = $this->db->get_where('rawmaterial', ['id_part_jasa' => $post['id'], 'deleted' => 0])->row();
+                    $child_material = $this->db->get_where('rawmaterial', ['id_parent' => $parent_material->id, 'deleted' => 0])->num_rows();
+                    // $this->db->trans_rollback();
+                    // echo $this->db->last_query();
+                    // die;
 
+                    // var_dump(intval($total_labour));
+                    // var_dump($child_material);
+                    // $this->db->trans_rollback();
+                    // die;
                     if (intval($total_labour) > 0 || $child_material > 0) {
                         $this->db->trans_rollback();
                         $msg = 'Set jumlah hour (labour) menjadi 0 dahulu <br> dan hapus sub material!';
@@ -531,11 +539,15 @@ class Quotation extends CI_Controller
                     } else {
                         $this->db->where('id', $parent_labour->id);
                         $this->db->or_where('id_parent', $parent_labour->id);
-                        $delLabour = $this->db->delete('labour');
+                        /* Current using soft delete */
+                        // $delLabour = $this->db->delete('labour');
+                        $delLabour = $this->db->update('labour', ['deleted' => 1]);
 
                         $this->db->where('id', $parent_material->id);
                         $this->db->or_where('id_parent', $parent_material->id);
-                        $dellMaterial = $this->db->delete('rawmaterial');
+                        /* Current using soft delete */
+                        // $dellMaterial = $this->db->delete('rawmaterial');
+                        $dellMaterial = $this->db->update('rawmaterial', ['deleted' => 1]);
                         // echo $this->db->last_query();
                         if ($delLabour && $dellMaterial) {
                             $this->db->trans_commit();
@@ -552,7 +564,9 @@ class Quotation extends CI_Controller
         } else {
 
             $this->db->trans_begin();
-            $del = $this->db->delete($post['table'], ['id' => $post['id']]);
+            /* current using soft delete */
+            // $del = $this->db->delete($post['table'], ['id' => $post['id']]);
+            $del = $this->db->update($post['table'], ['deleted' => 1], ['id' => $post['id']]);
             // echo $this->db->last_query();
             if ($del) {
                 $this->db->trans_commit();
@@ -675,8 +689,14 @@ class Quotation extends CI_Controller
     {
         $rowTitle = $this->db->get_where('header', ['id' => $id_header])->row();
         $title = "Quot-Part-" . $rowTitle->inquiry_no . "-" . $rowTitle->project_name . "-" . $rowTitle->customer . "-" . date('dmY');
-        $dataPart = $this->getDataPart($id_header, NULL, false);
-        $dataMaterial = $this->getDataMaterial($id_header, NULL, false);
+        $part = $this->getDataPart($id_header, NULL, false);
+        $dataPart = array_filter($part, function($item){
+            return $item['deleted'] == 0;
+        });
+        $material = $this->getDataMaterial($id_header, NULL, false);
+        $dataMaterial = array_filter($material, function($item){
+            return $item['deleted'] == 0;
+        });
         $this->load->view('report/quotation_part', ['part' => $dataPart, 'material' => $dataMaterial, 'title' => $title]);
     }
 
@@ -684,7 +704,10 @@ class Quotation extends CI_Controller
     {
         $rowTitle = $this->db->get_where('header', ['id' => $id_header])->row();
         $title = "Quot-Labour-" . $rowTitle->inquiry_no . "-" . $rowTitle->project_name . "-" . $rowTitle->customer . "-" . date('dmY');
-        $dataLabour = $this->getDataLabour($id_header, NULL, false, false);
+        $labour = $this->getDataLabour($id_header, NULL, false, false);
+        $dataLabour = array_filter($labour, function($item){
+            return $item['deleted'] == 0;
+        });
         $this->load->view('report/quotation_labour', ['labour' => $dataLabour, 'title' => $title]);
     }
 
@@ -692,9 +715,21 @@ class Quotation extends CI_Controller
     {
         $rowTitle = $this->db->get_where('header', ['id' => $id_header])->row();
         $title = "Quot-Summary" . $rowTitle->inquiry_no . "-" . $rowTitle->project_name . "-" . $rowTitle->customer . "-" . date('dmY');
-        $dataPart = $this->getDataPart($id_header, NULL, false);
-        $dataMaterial = $this->getDataMaterial($id_header, NULL, false);
-        $dataLabour = $this->getDataLabour($id_header, NULL, false, false);
+        // $dataPart = $this->getDataPart($id_header, NULL, false);
+        // $dataMaterial = $this->getDataMaterial($id_header, NULL, false);
+        // $dataLabour = $this->getDataLabour($id_header, NULL, false, false);
+        $part = $this->getDataPart($id_header, NULL, false);
+        $dataPart = array_filter($part, function($item){
+            return $item['deleted'] == 0;
+        });
+        $material = $this->getDataMaterial($id_header, NULL, false);
+        $dataMaterial = array_filter($material, function($item){
+            return $item['deleted'] == 0;
+        });
+        $labour = $this->getDataLabour($id_header, NULL, false, false);
+        $dataLabour = array_filter($labour, function($item){
+            return $item['deleted'] == 0;
+        });
         $summary = $this->reporter->getDataSummary($dataPart, $dataMaterial, $dataLabour);
         if ($return) {
             return $summary;

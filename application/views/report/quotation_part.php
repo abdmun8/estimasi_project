@@ -7,6 +7,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 
 require_once 'vendor/autoload.php';
 
@@ -16,17 +17,18 @@ $arrHeaderPart = [
     'Item Code',
     'Item Name',
     'Spec',
-    'Merk',
-    'Satuan',
-    'Harga',
+    'Maker',
+    'Units',
+    'Unit Price',
     'Qty',
     'Total',
-    'Kategori'
+    'Category',
+    'Remark'
 ];
 
 $dataPart = $this->reporter->getStructure($part, 'findChildPart');
 
-// print_r($arrData);
+// print_r($dataPart);die;
 // Create new Spreadsheet object
 $spreadsheet = new Spreadsheet();
 $activeSheet = $spreadsheet->getActiveSheet();
@@ -59,7 +61,7 @@ $headerStyle = [
     ]
 ];
 $activeSheet->fromArray($arrHeaderPart, NULL, 'A3');
-$activeSheet->getStyle('A3:K3')->applyFromArray($headerStyle);
+$activeSheet->getStyle('A3:L3')->applyFromArray($headerStyle);
 
 // Looping part & jasa
 
@@ -68,7 +70,7 @@ foreach ($dataPart as $key => $part) {
     $row = (int) $key + 4;
     $color = $this->reporter->typeCheck($part['tipe_item']);
 
-    $activeSheet->setCellValue('A' . $row, $part['tipe_id']);
+    $activeSheet->getCell('A' . $row)->setValueExplicit($part['tipe_item'] == 'item' ? '' : strval($part['tipe_id']), \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
     $activeSheet->setCellValue('B' . $row, $part['tipe_name']);
     $activeSheet->setCellValue('C' . $row, $part['item_code']);
     $activeSheet->setCellValue('D' . $row, $part['item_name']);
@@ -79,11 +81,12 @@ foreach ($dataPart as $key => $part) {
     $activeSheet->setCellValue('I' . $row, $part['qty']);
     $activeSheet->setCellValue('J' . $row, $part['total']);
     $activeSheet->setCellValue('K' . $row, $part['kategori']);
+    $activeSheet->setCellValue('L' . $row, $part['remark_harga']);
     $activeSheet->getStyle("H$row")->getNumberFormat()
         ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
     $activeSheet->getStyle("J$row")->getNumberFormat()
         ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-    $activeSheet->getStyle("A$row:K$row")->applyFromArray(
+    $activeSheet->getStyle("A$row:L$row")->applyFromArray(
         [
             'fill' => [
                 'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_GRADIENT_LINEAR,
@@ -142,7 +145,7 @@ foreach ($dataMaterial as $key => $part) {
     $row ++;
     $color = $this->reporter->typeCheck($part['tipe_item']);
 
-    $activeSheet->setCellValue('A' . $row, $part['tipe_id']);
+    $activeSheet->getCell('A' . $row)->setValueExplicit($part['tipe_item'] == 'item' ? '' : strval($part['tipe_id']), \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
     $activeSheet->setCellValue('B' . $row, $part['tipe_name']);
     $activeSheet->setCellValue('C' . $row, $part['item_code']);
     $activeSheet->setCellValue('D' . $row, $part['part_name']);
