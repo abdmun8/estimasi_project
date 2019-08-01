@@ -67,6 +67,18 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         .font14 {
             font-size: .8em;
         }
+
+        .section-bg {
+            background-color: #CCFFE8;
+        }
+
+        .object-bg {
+            background-color: #C5DEED;
+        }
+
+        .sub_object-bg {
+            background-color: #FBE1B6;
+        }
     </style>
     <script>
         var base_url = '<?php echo base_url(); ?>';
@@ -684,16 +696,16 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     formatter: function(value, row, index) {
                         if (row.tipe_item == 'section') {
                             if (row.deleted == 1)
-                                return '<strike>' + value + '</strike>';
-                            return '<span>' + value + '</span>';
-                        } else if (row.tipe_item == 'object') {
+                                return `<strike class="section-identity">` + value + `</strike>`;
+                            return `<span class="section-identity">` + value + `</span>`;
+                        } else if (row.tipe_item == `object`) {
                             if (row.deleted == 1)
-                                return '<strike>' + addSpace(3) + value + '</strike>';
-                            return '<span>' + addSpace(3) + value + '</span>';
-                        } else if (row.tipe_item == 'sub_object') {
+                                return `<strike class="object-identity">` + addSpace(3) + value + `</strike>`;
+                            return `<span class="object-identity">` + addSpace(3) + value + `</span>`;
+                        } else if (row.tipe_item == `sub_object`) {
                             if (row.deleted == 1)
-                                return '<strike>' + addSpace(6) + value + '</strike>';
-                            return '<span>' + addSpace(6) + value + '</span>';
+                                return `<strike class="sub_object-identity">` + addSpace(6) + value + `</strike>`;
+                            return `<span class="sub_object-identity">` + addSpace(6) + value + `</span>`;
                         } else {
                             return '';
                         }
@@ -823,7 +835,21 @@ $satuan = $this->db->get_where('tblsatuan')->result();
 
             ],
             onAll: function(data) {
-                // console.log("onAll");
+                let gpsection = $(".section-identity").parent().parent();
+                for (let index = 0; index < gpsection.length; index++) {
+                    const element = gpsection[index];
+                    $(element).addClass('section-bg')
+                }
+                let osection = $(".object-identity").parent().parent();
+                for (let index = 0; index < osection.length; index++) {
+                    const element = osection[index];
+                    $(element).addClass('object-bg')
+                }
+                let susection = $(".sub_object-identity").parent().parent();
+                for (let index = 0; index < susection.length; index++) {
+                    const element = susection[index];
+                    $(element).addClass('sub_object-bg')
+                }
                 return false;
             },
             onLoadSuccess: function(data) {
@@ -944,16 +970,16 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     formatter: function(value, row, index) {
                         if (row.tipe_item == 'section') {
                             if (row.deleted == 1)
-                                return '<strike>' + value + '</strike>';
-                            return '<span>' + value + '</span>';
-                        } else if (row.tipe_item == 'object') {
+                                return `<strike class="section-identity">` + value + `</strike>`;
+                            return `<span class="section-identity">` + value + `</span>`;
+                        } else if (row.tipe_item == `object`) {
                             if (row.deleted == 1)
-                                return '<strike>' + addSpace(3) + value + '</strike>';
-                            return '<span>' + addSpace(3) + value + '</span>';
-                        } else if (row.tipe_item == 'sub_object') {
+                                return `<strike class="object-identity">` + addSpace(3) + value + `</strike>`;
+                            return `<span class="object-identity">` + addSpace(3) + value + `</span>`;
+                        } else if (row.tipe_item == `sub_object`) {
                             if (row.deleted == 1)
-                                return '<strike>' + addSpace(6) + value + '</strike>';
-                            return '<span>' + addSpace(6) + value + '</span>';
+                                return `<strike class="sub_object-identity">` + addSpace(6) + value + `</strike>`;
+                            return `<span class="sub_object-identity">` + addSpace(6) + value + `</span>`;
                         } else {
                             return '';
                         }
@@ -1032,7 +1058,21 @@ $satuan = $this->db->get_where('tblsatuan')->result();
 
             ],
             onAll: function(data) {
-                // console.log("onAll");
+                let gpsection = $(".section-identity").parent().parent();
+                for (let index = 0; index < gpsection.length; index++) {
+                    const element = gpsection[index];
+                    $(element).addClass('section-bg')
+                }
+                let osection = $(".object-identity").parent().parent();
+                for (let index = 0; index < osection.length; index++) {
+                    const element = osection[index];
+                    $(element).addClass('object-bg')
+                }
+                let susection = $(".sub_object-identity").parent().parent();
+                for (let index = 0; index < susection.length; index++) {
+                    const element = susection[index];
+                    $(element).addClass('sub_object-bg')
+                }
                 return false;
             },
             onLoadSuccess: function(data) {
@@ -1138,31 +1178,20 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     formatter: function(value, row, index) {
                         if (row.tipe_item == 'section') {
                             if (row.deleted == 1)
-                                return '<strike>' + value + '</strike>';
-                            return '<span>' + value + '</span>';
-                        } else if (row.tipe_item == 'object') {
+                                return `<strike class="section-identity">` + value + `</strike>`;
+                            return `<span class="section-identity">` + value + `</span>`;
+                        } else if (row.tipe_item == `object`) {
                             if (row.deleted == 1)
-                                return '<strike>' + addSpace(3) + value + '</strike>';
-                            return '<span>' + addSpace(3) + value + '</span>';
-                        } else if (row.tipe_item == 'sub_object') {
+                                return `<strike class="object-identity">` + addSpace(3) + value + `</strike>`;
+                            return `<span class="object-identity">` + addSpace(3) + value + `</span>`;
+                        } else if (row.tipe_item == `sub_object`) {
                             if (row.deleted == 1)
-                                return '<strike>' + addSpace(6) + value + '</strike>';
-                            return '<span>' + addSpace(6) + value + '</span>';
+                                return `<strike class="sub_object-identity">` + addSpace(6) + value + `</strike>`;
+                            return `<span class="sub_object-identity">` + addSpace(6) + value + `</span>`;
                         } else {
                             return '';
                         }
                     }
-                    // formatter: function(value, row, index) {
-                    //     if (row.tipe_item == 'section') {
-                    //         return '<span>' + value + '</span>';
-                    //     } else if (row.tipe_item == 'object') {
-                    //         return '<span>' + addSpace(3) + value + '</span>';
-                    //     } else if (row.tipe_item == 'sub_object') {
-                    //         return '<span>' + addSpace(6) + value + '</span>';
-                    //     } else {
-                    //         return '';
-                    //     }
-                    // }
                 },
                 {
                     field: 'item_code',
@@ -1348,7 +1377,21 @@ $satuan = $this->db->get_where('tblsatuan')->result();
 
             ],
             onAll: function(data) {
-                // console.log("onAll");
+                let gpsection = $(".section-identity").parent().parent();
+                for (let index = 0; index < gpsection.length; index++) {
+                    const element = gpsection[index];
+                    $(element).addClass('section-bg')
+                }
+                let osection = $(".object-identity").parent().parent();
+                for (let index = 0; index < osection.length; index++) {
+                    const element = osection[index];
+                    $(element).addClass('object-bg')
+                }
+                let susection = $(".sub_object-identity").parent().parent();
+                for (let index = 0; index < susection.length; index++) {
+                    const element = susection[index];
+                    $(element).addClass('sub_object-bg')
+                }
                 return false;
             },
             onLoadSuccess: function(data) {
@@ -1745,7 +1788,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 }
             }
 
-            if($("#item_code-item").val() == ''){
+            if ($("#item_code-item").val() == '') {
                 $("#item_code").val('')
             }
 

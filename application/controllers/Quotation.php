@@ -227,8 +227,6 @@ class Quotation extends CI_Controller
                 }
             }
 
-
-
             foreach ($temp_sub_obj as $key => $so) {
                 $so['total'] = 0;
                 foreach ($data_item as $key => $item) {
@@ -240,8 +238,6 @@ class Quotation extends CI_Controller
                 }
                 $data_sub_obj[] = $so;
             }
-
-
 
             foreach ($temp_obj as $key => $object) {
                 $object['total'] = 0;
@@ -320,6 +316,8 @@ class Quotation extends CI_Controller
                 if ($this->quotation->insertGeneralInfo() == TRUE) {
                     $code = 1;
                     $last_id = $this->db->insert_id();
+                    /* INSERT DEFAULT SECTION */
+                    $this->saveDefaultSection($last_id);
                 }
             } else {
                 if ($this->quotation->udpateGeneralInfo() == TRUE) {
@@ -328,14 +326,56 @@ class Quotation extends CI_Controller
                 }
             }
         }
-
+        
         echo json_encode(array('data' => array(
             'code' => $code,
             'message' => $message
         ), 'last_id' => $last_id));
     }
 
-    public function saveItem()
+    public function saveDefaultSection($id_header)
+    {
+        $arr = [
+            ['tipe_name-item' => 'ONSITE', 'tipe_id-item' => '19', 'id_header-item' => $id_header],
+            ['tipe_name-item' => 'INSTALLATION', 'tipe_id-item' => '20', 'id_header-item' => $id_header]
+        ];
+
+        $wrap = [
+            'tipe_item-item' => 'section',
+            'item_code-item' => '',
+            'spec-item' => '',
+            'satuan-item' => '',
+            'qty-item' => '',
+            'item_code' => '',
+            'id_parent-item' => '0',
+            'id_header-item' => '',
+            'action-item' => '1',
+            'id-item' => '1',
+            'tipe_id-item' => '19',
+            'tipe_name-item' => '',
+            'item_name-item' => '',
+            'merk-item' => '',
+            'harga-item' => '',
+            'kategori-item' => '',
+            'harga-item-clean' => '0',
+            'remark-harga' => ''
+        ];
+
+        foreach ($arr as $key => $value) {
+            $data = $wrap;
+            $data['tipe_name-item'] = $value['tipe_name-item'];
+            $data['tipe_id-item'] = $value['tipe_id-item'];
+            $data['id_header-item'] = $value['id_header-item'];
+            $_POST = $data;
+            $code = $this->saveItem(FALSE);
+        }
+
+        if ($code)
+            return TRUE;
+        return FALSE;
+    }
+
+    public function saveItem($json = TRUE)
     {
         // print_r($this->input->post());die;
         $code = 0;
@@ -423,10 +463,15 @@ class Quotation extends CI_Controller
                 $code = 1;
             }
         }
-        echo json_encode(array('data' => array(
-            'code' => $code,
-            'message' => $message
-        )));
+
+        if ($json) {
+            echo json_encode(array('data' => array(
+                'code' => $code,
+                'message' => $message
+            )));
+        } else {
+            return $code;
+        }
     }
 
     public function saveLabour()
@@ -690,11 +735,11 @@ class Quotation extends CI_Controller
         $rowTitle = $this->db->get_where('header', ['id' => $id_header])->row();
         $title = "Quot-Part-" . $rowTitle->inquiry_no . "-" . $rowTitle->project_name . "-" . $rowTitle->customer . "-" . date('dmY');
         $part = $this->getDataPart($id_header, NULL, false);
-        $dataPart = array_filter($part, function($item){
+        $dataPart = array_filter($part, function ($item) {
             return $item['deleted'] == 0;
         });
         $material = $this->getDataMaterial($id_header, NULL, false);
-        $dataMaterial = array_filter($material, function($item){
+        $dataMaterial = array_filter($material, function ($item) {
             return $item['deleted'] == 0;
         });
         $this->load->view('report/quotation_part', ['part' => $dataPart, 'material' => $dataMaterial, 'title' => $title]);
@@ -705,7 +750,7 @@ class Quotation extends CI_Controller
         $rowTitle = $this->db->get_where('header', ['id' => $id_header])->row();
         $title = "Quot-Labour-" . $rowTitle->inquiry_no . "-" . $rowTitle->project_name . "-" . $rowTitle->customer . "-" . date('dmY');
         $labour = $this->getDataLabour($id_header, NULL, false, false);
-        $dataLabour = array_filter($labour, function($item){
+        $dataLabour = array_filter($labour, function ($item) {
             return $item['deleted'] == 0;
         });
         $this->load->view('report/quotation_labour', ['labour' => $dataLabour, 'title' => $title]);
@@ -719,15 +764,15 @@ class Quotation extends CI_Controller
         // $dataMaterial = $this->getDataMaterial($id_header, NULL, false);
         // $dataLabour = $this->getDataLabour($id_header, NULL, false, false);
         $part = $this->getDataPart($id_header, NULL, false);
-        $dataPart = array_filter($part, function($item){
+        $dataPart = array_filter($part, function ($item) {
             return $item['deleted'] == 0;
         });
         $material = $this->getDataMaterial($id_header, NULL, false);
-        $dataMaterial = array_filter($material, function($item){
+        $dataMaterial = array_filter($material, function ($item) {
             return $item['deleted'] == 0;
         });
         $labour = $this->getDataLabour($id_header, NULL, false, false);
-        $dataLabour = array_filter($labour, function($item){
+        $dataLabour = array_filter($labour, function ($item) {
             return $item['deleted'] == 0;
         });
         $summary = $this->reporter->getDataSummary($dataPart, $dataMaterial, $dataLabour);
