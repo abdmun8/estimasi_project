@@ -116,6 +116,7 @@ foreach ($sectionPart as $key => $section) {
     $activeSheet->getColumnDimension('K')->setWidth(20);
     $activeSheet->getColumnDimension('L')->setWidth(20);
 
+    $row = 5;
     $activeSheet->fromArray($arrHeaderPart, NULL, 'B5');
     $activeSheet->getStyle('B5:L5')->applyFromArray($headerStyle);
 
@@ -134,7 +135,7 @@ foreach ($sectionPart as $key => $section) {
     $activeSheet->getStyle('B4')->getFont()->setSize(11);
     $activeSheet->getStyle('B4')->getFont()->setBold(true);
 
-    $row += 5;
+    $row +=1;
     $noitem = 0;
     $sub_total = 0;
     $grand_total = 0;

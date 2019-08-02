@@ -776,6 +776,7 @@ class Quotation extends CI_Controller
             return $item['deleted'] == 0;
         });
         $summary = $this->reporter->getDataSummary($dataPart, $dataMaterial, $dataLabour);
+        $_GET['id'] = $id_header;
         if ($return) {
             return $summary;
         } else {

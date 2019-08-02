@@ -121,7 +121,7 @@ foreach ($data as $key => $value) {
     );
 }
 
-print_r($spreadsheet);die;   
+// print_r($spreadsheet);die;   
 
 // Redirect output to a client's web browser (Xlsx)
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
