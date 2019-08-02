@@ -134,12 +134,11 @@ foreach ($sectionPart as $key => $section) {
     $activeSheet->getStyle('B4')->getFont()->setSize(11);
     $activeSheet->getStyle('B4')->getFont()->setBold(true);
 
-    $row = 0;
+    $row = 5;
     $noitem = 0;
     $sub_total = 0;
     $grand_total = 0;
     foreach ($itemPart as $key => $part) {
-        $row = (int) $key + 6;
         $noitem++;
         $total = $part['qty'] * $part['harga'];
         $sub_total += $total;
@@ -173,6 +172,7 @@ foreach ($sectionPart as $key => $section) {
                 ]
             ]
         );
+        $row++;
     }
 
     // sub total material
