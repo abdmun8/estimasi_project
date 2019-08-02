@@ -42,7 +42,7 @@ $arrHeaderMaterial = [
 ];
 
 $arrHeaderLabour = [
-    'No',
+    'Id',
     'Name',
     'Id labour',
     'Aktifitas',
@@ -176,7 +176,7 @@ foreach ($sectionPart as $key => $section) {
     }
 
     // sub total material
-    $row += 1;
+    // $row += 1;
     $tot_alw = ($allowance / 100 * $sub_total);
     $sub = $sub_total + $tot_alw;
     $grand_total += $sub;
