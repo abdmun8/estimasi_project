@@ -81,16 +81,24 @@ $row = 0;
 foreach ($data as $key => $value) {
     $row = (int) $key + 5;
     $qty = $value['qty'];
+
+    $total_rm = $value['total_rm'] * $qty;
+    $total_mch = $value['total_mch'] * $qty;
+    $total_elc = $value['total_elc'] * $qty;
+    $total_pnu = $value['total_pnu'] * $qty;
+    $total_hyd =  $value['total_hyd'] * $qty;
+    $total_sub = $value['total_sub'] * $qty;
+
     $formatNum = ['C','D','E','F','G','H','I','J','K'];
     $activeSheet->setCellValue('A' . $row, $value['no']);
     $activeSheet->setCellValue('B' . $row, $value['tipe_id']);
     $activeSheet->setCellValue('C' . $row, $value['tipe_name']);
-    $activeSheet->setCellValue('D' . $row, $value['total_rm'] * $qty);
-    $activeSheet->setCellValue('E' . $row, $value['total_mch'] * $qty);
-    $activeSheet->setCellValue('F' . $row, $value['total_elc'] * $qty);
-    $activeSheet->setCellValue('G' . $row, $value['total_pnu'] * $qty);
-    $activeSheet->setCellValue('H' . $row, $value['total_hyd'] * $qty);
-    $activeSheet->setCellValue('I' . $row, $value['total_sub'] * $qty);
+    $activeSheet->setCellValue('D' . $row, $total_rm + ($allowance / 100 * $total_rm ));
+    $activeSheet->setCellValue('E' . $row, $total_mch + ($allowance / 100 * $total_mch));
+    $activeSheet->setCellValue('F' . $row, $total_elc + ($allowance / 100 * $total_elc));
+    $activeSheet->setCellValue('G' . $row, $total_pnu + ($allowance / 100 * $total_pnu));
+    $activeSheet->setCellValue('H' . $row, $total_hyd + ($allowance / 100 * $total_hyd));
+    $activeSheet->setCellValue('I' . $row, $total_sub + ($allowance / 100 * $total_sub));
     $activeSheet->setCellValue('J' . $row, $value['total_eng']);
     $activeSheet->setCellValue('K' . $row, $value['total_prod'] * $qty);
     foreach ($formatNum as $v) {
@@ -113,7 +121,7 @@ foreach ($data as $key => $value) {
     );
 }
 
-// print_r($spreadsheet);die;   
+print_r($spreadsheet);die;   
 
 // Redirect output to a client's web browser (Xlsx)
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');

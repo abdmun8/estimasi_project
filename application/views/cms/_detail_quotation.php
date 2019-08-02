@@ -1447,24 +1447,27 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         notify('danger', 'Terjadi kesalahan!');
 
                     } else {
+                        setTimeout(() => {
+                            $("#inquiry_no").val(json.data.object.inquiry_no);
+                            $("#project_name").val(json.data.object.project_name);
+                            $("#customer").val(json.data.object.customer);
+                            $('#customer').trigger('change');
+                            $("#qty_general").val(json.data.object.qty);
+                            $("#lot_general").val(json.data.object.satuan);
+                            $("#pic_marketing").val(json.data.object.pic_marketing);
+                            $('#pic_marketing').trigger('change');
+                            $("#start_date").val(convertDateIndo(json.data.object.start_date));
+                            $("#finish_date").val(convertDateIndo(json.data.object.finish_date));
+                            $("#project_type").val(json.data.object.project_type);
+                            $("#difficulty").val(json.data.object.difficulty);
+                            $("#duration").val(json.data.object.duration);
+                            $("#action-input").val('2');
+                            $("#value-input").val(json.data.object.id);
+                            $("#id_header-item").val(json.data.object.id);
+                            calcDate();
+                        }, 1000);
 
-                        $("#inquiry_no").val(json.data.object.inquiry_no);
-                        $("#project_name").val(json.data.object.project_name);
-                        $("#customer").val(json.data.object.customer);
-                        $('#customer').trigger('change');
-                        $("#qty_general").val(json.data.object.qty);
-                        $("#lot_general").val(json.data.object.satuan);
-                        $("#pic_marketing").val(json.data.object.pic_marketing);
-                        $('#pic_marketing').trigger('change');
-                        $("#start_date").val(convertDateIndo(json.data.object.start_date));
-                        $("#finish_date").val(convertDateIndo(json.data.object.finish_date));
-                        $("#project_type").val(json.data.object.project_type);
-                        $("#difficulty").val(json.data.object.difficulty);
-                        $("#duration").val(json.data.object.duration);
-                        $("#action-input").val('2');
-                        $("#value-input").val(json.data.object.id);
-                        $("#id_header-item").val(json.data.object.id);
-                        calcDate();
+
                     }
                 }
             });

@@ -134,7 +134,7 @@ foreach ($sectionPart as $key => $section) {
     $activeSheet->getStyle('B4')->getFont()->setSize(11);
     $activeSheet->getStyle('B4')->getFont()->setBold(true);
 
-    $row = 5;
+    $row += 5;
     $noitem = 0;
     $sub_total = 0;
     $grand_total = 0;
@@ -362,7 +362,7 @@ $spreadsheet->setActiveSheetIndex(0);
 
 // Redirect output to a client's web browser (Xlsx)
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-header('Content-Disposition: attachment;filename="' . 'aaa' . '.xlsx"');
+header('Content-Disposition: attachment;filename="' . $title . '.xlsx"');
 header('Cache-Control: max-age=0');
 
 $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');

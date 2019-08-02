@@ -779,7 +779,7 @@ class Quotation extends CI_Controller
         if ($return) {
             return $summary;
         } else {
-            $this->load->view('report/quotation_summary', ['summary' => $summary, 'title' => $title, 'inquiry_no' => $rowTitle->inquiry_no]);
+            $this->load->view('report/quotation_summary', ['summary' => $summary, 'title' => $title, 'inquiry_no' => $rowTitle->inquiry_no, 'allowance' => $this->getAmountAllowance(TRUE)]);
         }
     }
 
@@ -806,6 +806,8 @@ class Quotation extends CI_Controller
         });
 
         $parentPart = $this->reporter->getStructureTree($part);
+        $rowTitle = $this->db->get_where('header', ['id' => $id_header])->row();
+        $title = "Quot-Summary" . $rowTitle->inquiry_no . "-" . $rowTitle->project_name . "-" . $rowTitle->customer . "-" . date('dmY');
         // var_dump($parentLabour);
         // var_dump($parentMaterial);
         // var_dump($parentPart);
@@ -822,7 +824,8 @@ class Quotation extends CI_Controller
                 'dataLabour' => $labour,
                 'parentLabour' => $parentLabour,
                 'sectionLabour' => $sectionLabour,
-                'allowance' => $this->getAmountAllowance(TRUE)
+                'allowance' => $this->getAmountAllowance(TRUE),
+                'title' => $title
             ]
         );
     }
