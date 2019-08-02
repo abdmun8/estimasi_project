@@ -376,4 +376,10 @@ class Reporter
 
         return $data;
     }
+
+    public function getItemOnly($id_parent){
+        $this->db->where(['deleted <>' => 1]);
+        $this->db->where_in('id_parent', $id_parent);
+        return  $this->_CI->db->get('part_jasa')->result_array();
+    }
 }

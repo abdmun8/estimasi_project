@@ -186,6 +186,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                     </select>
                                 </div>
                             </div>
+                            <button title="Export Summary Detail" id="print-part-section-detail" style="margin-left: 10px;" onclick="exportExcel('detail_summary','<?= $param ?>')" type="button" class="btn btn-default pull-right"><i class="fa fa-file-excel-o"></i> Detail Summary</button>
                             <button title="Export Summary" id="print-part-section" style="margin-left: 10px;" onclick="exportExcel('summary','<?= $param ?>')" type="button" class="btn btn-default pull-right"><i class="fa fa-file-excel-o"></i> Summary</button>
                             <button title="Save Record" type="button" class="btn btn-default pull-right" onclick="saving();"><i class="fa fa-save"></i> Save</button>
                             <button title="New Record" type="button" class="btn btn-default pull-right" onclick="newForm();" style="margin-right: 10px;"><i class="fa fa-plus"></i> New</button>

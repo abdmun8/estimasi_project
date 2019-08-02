@@ -96,6 +96,7 @@ $route['quotation/get_item_code'] = 'Quotation/getItemCode';
 $route['quotation/print_part/(:num)'] = 'Quotation/printPart/$1';
 $route['quotation/print_labour/(:num)'] = 'Quotation/printLabour/$1';
 $route['quotation/print_summary/(:num)'] = 'Quotation/printSummary/$1';
+$route['quotation/print_detail_summary/(:num)'] = 'Quotation/printDetailSummary/$1';
 
 
 

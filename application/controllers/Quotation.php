@@ -326,7 +326,7 @@ class Quotation extends CI_Controller
                 }
             }
         }
-        
+
         echo json_encode(array('data' => array(
             'code' => $code,
             'message' => $message
@@ -783,6 +783,50 @@ class Quotation extends CI_Controller
         }
     }
 
+    public function printDetailSummary($id_header)
+    {
+        $part = $this->getDataPart($id_header, NULL, false);
+        $material = $this->getDataMaterial($id_header, NULL, false);
+        $labour = $this->getDataLabour($id_header, NULL, false, false);
+
+        $sectionLabour = array_filter($labour, function ($item) {
+            return $item['tipe_item'] == 'section';
+        });
+
+        $parentLabour = $this->reporter->getStructureTree($labour);
+
+        $sectionMaterial = array_filter($material, function ($item) {
+            return $item['tipe_item'] == 'section';
+        });
+
+        $parentMaterial = $this->reporter->getStructureTree($material);
+
+        $sectionPart = array_filter($part, function ($item) {
+            return $item['tipe_item'] == 'section';
+        });
+
+        $parentPart = $this->reporter->getStructureTree($part);
+        // var_dump($parentLabour);
+        // var_dump($parentMaterial);
+        // var_dump($parentPart);
+        $_GET['id'] = $id_header;
+        $this->load->view(
+            'report/quotation_persection',
+            [
+                'dataPart' => $part,
+                'parentPart' => $parentPart,
+                'sectionPart' => $sectionPart,
+                'dataMaterial' => $material,
+                'parentMaterial' => $parentMaterial,
+                'sectionMaterial' => $sectionMaterial,
+                'dataLabour' => $labour,
+                'parentLabour' => $parentLabour,
+                'sectionLabour' => $sectionLabour,
+                'allowance' => $this->getAmountAllowance(TRUE)
+            ]
+        );
+    }
+
     public function saveAllowance()
     {
         $post = $this->input->post();
@@ -794,11 +838,14 @@ class Quotation extends CI_Controller
         echo json_encode(['code' => 1, 'success' => true]);
     }
 
-    public function getAmountAllowance()
+    public function getAmountAllowance($return = FALSE)
     {
         $get = $this->input->get();
         $amount = $this->db->get_where('header', ['id' => $get['id']])->row()->allowance;
-        echo json_encode(['data' => $amount, 'code' => 1, 'success' => true]);
+        if ($return)
+            return $amount;
+        else
+            echo json_encode(['data' => $amount, 'code' => 1, 'success' => true]);
     }
 
     // get counter except item
