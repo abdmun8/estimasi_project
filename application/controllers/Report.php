@@ -133,7 +133,7 @@ class Report extends Quotation
 
         /* Tittle Report */
         $this->pdf->SetFont('Arial', 'B', '13');
-        $this->pdf->Cell(275, -34, 'COST OF GOODS MANUFACTURE', 0, 0, 'C');
+        $this->pdf->Cell(275, -34, 'COST OF GOODS MANUFACTURED', 0, 0, 'C');
         $this->pdf->Ln(0);
         $this->pdf->Cell(215);
         $this->pdf->Cell(50, -50, 'INQUIRY No # ' . $header->inquiry_no, 0, 0);
