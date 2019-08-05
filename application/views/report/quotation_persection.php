@@ -10,18 +10,33 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 require_once 'vendor/autoload.php';
 
+function cellMerge($activeSheet, $cellNo)
+{
+    $activeSheet->mergeCells($cellNo);
+}
+
+function numberFormat($activeSheet, $cellNo)
+{
+    $activeSheet->getStyle($cellNo)->getNumberFormat()
+        ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+}
+
 $arrHeaderPart = [
     'No',
     'Item Code',
     'Item Name',
     'Spec',
+    '',
     'Maker',
     'Units',
+    'Category',
+    '',
+    'Remark',
+    '',
     'Unit Price',
     'Qty',
     'Total',
-    'Category',
-    'Remark'
+
 ];
 
 $arrHeaderMaterial = [
@@ -105,20 +120,24 @@ foreach ($sectionPart as $key => $section) {
     // set section style
     $activeSheet->getStyle('A1:B1')->applyFromArray($sectionStyle);
     $activeSheet->getStyle('A2:B2')->applyFromArray($sectionStyle);
+
     // set column a dimension
     $activeSheet->getColumnDimension('A')->setWidth(5);
     $activeSheet->getColumnDimension('B')->setWidth(5);
-    $activeSheet->getColumnDimension('C')->setWidth(20);
+    $activeSheet->getColumnDimension('C')->setWidth(10);
     $activeSheet->getColumnDimension('D')->setWidth(30);
     $activeSheet->getColumnDimension('E')->setWidth(20);
-    $activeSheet->getColumnDimension('H')->setWidth(15);
-    $activeSheet->getColumnDimension('J')->setWidth(12);
-    $activeSheet->getColumnDimension('K')->setWidth(20);
-    $activeSheet->getColumnDimension('L')->setWidth(20);
+    // $activeSheet->getColumnDimension('H')->setWidth(15);
+    $activeSheet->getColumnDimension('L')->setWidth(10);
+    $activeSheet->getColumnDimension('M')->setWidth(15);
+    $activeSheet->getColumnDimension('O')->setWidth(15);
 
     $row = 5;
-    $activeSheet->fromArray($arrHeaderPart, NULL, 'B5');
-    $activeSheet->getStyle('B5:L5')->applyFromArray($headerStyle);
+    $activeSheet->fromArray($arrHeaderPart, NULL, "B$row");
+    $activeSheet->getStyle("B$row:O$row")->applyFromArray($headerStyle);
+    cellMerge($activeSheet, "E$row:F$row");
+    cellMerge($activeSheet, "I$row:J$row");
+    cellMerge($activeSheet, "K$row:L$row");
 
     // query part jasa
     $this->db->select('p.*,a.desc as nama_kategori', false);
@@ -135,7 +154,7 @@ foreach ($sectionPart as $key => $section) {
     $activeSheet->getStyle('B4')->getFont()->setSize(11);
     $activeSheet->getStyle('B4')->getFont()->setBold(true);
 
-    $row +=1;
+    $row += 1;
     $noitem = 0;
     $sub_total = 0;
     $grand_total = 0;
@@ -148,18 +167,28 @@ foreach ($sectionPart as $key => $section) {
         $activeSheet->setCellValue('C' . $row, $part['item_code']);
         $activeSheet->setCellValue('D' . $row, $part['item_name']);
         $activeSheet->setCellValue('E' . $row, $part['spec']);
-        $activeSheet->setCellValue('F' . $row, $part['merk']);
-        $activeSheet->setCellValue('G' . $row, $part['satuan']);
-        $activeSheet->setCellValue('H' . $row, $part['harga']);
-        $activeSheet->setCellValue('I' . $row, $part['qty']);
-        $activeSheet->setCellValue('J' . $row, $total);
-        $activeSheet->setCellValue('K' . $row, $part['nama_kategori']);
-        $activeSheet->setCellValue('L' . $row, $part['remark_harga']);
-        $activeSheet->getStyle("H$row")->getNumberFormat()
-            ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-        $activeSheet->getStyle("J$row")->getNumberFormat()
-            ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-        $activeSheet->getStyle("B$row:L$row")->applyFromArray(
+        $activeSheet->setCellValue('G' . $row, $part['merk']);
+        $activeSheet->setCellValue('H' . $row, $part['satuan']);
+        $activeSheet->setCellValue('I' . $row, $part['nama_kategori']);
+        $activeSheet->setCellValue('K' . $row, $part['remark_harga']);
+        $activeSheet->setCellValue('M' . $row, $part['harga']);
+        $activeSheet->setCellValue('N' . $row, $part['qty']);
+        $activeSheet->setCellValue('O' . $row, $total);
+
+        /* Number format */
+        numberFormat($activeSheet, "M$row");
+        numberFormat($activeSheet, "O$row");
+        // $activeSheet->getStyle("H$row")->getNumberFormat()
+        //     ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+        // $activeSheet->getStyle("J$row")->getNumberFormat()
+        //     ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+
+        /* Merge */
+        cellMerge($activeSheet, "E$row:F$row");
+        cellMerge($activeSheet, "I$row:J$row");
+        cellMerge($activeSheet, "K$row:L$row");
+        // $activeSheet->mergeCells("E$row:F$row");
+        $activeSheet->getStyle("B$row:O$row")->applyFromArray(
             [
                 'borders' => [
                     'allBorders' => [
@@ -182,19 +211,19 @@ foreach ($sectionPart as $key => $section) {
     $sub = $sub_total + $tot_alw;
     $grand_total += $sub;
 
-    $activeSheet->setCellValue("H$row", "Overrage $allowance %");
-    $activeSheet->setCellValue("J$row", $tot_alw);
-    $activeSheet->getStyle("J$row")->getNumberFormat()
+    $activeSheet->setCellValue("M$row", "Overrage $allowance %");
+    $activeSheet->setCellValue("O$row", $tot_alw);
+    $activeSheet->getStyle("O$row")->getNumberFormat()
         ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-    $activeSheet->getStyle("H$row:J$row")->getFont()->setSize(9);
-    $activeSheet->getStyle("H$row:J$row")->getFont()->setBold(true);
+    $activeSheet->getStyle("M$row:O$row")->getFont()->setSize(9);
+    $activeSheet->getStyle("M$row:O$row")->getFont()->setBold(true);
     $row += 1;
-    $activeSheet->setCellValue("H$row", "Sub Total");
-    $activeSheet->setCellValue("J$row", $sub);
-    $activeSheet->getStyle("J$row")->getNumberFormat()
+    $activeSheet->setCellValue("M$row", "Sub Total");
+    $activeSheet->setCellValue("O$row", $sub);
+    $activeSheet->getStyle("O$row")->getNumberFormat()
         ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-    $activeSheet->getStyle("H$row:J$row")->getFont()->setSize(9);
-    $activeSheet->getStyle("H$row:J$row")->getFont()->setBold(true);
+    $activeSheet->getStyle("M$row:O$row")->getFont()->setSize(9);
+    $activeSheet->getStyle("M$row:O$row")->getFont()->setBold(true);
 
     // query material
     $this->db->select('m.*', false);
@@ -294,7 +323,10 @@ foreach ($sectionPart as $key => $section) {
 
     $row += 1;
     $activeSheet->fromArray($arrHeaderLabour, NULL, "B$row");
-    $activeSheet->getStyle("B$row:H$row")->applyFromArray($headerStyle);
+    $activeSheet->getStyle("B$row:O$row")->applyFromArray($headerStyle);
+    cellMerge($activeSheet, "C$row:E$row");
+    cellMerge($activeSheet, "F$row:H$row");
+    cellMerge($activeSheet, "I$row:L$row");
 
     $row += 1;
     $noitem = 0;
@@ -307,14 +339,20 @@ foreach ($sectionPart as $key => $section) {
 
             $activeSheet->getCell('B' . $row)->setValueExplicit(strval($labour['tipe_id']), \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
             $activeSheet->setCellValue('C' . $row, $labour['tipe_name']);
-            $activeSheet->setCellValue('D' . $row, $labour['nama_kategori']);
-            $activeSheet->setCellValue('E' . $row, $labour['aktivitas']);
-            $activeSheet->setCellValue('F' . $row, $labour['hour']);
-            $activeSheet->setCellValue('G' . $row, $labour['rate']);
-            $activeSheet->setCellValue('H' . $row, $total);
-            $activeSheet->getStyle("H$row")->getNumberFormat()
-                ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-            $activeSheet->getStyle("B$row:H$row")->applyFromArray(
+            $activeSheet->setCellValue('F' . $row, $labour['nama_kategori']);
+            $activeSheet->setCellValue('I' . $row, $labour['aktivitas']);
+            $activeSheet->setCellValue('M' . $row, $labour['hour']);
+            $activeSheet->setCellValue('N' . $row, $labour['rate']);
+            $activeSheet->setCellValue('O' . $row, $total);
+
+            /* Number format */
+            numberFormat($activeSheet, "O$row");
+
+            /* Merge Cells */
+            cellMerge($activeSheet, "C$row:E$row");
+            cellMerge($activeSheet, "F$row:H$row");
+            cellMerge($activeSheet, "I$row:L$row");
+            $activeSheet->getStyle("B$row:O$row")->applyFromArray(
                 [
                     'borders' => [
                         'allBorders' => [
@@ -337,20 +375,20 @@ foreach ($sectionPart as $key => $section) {
     $sub = $sub_total;
     $grand_total += $sub;
 
-    $activeSheet->setCellValue("F$row", "Sub Total");
-    $activeSheet->setCellValue("H$row", $sub);
-    $activeSheet->getStyle("H$row")->getNumberFormat()
+    $activeSheet->setCellValue("M$row", "Sub Total");
+    $activeSheet->setCellValue("O$row", $sub);
+    $activeSheet->getStyle("O$row")->getNumberFormat()
         ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-    $activeSheet->getStyle("F$row:H$row")->getFont()->setSize(9);
-    $activeSheet->getStyle("F$row:H$row")->getFont()->setBold(true);
+    $activeSheet->getStyle("M$row:O$row")->getFont()->setSize(9);
+    $activeSheet->getStyle("M$row:O$row")->getFont()->setBold(true);
 
     $row++;
-    $activeSheet->setCellValue("F$row", "Grand Total");
-    $activeSheet->setCellValue("H$row", $grand_total);
-    $activeSheet->getStyle("H$row")->getNumberFormat()
+    $activeSheet->setCellValue("M$row", "Grand Total");
+    $activeSheet->setCellValue("O$row", $grand_total);
+    $activeSheet->getStyle("O$row")->getNumberFormat()
         ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-    $activeSheet->getStyle("F$row:H$row")->getFont()->setSize(9);
-    $activeSheet->getStyle("F$row:H$row")->getFont()->setBold(true);
+    $activeSheet->getStyle("M$row:O$row")->getFont()->setSize(9);
+    $activeSheet->getStyle("M$row:O$row")->getFont()->setBold(true);
 
 
     // no section
