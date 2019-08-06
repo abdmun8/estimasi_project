@@ -29,6 +29,12 @@
         <li><a href="#" onclick="loadContent(base_url + 'view/_quotation'); return false;"><i class="fa fa-circle-o"></i> Quotation</a></li>
     </ul>
 </li>
+<li class="menu" id="dashboard">
+    <a href="#" onclick="goToSomewhere('http://server/project_inquiry/table_inquiry1.php')">
+        <i class="fa fa-file-text-o"></i> <span>List Quotation</span> </i>
+    </a>
+</li>
+
 
 <!-- <li class="treeview menu" id="group-system">
     <a href="#">
@@ -44,3 +50,4 @@
         <li><a href="#" onclick="loadContent(base_url + 'view/_group_access'); return false;"><i class="fa fa-circle-o"></i> Group Access</a></li>
     </ul>
 </li> -->
+

@@ -176,6 +176,10 @@
         //for extra js...
         <?php echo (isset($_EXTRA_JS))?$_EXTRA_JS:'';?>
     });
+
+    function goToSomewhere(url){
+        window.open(url);
+    }
     
 </script>
 </body>
