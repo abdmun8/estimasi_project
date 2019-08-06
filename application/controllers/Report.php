@@ -589,11 +589,11 @@ class Report extends Quotation
         $this->pdf->Cell(130, 40, '', 1, 0, 'L');
 
         $this->pdf->Ln(0);
-        $this->pdf->Cell(10, 4, 'NOTE', 0, 0, 'R');
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(10, 10, '- Perbedaan model/dimensi benda kerja', 0, 0);
-        $this->pdf->Ln(0);
-        $this->pdf->Cell(10, 15, '- Perbedaan kapasitas pallet di dalam mesin.', 0, 0);
+        $this->pdf->Cell(10, 4, 'NOTE:', 0, 0, 'R');
+        // $this->pdf->Ln(0);
+        // $this->pdf->Cell(10, 10, '- Perbedaan model/dimensi benda kerja', 0, 0);
+        // $this->pdf->Ln(0);
+        // $this->pdf->Cell(10, 15, '- Perbedaan kapasitas pallet di dalam mesin.', 0, 0);
 
         /* Approval */
         $this->pdf->Ln(18);
