@@ -21,6 +21,16 @@ function numberFormat($activeSheet, $cellNo)
         ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
 }
 
+function addSpaceName($tipe_item)
+{
+    if ($tipe_item == 'object') {
+        return '  ';
+    } else if ($tipe_item == 'sub_object') {
+        return '    ';
+    }
+    return '';
+}
+
 $arrHeaderPart = [
     'No',
     'Item Code',
@@ -99,7 +109,7 @@ $headerStyle = [
 // $dataPart = $this->reporter->getStructure($dataPart, 'findChildPart');
 
 // $itemPart = $this->reporter->getItemOnly();
-// print_r($itemPart);
+// print_r($dataPart);
 // die;
 $spreadsheet = new Spreadsheet();
 $n = 0;
@@ -140,14 +150,29 @@ foreach ($sectionPart as $key => $section) {
     cellMerge($activeSheet, "K$row:L$row");
 
     // query part jasa
-    $this->db->select('p.*,a.desc as nama_kategori', false);
-    $this->db->where(['deleted <>' => 1, 'tipe_item' => 'item']);
-    $this->db->where_in('id_parent', $parentPart[$n]);
-    $this->db->join('sgedb.akunbg a', 'p.kategori = a.accno');
-    $this->db->order_by('nama_kategori', 'ASC');
-    $itemPart = $this->db->get("{$this->db->database}.part_jasa p")->result_array();
+    // $this->db->select('p.*,p.qty * p.harga AS `total`,a.desc as nama_kategori', false);
+    // $this->db->where(['deleted <>' => 1]);
+    // // $this->db->where(['deleted <>' => 1, 'tipe_item' => 'item']);
+    // $this->db->where_in('id', $parentPart[$n]);
+    // $this->db->or_where_in('id_parent', $parentPart[$n]);
+    // $this->db->join('sgedb.akunbg a', 'p.kategori = a.accno', 'left');
+    // $this->db->order_by('nama_kategori', 'ASC');
+    // $itemPart1 = $this->db->get("{$this->db->database}.part_jasa p")->result_array();
     // echo $this->db->last_query();
+    // $itemPart = array_merge($)
     // var_dump($itemPart);
+    $itemPart = $this->reporter->getStructure($dataPart, 'findChildPart');
+    $newPart = [];
+    foreach ($itemPart as $key => $item) {
+        if (in_array($item['id'], $parentPart[$n])) {
+            array_push($newPart, $item);
+        } else {
+            if (in_array($item['id_parent'], $parentPart[$n])) {
+                array_push($newPart, $item);
+            }
+        }
+    }
+    // var_dump($newPart);
     // die;
 
     $activeSheet->setCellValue('B4', 'Part & Jasa');
@@ -158,22 +183,22 @@ foreach ($sectionPart as $key => $section) {
     $noitem = 0;
     $sub_total = 0;
     $grand_total = 0;
-    foreach ($itemPart as $key => $part) {
+    foreach ($newPart as $key => $part) {
         $noitem++;
-        $total = $part['qty'] * $part['harga'];
+        $total = (int) $part['qty'] * (int) $part['harga'];
         $sub_total += $total;
 
-        $activeSheet->setCellValue('B' . $row, $noitem);
+        $activeSheet->getCell('B' . $row)->setValueExplicit($part['tipe_item'] == 'item' ? '' : strval($part['tipe_id']), DataType::TYPE_STRING);
         $activeSheet->setCellValue('C' . $row, $part['item_code']);
-        $activeSheet->setCellValue('D' . $row, $part['item_name']);
+        $activeSheet->setCellValue('D' . $row, $part['tipe_item'] == 'item' ? $part['item_name'] : addSpaceName($part['tipe_item']).$part['tipe_name']);
         $activeSheet->setCellValue('E' . $row, $part['spec']);
         $activeSheet->setCellValue('G' . $row, $part['merk']);
         $activeSheet->setCellValue('H' . $row, $part['satuan']);
-        $activeSheet->setCellValue('I' . $row, $part['nama_kategori']);
+        $activeSheet->setCellValue('I' . $row, isset($part['nama_kategori']) ? $part['nama_kategori'] : '');
         $activeSheet->setCellValue('K' . $row, $part['remark_harga']);
-        $activeSheet->setCellValue('M' . $row, $part['harga']);
-        $activeSheet->setCellValue('N' . $row, $part['qty']);
-        $activeSheet->setCellValue('O' . $row, $total);
+        $activeSheet->setCellValue('M' . $row, $part['tipe_item'] == 'item' ? $part['harga'] : '');
+        $activeSheet->setCellValue('N' . $row, $part['tipe_item'] == 'item' ? $part['qty'] : '');
+        $activeSheet->setCellValue('O' . $row, $part['tipe_item'] == 'item' ? $total : '');
 
         /* Number format */
         numberFormat($activeSheet, "M$row");
@@ -226,10 +251,23 @@ foreach ($sectionPart as $key => $section) {
     $activeSheet->getStyle("M$row:O$row")->getFont()->setBold(true);
 
     // query material
-    $this->db->select('m.*', false);
-    $this->db->where(['deleted <>' => 1, 'tipe_item' => 'item']);
-    $this->db->where_in('id_parent', $parentMaterial[$n]);
-    $itemMaterial = $this->db->get("v_rawmaterial m")->result_array();
+    // $this->db->select('m.*', false);
+    // $this->db->where(['deleted <>' => 1, 'tipe_item' => 'item']);
+    // $this->db->where_in('id_parent', $parentMaterial[$n]);
+    // $itemMaterial = $this->db->get("v_rawmaterial m")->result_array();
+    $tempMaterial = $this->reporter->getStructure($dataMaterial, 'findChildMaterial');
+    $itemMaterial = [];
+    foreach ($tempMaterial as $key => $item) {
+        if (in_array($item['id'], $parentMaterial[$n])) {
+            array_push($itemMaterial, $item);
+        } else {
+            if (in_array($item['id_parent'], $parentMaterial[$n])) {
+                array_push($itemMaterial, $item);
+            }
+        }
+    }
+
+    // var_dump($itemMaterial);die;
 
     $row += 2;
     $activeSheet->setCellValue("B$row", "Raw Material");
@@ -245,22 +283,26 @@ foreach ($sectionPart as $key => $section) {
     $sub_total = 0;
     foreach ($itemMaterial as $key => $material) {
         $noitem++;
-        $total = $material['weight'] * $material['price'];
+        $weight = isset($material['weight']) ? $material['weight'] : 0;
+        $price = isset($material['price']) ? $material['price'] : 0;
+        $total = (float) $weight * (float) $price;
         $sub_total += $total;
 
-        $activeSheet->setCellValue('B' . $row, $noitem);
-        $activeSheet->setCellValue('C' . $row, $material['item_code']);
-        $activeSheet->setCellValue('D' . $row, $material['part_name']);
-        $activeSheet->setCellValue('E' . $row, $material['units']);
-        $activeSheet->setCellValue('F' . $row, $material['qty']);
-        $activeSheet->setCellValue('G' . $row, $material['materials']);
-        $activeSheet->setCellValue('H' . $row, $material['l']);
-        $activeSheet->setCellValue('I' . $row, $material['w']);
-        $activeSheet->setCellValue('J' . $row, $material['h']);
-        $activeSheet->setCellValue('K' . $row, $material['t']);
-        $activeSheet->setCellValue('L' . $row, $material['density']);
-        $activeSheet->setCellValue('M' . $row, $material['weight']);
-        $activeSheet->setCellValue('N' . $row, $material['price']);
+        // $activeSheet->setCellValue('B' . $row, $noitem);
+        $activeSheet->getCell('B' . $row)->setValueExplicit($material['tipe_item'] == 'item' ? '' : strval($material['tipe_id']), DataType::TYPE_STRING);
+        $activeSheet->setCellValue('C' . $row, $material['tipe_item'] == 'item' ? $material['item_code'] : '');
+        $activeSheet->setCellValue('D' . $row, $material['tipe_item'] == 'item' ? $material['part_name'] : addSpaceName($material['tipe_item']).$material['tipe_name']);
+        // $activeSheet->setCellValue('D' . $row, isset($material['part_name']) ? $material['part_name'] : '');
+        $activeSheet->setCellValue('E' . $row, isset($material['units']) ? $material['units'] : '');
+        $activeSheet->setCellValue('F' . $row, isset($material['qty']) ? $material['qty'] : '');
+        $activeSheet->setCellValue('G' . $row, isset($material['materials']) ? $material['materials'] : '');
+        $activeSheet->setCellValue('H' . $row, isset($material['l']) ? $material['l'] : '');
+        $activeSheet->setCellValue('I' . $row, isset($material['w']) ? $material['w'] : '');
+        $activeSheet->setCellValue('J' . $row, isset($material['h']) ? $material['h'] : '');
+        $activeSheet->setCellValue('K' . $row, isset($material['t']) ? $material['t'] : '');
+        $activeSheet->setCellValue('L' . $row, isset($material['density']) ? $material['density'] : '');
+        $activeSheet->setCellValue('M' . $row, isset($material['weight']) ? $material['weight'] : '');
+        $activeSheet->setCellValue('N' . $row, isset($material['price']) ? $material['price'] : '');
         $activeSheet->setCellValue('O' . $row, $total);
         $activeSheet->getStyle("N$row")->getNumberFormat()
             ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);

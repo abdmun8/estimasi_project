@@ -91,6 +91,7 @@ class Reporter
             't' =>  $t,
             'density' =>  $density,
             'weight' =>  $weight,
+            'price' =>  $v['price'],
             'total' =>  $v['total'],
             'tipe_item' =>  $v['tipe_item'],
         ];
