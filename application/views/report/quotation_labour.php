@@ -161,11 +161,17 @@ foreach ($newData as $key => $part) {
 // print_r($spreadsheet);die;
 
 // Redirect output to a client's web browser (Xlsx)
-header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-header("Access-Control-Allow-Origin: *");
-header('Content-Disposition: attachment;filename="'.$title.'.xlsx"');
-header('Cache-Control: max-age=0');
+// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+// header("Access-Control-Allow-Origin: *");
+// header('Content-Disposition: attachment;filename="'.$title.'.xlsx"');
+// header('Cache-Control: max-age=0');
 
-$writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-$writer->save('php://output');
-exit;
+// $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+// $writer->save('php://output');
+// exit;
+$writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+$file = 'temp/'.$title.'.xlsx';
+$writer->save($file);
+$base_url = base_url();
+
+header("location:$base_url$file");

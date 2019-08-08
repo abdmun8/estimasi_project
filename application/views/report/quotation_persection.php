@@ -435,11 +435,17 @@ $spreadsheet->setActiveSheetIndex(0);
 
 
 // Redirect output to a client's web browser (Xlsx)
-header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-header('Content-Disposition: attachment;filename="' . $title . '.xlsx"');
-header("Access-Control-Allow-Origin: *");
-header('Cache-Control: max-age=0');
+// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+// header('Content-Disposition: attachment;filename="' . $title . '.xlsx"');
+// header("Access-Control-Allow-Origin: *");
+// header('Cache-Control: max-age=0');
 
-$writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-$writer->save('php://output');
-exit;
+// $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+// $writer->save('php://output');
+// exit;
+$writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+$file = 'temp/'.$title.'.xlsx';
+$writer->save($file);
+$base_url = base_url();
+
+header("location:$base_url$file");

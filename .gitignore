@@ -36,3 +36,6 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 # Config
 application/config/config.php
 application/config/database.php
+
+# temp
+/temp/
