@@ -561,7 +561,7 @@ class Report extends Quotation
         // $this->createLeftRow(20, $item);
         $this->pdf->Ln(4);
         $this->pdf->Cell(8, 4, 20, 1, 0, 'C');
-        $this->pdf->Cell(42, 4, 'Allowance', 1, 0);
+        $this->pdf->Cell(42, 4, 'Overrage', 1, 0);
         $this->pdf->Cell(8, 4, '', 1, 0, 'C');
         $this->pdf->Cell(24, 4, number_format($tot_alw), 1, 0, 'R');
         $this->pdf->Cell(24, 4, 0, 1, 0, 'R');

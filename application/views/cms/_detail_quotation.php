@@ -2168,6 +2168,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         }
                     ],
                     "ordering": true,
+                    "pageLength": 50,
                     "deferRender": true,
                     "order": [
                         [0, "asc"]

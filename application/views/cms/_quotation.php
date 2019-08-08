@@ -47,32 +47,30 @@ if ($param != null) {
                 </li> -->
                 <button type="button" class="btn btn-default btn-sm" style="margin-right: 10px;" onclick="refreshTable()"><i class="fa fa-refresh"></i> Refresh</button>
             </div>
-            <div class="table-responsive">
-                <table id="table-data" class="table table-bordered table-striped table-hover table-condensed">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Inquiry No</th>
-                            <th>Project name</th>
-                            <th>Qty</th>
-                            <th>Satuan</th>
-                            <th>Customer</th>
-                            <th>PIC Marketing</th>
-                            <th>Estimator</th>
-                            <th>Position Eng</th>
-                            <th>Overrage</th>
-                            <th>Priority</th>
-                            <th>Recomendation</th>
-                            <th>Req Finish Est</th>
-                            <th>Start Date</th>
-                            <th>Finish Date</th>
-                            <th>Duration</th>
-                            <th>Opsi</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+            <table id="table-data" class="table table-bordered table-striped table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Inquiry No</th>
+                        <th>Project name</th>
+                        <th>Qty</th>
+                        <th>Satuan</th>
+                        <th>Customer</th>
+                        <th>PIC Marketing</th>
+                        <th>Estimator</th>
+                        <th>Position Eng</th>
+                        <th>Overrage</th>
+                        <th>Priority</th>
+                        <th>Recomendation</th>
+                        <th>Req Finish Est</th>
+                        <th>Start Date</th>
+                        <th>Finish Date</th>
+                        <th>Duration</th>
+                        <th>Opsi</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -285,14 +283,14 @@ if ($param != null) {
                         "targets": 11,
                         "className": "text-center",
                         render: function(data, type, row, meta) {
-                            return `<span style="background-color:${row.color};padding:2px;">${data}</span>`;
+                            return `<span class="coloring" data-color="${row.color}" style="background-color:${row.color};padding:2px;">${data}</span>`;
                         }
                     }
                 ],
                 "order": [
                     [0, "asc"]
                 ],
-                scrollX:true,
+                scrollX: true,
                 scrollCollapse: true,
                 fixedColumns: {
                     leftColumns: 3,
@@ -305,6 +303,10 @@ if ($param != null) {
     }
 
     function utilsDataTable() {
+
+        // console.log(td)
+        // parent().css('background-color',)
+
         $("#table-data .editBtn").on("click", function() {
             openWindow(base_url + 'quotation/' + $(this).attr('href').substring(1));
             // loadContent(base_url + 'view/_quotation/' + $(this).attr('href').substring(1));
@@ -473,6 +475,7 @@ if ($param != null) {
                     }
                 ],
                 "ordering": true,
+                "pageLength": 50,
                 "deferRender": true,
                 "columnDefs": [
                     // {
