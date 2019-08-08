@@ -268,11 +268,61 @@ class Retriever extends CI_Controller {
 			if ($picker == 'yes') {
 				$linkBtn = '<a href="#' . $record->id . '" class="btn btn-xs btn-info pickBtn" title="Pilih"><i class="fa fa-thumb-tack"></i> Pilih</a>';
 			} else if ($picker == 'no') {
-				$linkBtn = ' <a href="#' . $record->id . '" class="btn btn-xs btn-primary editBtn" title="Edit"><i class="fa fa-edit"></i> Edit</a>';
-				$linkBtn .= ' <a href="#' . $record->id . '" class="btn btn-xs btn-primary editAllowanceBtn" title="Edit Allowance Sect"><i class="fa fa-edit"></i> Allowance</a>';
+				$linkBtn = '  <a href="#' . $record->id . '" class="btn btn-xs btn-primary editBtn" title="Edit"><i class="fa fa-edit"></i> Edit</a>';
+				$linkBtn .= ' <a href="#' . $record->id . '" class="btn btn-xs btn-primary editAllowanceBtn" title="Edit Overrage Sect"><i class="fa fa-edit"></i> Overrage</a>';
 				$linkBtn .= ' <a href="#' . $record->id . '" class="btn btn-xs btn-primary editQtyBtn" title="Edit Qty Sect"><i class="fa fa-edit"></i> Qty Sect</a>';
 				// $linkBtn .= ' <a href="#' . $record->id . '" class="btn btn-xs btn-danger removeBtn" title="Hapus"><i class="fa fa-trash-o"></i> Hapus</a>';
 				$linkBtn .= ' <a onclick="printQuotation('.$record->id.'); return false;" href="#" class="btn btn-xs btn-success " title="Print"><i class="fa fa-print"></i> Print</a>';
+			}
+			
+			$pc_ce = @($record->pc_company_experience * 0.15);
+			$p_pl  = @($record->pc_complexity_level * 0.15);
+			$pc_pw = @($record->pc_working_duration * 0.1);
+			$pc_vw = @($record->pc_variant_workpiece * 0.1);
+			$pc_al = @($record->pc_automation_level * 0.1);
+			$pc_ms = @($record->pc_machine_speed * 0.05);
+			$pc_sc = @($record->pc_duty_cycle * 0.05);
+
+			$pc_is = @($record->pc_installation_schedile * 0.05);
+			$pc_tl = @($record->pc_technology_level * 0.05);
+
+			if ($pc_environment_for_material = 31) {
+				$pc_efm1 = 3;
+			} elseif ($pc_environment_for_material = 51 || $pc_environment_for_material = 52) {
+				$pc_efm1 = 5;
+			} else {
+				$pc_efm1 = $pc_environment_for_material;
+			}
+			$pc_efm = @($pc_efm1 * 0.05);
+
+			if ($pc_environment_for_installation = 31 || $pc_environment_for_installation = 32) {
+				$pc_efi1 = 3;
+			} else {
+				$pc_efi1 = $pc_environment_for_installation;
+			}
+			$pc_efi = @($pc_efi1 * 0.05);
+			$pc_esr = @($record->pc_equipment_spesification_requirement * 0.05);
+
+			if ($pc_purpose_for_project = 31 || $pc_purpose_for_project = 32) {
+				$pc_pfp1 = 3;
+			} else {
+				$pc_pfp1 = $pc_purpose_for_project;
+			}
+			$pc_pfp = @($pc_pfp1 * 0.05);
+
+			$recomen = @($pc_ce + $p_pl + $pc_pw + $pc_vw + $pc_al + $pc_ms + $pc_sc + $pc_is + $pc_tl + $pc_efm + $pc_efi + $pc_esr + $pc_pfp);
+			
+			$ax = cek_risk($recomen);
+			if ($ax == "PROJECT NORMAL") {
+				$color_r = "#3AE375";
+			} elseif ($ax == "PROJECT MEDIUM RISK") {
+				$color_r = "#E0F457";
+			} elseif ($ax == "PROJECT HIGH RISK") {
+				$color_r = "#F06275";
+			} elseif ($ax == "PROJECT VERY HIGH RISK") {
+				$color_r = "#940014";
+			} else {
+				$color_r = "#55B1ED";
 			}
 
 			$data[] = array(
@@ -281,13 +331,20 @@ class Retriever extends CI_Controller {
 				'qty' => $record->qty,
 				'satuan' => $record->satuan,
 				'inquiry_no' => $record->inquiry_no,
+				'nama_estimator' => $record->nama_estimator,
+				'priority' => $record->prioritas,
+				'r_f_estimation' => $record->r_f_estimation,				
 				'customer' => $record->customer,
 				'pic_marketing' => $record->pic_marketing,
 				'nama' => $record->nama,
+				'unit' => $record->unit,
 				'allowance' => $record->allowance,
 				'start_date' => $record->start_date,
 				'finish_date' => $record->finish_date,
+				'deptname' => $record->deptname,
+				'risk' => $ax,
 				'duration' => '',
+				'color' => $color_r,
 				'aksi' => $linkBtn
 			);
 		}

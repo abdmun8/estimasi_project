@@ -40,24 +40,26 @@ function format_rupiah($angka = 0)
 */
 function genActivationCode($len = 5)
 {
-    $angka = range(0, 9);
-    shuffle($angka);
-    return implode('', array_rand($angka, $len));
+	$angka = range(0, 9);
+	shuffle($angka);
+	return implode('', array_rand($angka, $len));
 }
 
 /*
 * Switch day to indo
 */
-function switch_day($i){
-	$days = array('senin','selasa','rabu','kamis','jum\'at','sabtu','minggu');
+function switch_day($i)
+{
+	$days = array('senin', 'selasa', 'rabu', 'kamis', 'jum\'at', 'sabtu', 'minggu');
 	return $days[$i - 1];
 }
 
 // calc diff date
-function calcDiffDate($dt1, $dt2, $tipe = 'm'){
+function calcDiffDate($dt1, $dt2, $tipe = 'm')
+{
 	$date1 = new DateTime($dt1);
 	$date2 = $date1->diff(new DateTime($dt2));
-	switch($tipe){
+	switch ($tipe) {
 		case 'days':
 			return $date2->days;
 			break;
@@ -76,25 +78,43 @@ function calcDiffDate($dt1, $dt2, $tipe = 'm'){
 	}
 }
 
-function createSequence($code, $length, $number){
-	$sequence = sprintf('%0'.$length.'d', $number);
-	return $code.$sequence;
+function createSequence($code, $length, $number)
+{
+	$sequence = sprintf('%0' . $length . 'd', $number);
+	return $code . $sequence;
 }
 
 function addSpace($v, $value)
-    {
-        $num_space = 0;
-        if ($v == 'object') {
-            $num_space = 2;
-        } else if ($v == 'sub_object') {
-            $num_space = 4;
-        } else {
-            $num_space = 0;
-        }
-        $space = '';
-        for ($i = 0; $i < $num_space; $i++) {
-            $space .= ' ';
-        }
-        return $space . $value;
-    }
+{
+	$num_space = 0;
+	if ($v == 'object') {
+		$num_space = 2;
+	} else if ($v == 'sub_object') {
+		$num_space = 4;
+	} else {
+		$num_space = 0;
+	}
+	$space = '';
+	for ($i = 0; $i < $num_space; $i++) {
+		$space .= ' ';
+	}
+	return $space . $value;
+}
 
+function cek_risk($nilai)
+{
+
+	$ketentuan = [
+		'PROJECT NORMAL'      => ['min' => 1, 'max' => 2.25],
+		'PROJECT MEDIUM RISK' => ['min' => 2.3, 'max' => 3.7],
+		'PROJECT HIGH RISK'   => ['min' => 3.75, 'max' => 4.45],
+		'VERY HIGH RISK'      => ['min' => 4.5, 'max' => 5],
+	];
+
+	foreach ($ketentuan as $key => $value) {
+		if ($nilai >= $value['min'] && $nilai <= $value['max']) {
+			return $key;
+		}
+	}
+	return 'FALSE';
+}

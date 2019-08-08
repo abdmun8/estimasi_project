@@ -150,9 +150,10 @@ class Report extends Quotation
         $this->pdf->Cell(30, 4, date('d F Y', strtotime($header->start_date)), 1, 0);
         $this->pdf->Cell(20);
         $this->pdf->Cell(30, 4, 'PROJECT TYPE', 1, 0);
-        $this->pdf->Cell(0, 4, $header->project_type, 1, 0);
+        $this->pdf->Cell(0, 4, /* $header->project_type */'', 1, 0);
 
         /* row 2*/
+        $this->pdf->SetFont('Arial', '', '7');
         $this->pdf->Ln(4);
         $this->pdf->Cell(50, 4, 'QUANTITY', 1, 0);
         $this->pdf->Cell(80, 4, $header->qty . ' ' . $header->satuan, 1, 0);

@@ -35,18 +35,18 @@ class Quotation extends CI_Controller
         $message = '';
         if ($id != NULL) {
             // $object = $this->model->getRecord(['table'=>'header','where'=>['id'=>$id]]);
-            $object = $this->db->select("{$this->db->database}.header.*, sgedb.personal.nama as pic_name, sgedb.customer.nama as customer_name", false)
-                ->join('sgedb.customer', "{$this->db->database}.header.customer = sgedb.customer.custid")
-                ->join('sgedb.personal', "{$this->db->database}.header.pic_marketing = sgedb.personal.id_personalia")
+            $object = $this->db->select("{$this->db->database}.v_header.*, sgedb.personal.nama as pic_name, sgedb.customer.nama as customer_name", false)
+                ->join('sgedb.customer', "{$this->db->database}.v_header.customer = sgedb.customer.custid")
+                ->join('sgedb.personal', "{$this->db->database}.v_header.pic_marketing = sgedb.personal.id_personalia")
                 ->where('id', $id)
-                ->get("{$this->db->database}.header")
+                ->get("{$this->db->database}.v_header")
                 ->row();
         } else {
-            // $object = $this->model->getList(['table'=>'header']);
-            $object = $this->db->select("{$this->db->database}.header.*, sgedb.personal.nama as pic_name, sgedb.customer.nama as customer_name", false)
-                ->join('customer', "{$this->db->database}.header.customer = sgedb.customer.custid")
-                ->join('personal', "{$this->db->database}.header.pic_marketing = sgedb.personal.id_personalia")
-                ->get("{$this->db->database}.header")
+            // $object = $this->model->getList(['table'=>'v_header']);
+            $object = $this->db->select("{$this->db->database}.v_header.*, sgedb.personal.nama as pic_name, sgedb.customer.nama as customer_name", false)
+                ->join('customer', "{$this->db->database}.v_header.customer = sgedb.customer.custid")
+                ->join('personal', "{$this->db->database}.v_header.pic_marketing = sgedb.personal.id_personalia")
+                ->get("{$this->db->database}.v_header")
                 ->result();
         }
 
@@ -497,11 +497,27 @@ class Quotation extends CI_Controller
 
     public function getItemCode()
     {
-        $obj = $this->sgedb->select('lp.stcd, CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," [",mstchd.stcd,"]" ) as name, TRIM(mstchd.spek) as spek, TRIM(mstchd.maker) as maker, TRIM(mstchd.uom) as uom, TRIM(mstchd.nama) as nama, (lp.mkt) as harga, lp.remark', false)
+        $obj = $this->sgedb->select('lp.stcd, lp.stcd as id , 
+            CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," [",mstchd.stcd,"]" ) as name, 
+            TRIM(mstchd.nama) as nama,
+            TRIM(mstchd.spek) as spek, 
+            TRIM(mstchd.maker) as maker, 
+            TRIM(mstchd.uom) as uom, 
+            CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," [",mstchd.stcd,"]" ) as text, 
+            (lp.mkt) as harga, lp.remark', false)
             ->join('msprice lp', 'mstchd.stcd = lp.stcd')
             ->get('mstchd')->result();
-        // echo $this->db->last_query();
-
+        array_unshift($obj, [
+            'harga' => "",
+            'id' => "",
+            'maker' => "",
+            'name' => "",
+            'remark' => "",
+            'spek' => "",
+            'stcd' => "",
+            'text' => "",
+            'uom' => ""
+        ]);
         echo json_encode($obj);
     }
 
@@ -536,6 +552,13 @@ class Quotation extends CI_Controller
     public function getPIC()
     {
         $obj = $this->sgedb->select('id_personalia as id, TRIM(`nama`) as text', false)->like('departemen', 'MKTG')->get('personal')->result();
+        echo json_encode($obj);
+    }
+
+    public function getEstimator()
+    {
+        $obj = $this->sgedb->select('id_personalia as id, TRIM(`nama`) as text', false)->get('personal')->result();
+        // echo $this->sgedb->last_query();
         echo json_encode($obj);
     }
 

@@ -29,7 +29,7 @@ if ($param != null) {
     <div class="tab-content">
         <div id="bidang-table-tab" class="tab-pane fade active in">
             <div style="padding-bottom:10px;">
-                <button type="button" class="btn btn-success btn-sm" onclick="openWindow(base_url + 'quotation');">Tambah Data</button>
+                <!-- <button type="button" class="btn btn-success btn-sm" onclick="openWindow(base_url + 'quotation');">Tambah Data</button> -->
                 <!-- <li class="dropdown btn btn-default btn-float pull-right btn-sm">
                     <a style="color:#000" class="dropdown-toggle" data-toggle="dropdown" href="#">
                       Export File <span class="caret"></span>
@@ -38,7 +38,7 @@ if ($param != null) {
                         <li role="presentation"><a role="menuitem" tabindex="-1" href="#" onclick="alert(1)">CSV</a></li>
                     </ul>
                 </li> -->
-                <button type="button" class="btn btn-default pull-right btn-sm" style="margin-right: 10px;" onclick="refreshTable()"><i class="fa fa-refresh"></i> Refresh</button>
+                <button type="button" class="btn btn-default btn-sm" style="margin-right: 10px;" onclick="refreshTable()"><i class="fa fa-refresh"></i> Refresh</button>
             </div>
             <div class="table-responsive">
                 <table id="table-data" class="table table-bordered table-striped table-hover table-condensed">
@@ -48,9 +48,15 @@ if ($param != null) {
                             <th>Inquiry No</th>
                             <th>Project name</th>
                             <th>Qty</th>
+                            <th>Satuan</th>
                             <th>Customer</th>
                             <th>PIC Marketing</th>
-                            <th>Allowance</th>
+                            <th>Estimator</th>
+                            <th>Position Eng</th>
+                            <th>Overrage</th>
+                            <th>Priority</th>
+                            <th>Recomendation</th>
+                            <th>Req Finish Est</th>
                             <th>Start Date</th>
                             <th>Finish Date</th>
                             <th>Duration</th>
@@ -109,7 +115,7 @@ if ($param != null) {
                 <div id="loading1"></div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Input Allowance</h4>
+                <h4 class="modal-title">Input Overrage</h4>
             </div>
             <div class="modal-body">
                 <div class="form-group">
@@ -213,13 +219,31 @@ if ($param != null) {
                         "data": "qty"
                     },
                     {
+                        "data": "unit"
+                    },
+                    {
                         "data": "customer"
                     },
                     {
                         "data": "nama"
                     },
                     {
+                        "data": "nama_estimator"
+                    },
+                    {
+                        "data": "deptname"
+                    },
+                    {
                         "data": "allowance"
+                    },
+                    {
+                        "data": "priority"
+                    },
+                    {
+                        "data": "risk"
+                    },
+                    {
+                        "data": "r_f_estimation"
                     },
                     {
                         "data": "start_date"
@@ -238,7 +262,7 @@ if ($param != null) {
                 "ordering": true,
                 "deferRender": true,
                 "columnDefs": [{
-                        "targets": 9,
+                        "targets": 15,
                         "render": function(data, type, row, meta) {
                             var diff = calcDiffDateToMonth(formatDate(row.start_date), formatDate(row.finish_date))
                             return diff + ' MONTH';
@@ -247,6 +271,13 @@ if ($param != null) {
                     {
                         "targets": 10,
                         "className": "text-center"
+                    },
+                    {
+                        "targets": 11,
+                        "className": "text-center",
+                        render: function ( data, type, row, meta ) {
+                            return `<span style="background-color:${row.color};padding:2px;">${data}</span>`;
+                        }
                     }
                 ],
                 "order": [

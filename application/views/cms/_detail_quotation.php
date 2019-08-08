@@ -30,6 +30,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/AdminLTE-2.4.9/css/AdminLTE.min.css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/AdminLTE-2.4.9/css/skins/skin-black.min.css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/swal/sweet-alert.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/jquery-autocomplete/jquery.auto-complete.css">
+    </link>
     <!-- daterange picker -->
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/bootstrap-daterangepicker/daterangepicker.css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/animate.css/animate.css">
@@ -107,22 +109,22 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                             <div class="form-group">
                                 <label for="inquiry_no" class="col-sm-3 control-label">Inquiry No.</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" name="inquiry_no" id="inquiry_no" placeholder="Inquiry No">
+                                    <input disabled type="text" class="form-control" name="inquiry_no" id="inquiry_no" placeholder="Inquiry No">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="project_name" class="col-sm-3 control-label">Project Name</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" name="project_name" id="project_name" placeholder="Project name">
+                                    <input disabled type="text" class="form-control" name="project_name" id="project_name" placeholder="Project name">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="qty_general" class="col-sm-3 control-label">QTY</label>
                                 <div class="col-sm-2">
-                                    <input type="text" class="form-control" name="qty_general" id="qty_general" placeholder="Qty">
+                                    <input disabled type="text" class="form-control" name="qty_general" id="qty_general" placeholder="Qty">
                                 </div>
                                 <div class="col-sm-7">
-                                    <select class="form-control" id="lot_general" name="lot_general">
+                                    <select  disabled class="form-control" id="lot_general" name="lot_general">
                                         <?php foreach ($satuan as $key => $value) : ?>
                                             <option value="<?= $value->name; ?>"><?= $value->name; ?></option>
                                         <?php endforeach; ?>
@@ -132,14 +134,14 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                             <div class="form-group">
                                 <label for="customer" class="col-sm-3 control-label">Customer</label>
                                 <div class="col-sm-9">
-                                    <select class="form-control" id="customer" name="customer" style="width: 100%;">
+                                    <select disabled class="form-control" id="customer" name="customer" style="width: 100%;">
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="pic_marketing" class="col-sm-3 control-label">PIC marketing</label>
                                 <div class="col-sm-9">
-                                    <select class="form-control" id="pic_marketing" name="pic_marketing" style="width: 100%;">
+                                    <select disabled class="form-control" id="pic_marketing" name="pic_marketing" style="width: 100%;">
                                     </select>
                                 </div>
                             </div>
@@ -149,40 +151,39 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                             <div class="form-group">
                                 <label for="start_date" class="col-sm-3 control-label">Start Date</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control select_date" name="start_date" id="start_date" placeholder="Start Date" onchange="calcDate()">
+                                    <input disabled type="text" class="form-control select_date" name="start_date" id="start_date" placeholder="Start Date" onchange="calcDate()">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="finish_date" class="col-sm-3 control-label">Finish Date</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control select_date" name="finish_date" id="finish_date" placeholder="Finish Date" onchange="calcDate()">
+                                    <input disabled type="text" class="form-control select_date" name="finish_date" id="finish_date" placeholder="Finish Date" onchange="calcDate()">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="duration" class="col-sm-3 control-label">Duration</label>
                                 <div class="col-sm-9">
-                                    <input type="text" class="form-control" name="duration" id="duration" placeholder="0" readonly>
+                                    <input disabled type="text" class="form-control" name="duration" id="duration" placeholder="0">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="project_type" class="col-sm-3 control-label">Project Type</label>
+                                <label for="pic_estimator" class="col-sm-3 control-label">Estimator</label>
                                 <div class="col-sm-9">
-                                    <select class="form-control" id="project_type" name="project_type">
-                                        <option value="" selected>Project Type</option>
-                                        <option value="Raku-Raku">Raku-Raku</option>
-                                        <option value="Robot">Robot</option>
-                                        <option value="Conveyor">Conveyor</option>
+                                    <select disabled class="form-control" id="pic_estimator" name="pic_estimator" style="width: 100%;">
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="difficulty" class="col-sm-3 control-label">Difficulty</label>
                                 <div class="col-sm-9">
-                                    <select class="form-control" id="difficulty" name="difficulty">
+                                    <select disabled class="form-control" id="difficulty" name="difficulty">
                                         <option value="" selected>Pilih Difficulty</option>
-                                        <option value="Easy">Easy</option>
-                                        <option value="Medium">Medium</option>
-                                        <option value="Hard">Hard</option>
+                                        <?php
+                                            $difficulty = $this->db->get('difficulty')->result();
+                                            foreach ($difficulty as $key => $value) {
+                                                echo "<option value='{$value->level}'>{$value->nama}</option>";
+                                            }
+                                        ?>
                                     </select>
                                 </div>
                             </div>
@@ -253,9 +254,14 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                     </select>
                                 </div>
                                 <div class="form-group only_item">
+                                    <label>Item Code</label>
+                                    <select class="form-control select2 input-sm" style="width:100%;" name="item_code-item" id="item_code-item">
+                                    </select>
+                                </div>
+                                <!-- <div class="form-group only_item">
                                     <label for="item_code-item">Item Code</label>
                                     <input type="text" class="form-control input-sm" id="item_code-item" name="item_code-item" placeholder="Item Code" data-provide="typeahead">
-                                </div>
+                                </div> -->
                                 <div class="form-group only_item">
                                     <label for="spec-item">Spec</label>
                                     <input type="text" class="form-control input-sm" id="spec-item" name="spec-item" placeholder="Spec">
@@ -460,10 +466,14 @@ $satuan = $this->db->get_where('tblsatuan')->result();
     <script src="<?php echo base_url(); ?>assets/cms/js/jquery.mask.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/cms/moment/min/moment.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/cms/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="<?php echo base_url(); ?>assets/cms/typehead.js/bloodhound.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/cms/typehead.js/bootstrap3-typeahead.js"></script>
+    <!--  -->
+    <script src="<?php echo base_url(); ?>assets/cms/jquery-autocomplete/jquery.auto-complete.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/cms/bootstrap-notify/bootstrap-notify.js"></script>
     <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.15.0/lodash.min.js"></script>
     <script type="text/javascript">
         var id_header_tree = '';
         var data_select = [];
@@ -498,27 +508,27 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 }
             });
 
-            /* get item code */
             $.get(base_url + "quotation/get_item_code", function(data) {
-                $("#item_code-item").typeahead({
-                    source: data,
-                    minLength: 1,
-                    order: "asc",
-                    afterSelect: function(o) {
-                        let code = o.stcd.substr(0, 3);
-                        let katval = switchCodeToCategory(code)
-                        $("#item_code").val(o.stcd);
-                        $("#spec-item").val(o.spek);
-                        $("#merk-item").val(o.maker);
-                        $("#satuan-item").val(o.uom);
-                        $("#item_name-item").val(o.nama);
-                        $("#harga-item").val(parseInt(o.harga));
-                        $("#kategori-item").val(katval);
-                        $("#kategori-item").trigger('change')
-                        $("#remark-harga").text(o.remark);
-                    }
+                $('#item_code-item').select2({
+                    placeholder: "Pilih Item Code",
+                    allowClear: true,
+                    multiple: false,
+                    data: data
+                }).on('select2:select', function(e) {
+                    var o = e.params.data;
+                    let code = o.stcd.substr(0, 3);
+                    let katval = switchCodeToCategory(code)
+                    $("#item_code").val(o.stcd);
+                    $("#spec-item").val(o.spek);
+                    $("#merk-item").val(o.maker);
+                    $("#satuan-item").val(o.uom);
+                    $("#item_name-item").val(o.nama);
+                    $("#harga-item").val(parseInt(o.harga));
+                    $("#kategori-item").val(katval);
+                    $("#kategori-item").trigger('change')
+                    $("#remark-harga").text(o.remark);
                 });
-            }, 'json');
+            }, 'json')
 
             $("#tipe_item-item").change(function() {
                 $("#item_code").val('');
@@ -554,6 +564,14 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     data: data
                 });
             }, 'json');
+
+            $.get(base_url + 'quotation/getEstimator', function(data) {
+                $("#pic_estimator").select2({
+                    placeholder: 'Pilih Estimator',
+                    data: data
+                });
+            }, 'json');
+
 
             /* get Satuan */
             // $.get(base_url + 'quotation/get_kategori', function(data) {
@@ -1456,16 +1474,18 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                             $("#lot_general").val(json.data.object.satuan);
                             $("#pic_marketing").val(json.data.object.pic_marketing);
                             $('#pic_marketing').trigger('change');
+                            $("#pic_estimator").val(json.data.object.estimator);
+                            $('#pic_estimator').trigger('change');
                             $("#start_date").val(convertDateIndo(json.data.object.start_date));
                             $("#finish_date").val(convertDateIndo(json.data.object.finish_date));
-                            $("#project_type").val(json.data.object.project_type);
-                            $("#difficulty").val(json.data.object.difficulty);
+                            // $("#project_type").val(json.data.object.project_type);
+                            $("#difficulty").val(json.data.object.pc_complexity_level);
                             $("#duration").val(json.data.object.duration);
                             $("#action-input").val('2');
                             $("#value-input").val(json.data.object.id);
                             $("#id_header-item").val(json.data.object.id);
                             calcDate();
-                        }, 1000);
+                        }, 700);
 
 
                     }
@@ -1665,6 +1685,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         $("#tipe_id-item").val(json.tipe_id);
                         $("#harga-item").val(parseInt(json.harga));
                         $("#item_code-item").val(json.item_code);
+                        $('#item_codeUnassigned-item').trigger('change');
                         $("#item_name-item").val(json.item_name);
                         $("#kategori-item").val(json.kategori);
                         $('#kategori-item').trigger('change');
@@ -2167,6 +2188,12 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         // Export Excel
         function exportExcel(report = 'summary', id_header) {
             window.open(base_url + `quotation/print_${report}/` + id_header);
+        }
+
+        function mockData() {
+            $.get(base_url + "quotation/get_item_code", function(data) {
+                return data;
+            }, 'json')
         }
     </script>
 </body>
