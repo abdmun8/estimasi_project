@@ -56,10 +56,10 @@ $arrHeaderMaterial = [
     'Units',
     'Qty',
     'Materials',
+    'Diameter/Ketebalan',
     'Length',
-    'Weight',
+    'Width',
     'Height',
-    'Diameter',
     'Density',
     'Weight Total',
     'Price',
@@ -296,10 +296,10 @@ foreach ($sectionPart as $key => $section) {
         $activeSheet->setCellValue('E' . $row, isset($material['units']) ? $material['units'] : '');
         $activeSheet->setCellValue('F' . $row, isset($material['qty']) ? $material['qty'] : '');
         $activeSheet->setCellValue('G' . $row, isset($material['materials']) ? $material['materials'] : '');
-        $activeSheet->setCellValue('H' . $row, isset($material['l']) ? $material['l'] : '');
-        $activeSheet->setCellValue('I' . $row, isset($material['w']) ? $material['w'] : '');
-        $activeSheet->setCellValue('J' . $row, isset($material['h']) ? $material['h'] : '');
-        $activeSheet->setCellValue('K' . $row, isset($material['t']) ? $material['t'] : '');
+        $activeSheet->setCellValue('H' . $row, isset($material['t']) ? $material['t'] : '');
+        $activeSheet->setCellValue('I' . $row, isset($material['l']) ? $material['l'] : '');
+        $activeSheet->setCellValue('J' . $row, isset($material['w']) ? $material['w'] : '');
+        $activeSheet->setCellValue('K' . $row, isset($material['h']) ? $material['h'] : '');
         $activeSheet->setCellValue('L' . $row, isset($material['density']) ? $material['density'] : '');
         $activeSheet->setCellValue('M' . $row, isset($material['weight']) ? $material['weight'] : '');
         $activeSheet->setCellValue('N' . $row, isset($material['price']) ? $material['price'] : '');

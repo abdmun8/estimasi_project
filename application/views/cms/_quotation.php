@@ -11,6 +11,13 @@ if ($param != null) {
 }
 
 ?>
+<style>
+    /* No wrap text */
+    th,
+    td {
+        white-space: nowrap;
+    }
+</style>
 <div class="nav-tabs-custom">
     <ul class="nav nav-tabs pull-right">
         <li class="active">
@@ -163,8 +170,10 @@ if ($param != null) {
 
     });
 
-    function printQuotation(id) {
-        window.open(base_url + 'report/quotationreport/' + id)
+    function printQuotation(id_header) {
+        window.open(base_url + 'report/quotationreport/' + id_header)
+        window.open(base_url + `quotation/print_summary/` + id_header);
+        window.open(base_url + `quotation/print_detail_summary/` + id_header);
     }
 
     function saveAllowance() {
@@ -275,7 +284,7 @@ if ($param != null) {
                     {
                         "targets": 11,
                         "className": "text-center",
-                        render: function ( data, type, row, meta ) {
+                        render: function(data, type, row, meta) {
                             return `<span style="background-color:${row.color};padding:2px;">${data}</span>`;
                         }
                     }
@@ -283,6 +292,11 @@ if ($param != null) {
                 "order": [
                     [0, "asc"]
                 ],
+                scrollX:true,
+                scrollCollapse: true,
+                fixedColumns: {
+                    leftColumns: 3,
+                },
                 "fnDrawCallback": function(oSettings) {
                     utilsDataTable();
                 }

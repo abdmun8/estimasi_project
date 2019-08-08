@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/swal/sweet-alert.css">
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/css/custom.css">
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/js/plugins/datatables/dataTables.bootstrap.css">
+    <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/js/plugins/datatables/extensions/FixedColumns-3.2.5/css/fixedColumns.bootstrap.min.css">
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/css/datepicker.css">
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/css/fileinput.min.css">
     <link rel="stylesheet" href="<?php echo base_url();?>assets/cms/js/plugins/iCheck/all.css">
@@ -132,6 +133,7 @@
 <script src="<?php echo base_url();?>assets/cms/swal/sweet-alert.js"></script>
 <script src="<?php echo base_url();?>assets/cms/js/plugins/datatables/jquery.dataTables.min.js"></script>
 <script src="<?php echo base_url();?>assets/cms/js/plugins/datatables/dataTables.bootstrap.min.js"></script>
+<script src="<?php echo base_url();?>assets/cms/js/plugins/datatables/extensions/FixedColumns-3.2.5/js/dataTables.fixedColumns.min.js"></script>
 <script src="<?php echo base_url();?>assets/cms/js/fileinput.min.js"></script>
 <script src="<?php echo base_url();?>assets/cms/ckeditor_full/ckeditor.js"></script>
 <script src="<?php echo base_url();?>assets/cms/js/jquery.metadata.js"></script>
