@@ -162,6 +162,7 @@ foreach ($newData as $key => $part) {
 
 // Redirect output to a client's web browser (Xlsx)
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+header("Access-Control-Allow-Origin: *");
 header('Content-Disposition: attachment;filename="'.$title.'.xlsx"');
 header('Cache-Control: max-age=0');
 
