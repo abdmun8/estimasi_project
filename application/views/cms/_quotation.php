@@ -61,7 +61,7 @@ if ($param != null) {
                         <th>Position Eng</th>
                         <th>Overrage</th>
                         <th>Priority</th>
-                        <th>Recomendation</th>
+                        <th>Recommendation</th>
                         <th>Req Finish Est</th>
                         <th>Start Date</th>
                         <th>Finish Date</th>
@@ -168,10 +168,12 @@ if ($param != null) {
 
     });
 
-    function printQuotation(id_header) {
-        window.open(base_url + 'report/quotationreport/' + id_header)
+    function printQuotation(id_header, risk) {
+        window.open(base_url + 'report/quotationreport/' + id_header + '/' + risk)
         window.open(base_url + `quotation/print_summary/` + id_header);
-        window.open(base_url + `quotation/print_detail_summary/` + id_header);
+        setTimeout(() => {
+            window.open(base_url + `quotation/print_detail_summary/` + id_header);
+        }, 3000)
     }
 
     function saveAllowance() {

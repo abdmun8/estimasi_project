@@ -115,16 +115,17 @@ class Report extends Quotation
         }
     }
 
-    public function quotationReport($id)
+    public function quotationReport($id, $risk = 'FALSE')
     {
         /* Header */
         $header = $this->getDataHeader($id, false);
+        // var_dump($header);die;
         /* Summary */
         $summary = $this->printSummary($id, TRUE);
 
         /* Total allowance & grand total */
         /* Grand Total */
-        $alw = $this->db->get_where('header',['id' =>  $id])->row()->allowance;
+        $alw = $this->db->get_where('v_header',['id' =>  $id])->row()->allowance;
         $totwithoutlabour = $this->countGrandTotalWithoutLabour($summary);
         $tot = $this->countGrandTotal($summary);
 
@@ -149,8 +150,8 @@ class Report extends Quotation
         $this->pdf->Cell(30, 4, 'START DATE', 1, 0);
         $this->pdf->Cell(30, 4, date('d F Y', strtotime($header->start_date)), 1, 0);
         $this->pdf->Cell(20);
-        $this->pdf->Cell(30, 4, 'PROJECT TYPE', 1, 0);
-        $this->pdf->Cell(0, 4, /* $header->project_type */'', 1, 0);
+        $this->pdf->Cell(30, 4, 'ESTIMATOR', 1, 0);
+        $this->pdf->Cell(0, 4, $header->nama_estimator, 1, 0);
 
         /* row 2*/
         $this->pdf->SetFont('Arial', '', '7');
@@ -161,8 +162,8 @@ class Report extends Quotation
         $this->pdf->Cell(30, 4, 'FINISH DATE', 1, 0);
         $this->pdf->Cell(30, 4, date('d F Y', strtotime($header->finish_date)), 1, 0);
         $this->pdf->Cell(20);
-        $this->pdf->Cell(30, 4, 'DIFFICULTY', 1, 0);
-        $this->pdf->Cell(0, 4, $header->difficulty, 1, 0);
+        $this->pdf->Cell(30, 4, 'RECOMMENDATION', 1, 0);
+        $this->pdf->Cell(0, 4, $risk, 1, 0);
 
         /* row 3*/
         $this->pdf->Ln(4);
@@ -171,7 +172,9 @@ class Report extends Quotation
         $this->pdf->Cell(5);
         $this->pdf->Cell(30, 4, 'DURATION', 1, 0);
         $this->pdf->Cell(30, 4, calcDiffDate($header->start_date, $header->finish_date) . ' MONTH(S)', 1, 0);
-
+        $this->pdf->Cell(20);
+        $this->pdf->Cell(30, 4, 'DIFFICULTY', 1, 0);
+        $this->pdf->Cell(0, 4, $header->difficulty ? $header->difficulty : 'NORMAL', 1, 0);
         /* row 4*/
         $this->pdf->Ln(4);
         $this->pdf->Cell(50, 4, 'PIC MARKETING', 1, 0);
@@ -561,7 +564,7 @@ class Report extends Quotation
         // $this->createLeftRow(20, $item);
         $this->pdf->Ln(4);
         $this->pdf->Cell(8, 4, 20, 1, 0, 'C');
-        $this->pdf->Cell(42, 4, 'Overrage', 1, 0);
+        $this->pdf->Cell(42, 4, 'Overrageserver', 1, 0);
         $this->pdf->Cell(8, 4, '', 1, 0, 'C');
         $this->pdf->Cell(24, 4, number_format($tot_alw), 1, 0, 'R');
         $this->pdf->Cell(24, 4, 0, 1, 0, 'R');
@@ -629,18 +632,19 @@ class Report extends Quotation
 
 
         // $this->pdf->AliasNbPages();
+        // die;
 
         $this->pdf->Output('quotation_report.pdf', 'I');
     }
 
-    function createRowIL($labour, $aktivitas, $qty = 0)
+    function createRowIL($labour, $aktivitas, $qty = 0, $qty_section = 1)
     {
         foreach ($labour as $key => $item) {
             if ($item['aktivitas'] == $aktivitas) {
                 $total = isset($item['qty']) && $qty != 0 ? ($item['qty'] * $item['total']) : $item['total'];
                 $this->pdf->Cell(5);
                 $this->pdf->Cell(50, 4, strtoupper($aktivitas), 1, 0);
-                $this->pdf->Cell(20, 4, $item['total_hour'], 1, 0, 'R');
+                $this->pdf->Cell(20, 4, /* $item['total_hour'] */ $item['total'] / (int) $item['rate'], 1, 0, 'R');
                 $this->pdf->Cell(10);
                 $this->pdf->Cell(30, 4, number_format((int) $item['rate']), 1, 0, 'R');
                 $this->pdf->Cell(0, 4, number_format($item['total']), 1, 0, 'R');

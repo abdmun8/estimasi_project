@@ -262,19 +262,6 @@ class Retriever extends CI_Controller {
 		$data = array();
 		$no = 0;
 		foreach ($records as $record) {
-
-			$no++;
-
-			if ($picker == 'yes') {
-				$linkBtn = '<a href="#' . $record->id . '" class="btn btn-xs btn-info pickBtn" title="Pilih"><i class="fa fa-thumb-tack"></i> Pilih</a>';
-			} else if ($picker == 'no') {
-				$linkBtn = '  <a href="#' . $record->id . '" class="btn btn-xs btn-primary editBtn" title="Edit"><i class="fa fa-edit"></i> Edit</a>';
-				$linkBtn .= ' <a href="#' . $record->id . '" class="btn btn-xs btn-primary editAllowanceBtn" title="Edit Overrage Sect"><i class="fa fa-edit"></i> Overrage</a>';
-				$linkBtn .= ' <a href="#' . $record->id . '" class="btn btn-xs btn-primary editQtyBtn" title="Edit Qty Sect"><i class="fa fa-edit"></i> Qty Sect</a>';
-				// $linkBtn .= ' <a href="#' . $record->id . '" class="btn btn-xs btn-danger removeBtn" title="Hapus"><i class="fa fa-trash-o"></i> Hapus</a>';
-				$linkBtn .= ' <a onclick="printQuotation('.$record->id.'); return false;" href="#" class="btn btn-xs btn-success " title="Print"><i class="fa fa-print"></i> Print</a>';
-			}
-			
 			$pc_ce = @($record->pc_company_experience * 0.15);
 			$p_pl  = @($record->pc_complexity_level * 0.15);
 			$pc_pw = @($record->pc_working_duration * 0.1);
@@ -313,6 +300,20 @@ class Retriever extends CI_Controller {
 			$recomen = @($pc_ce + $p_pl + $pc_pw + $pc_vw + $pc_al + $pc_ms + $pc_sc + $pc_is + $pc_tl + $pc_efm + $pc_efi + $pc_esr + $pc_pfp);
 			
 			$ax = cek_risk($recomen);
+
+			$no++;
+
+			if ($picker == 'yes') {
+				$linkBtn = '<a href="#' . $record->id . '" class="btn btn-xs btn-info pickBtn" title="Pilih"><i class="fa fa-thumb-tack"></i> Pilih</a>';
+			} else if ($picker == 'no') {
+				$linkBtn = '  <a href="#' . $record->id . '" class="btn btn-xs btn-primary editBtn" title="Edit"><i class="fa fa-edit"></i> Edit</a>';
+				$linkBtn .= ' <a href="#' . $record->id . '" class="btn btn-xs btn-primary editAllowanceBtn" title="Edit Overrage Sect"><i class="fa fa-edit"></i> Overrage</a>';
+				$linkBtn .= ' <a href="#' . $record->id . '" class="btn btn-xs btn-primary editQtyBtn" title="Edit Qty Sect"><i class="fa fa-edit"></i> Qty Sect</a>';
+				// $linkBtn .= ' <a href="#' . $record->id . '" class="btn btn-xs btn-danger removeBtn" title="Hapus"><i class="fa fa-trash-o"></i> Hapus</a>';
+				$linkBtn .= ' <a onclick="printQuotation('.$record->id.',\''.$ax.'\'); return false;" href="#" class="btn btn-xs btn-success " title="Print"><i class="fa fa-print"></i> Print</a>';
+			}
+			
+			
 			if ($ax == "PROJECT NORMAL") {
 				$color_r = "#3AE375";
 			} elseif ($ax == "PROJECT MEDIUM RISK") {
