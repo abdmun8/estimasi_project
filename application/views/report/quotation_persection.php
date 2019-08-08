@@ -114,7 +114,6 @@ $headerStyle = [
 $spreadsheet = new Spreadsheet();
 $n = 0;
 foreach ($sectionPart as $key => $section) {
-    // var_dump($section);die;
     // create new sheet
     $myWorkSheet = new Worksheet($spreadsheet, $section['tipe_name']);
     // Attach the "My Data" worksheet as the first worksheet in the Spreadsheet object
@@ -160,7 +159,6 @@ foreach ($sectionPart as $key => $section) {
     // $itemPart1 = $this->db->get("{$this->db->database}.part_jasa p")->result_array();
     // echo $this->db->last_query();
     // $itemPart = array_merge($)
-    // var_dump($itemPart);
     $itemPart = $this->reporter->getStructure($dataPart, 'findChildPart');
     $newPart = [];
     foreach ($itemPart as $key => $item) {
@@ -172,8 +170,6 @@ foreach ($sectionPart as $key => $section) {
             }
         }
     }
-    // var_dump($newPart);
-    // die;
 
     $activeSheet->setCellValue('B4', 'Part & Jasa');
     $activeSheet->getStyle('B4')->getFont()->setSize(11);
@@ -267,7 +263,6 @@ foreach ($sectionPart as $key => $section) {
         }
     }
 
-    // var_dump($itemMaterial);die;
 
     $row += 2;
     $activeSheet->setCellValue("B$row", "Raw Material");
@@ -354,10 +349,6 @@ foreach ($sectionPart as $key => $section) {
     $this->db->join('sgedb.akunbg a', 'l.id_labour = a.accno');
     $itemLabour = $this->db->get("{$this->db->database}.v_labour l")->result_array();
 
-    // var_dump($itemLabour);
-    // die;
-
-
     $row += 2;
     $activeSheet->setCellValue("B$row", "Labour");
     $activeSheet->getStyle("B$row")->getFont()->setSize(11);
@@ -436,8 +427,10 @@ foreach ($sectionPart as $key => $section) {
     // no section
     $n++;
 }
-// var_dump($spreadsheet);die;
+
 $spreadsheet->setActiveSheetIndex(0);
+
+// var_dump($spreadsheet);die;
 // Create new Spreadsheet object
 
 

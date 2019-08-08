@@ -832,9 +832,6 @@ class Quotation extends CI_Controller
         $parentPart = $this->reporter->getStructureTree($part);
         $rowTitle = $this->db->get_where('header', ['id' => $id_header])->row();
         $title = "Quot-Summary-Detail" . $rowTitle->inquiry_no . "-" . $rowTitle->project_name . "-" . $rowTitle->customer . "-" . date('dmY');
-        // var_dump($parentLabour);
-        // var_dump($parentMaterial);
-        // var_dump($parentPart);
         $_GET['id'] = $id_header;
         $this->load->view(
             'report/quotation_persection',
