@@ -173,7 +173,7 @@ if ($param != null) {
         window.open(base_url + `quotation/print_summary/` + id_header);
         setTimeout(() => {
             window.open(base_url + `quotation/print_detail_summary/` + id_header);
-        }, 3000)
+        }, 1000)
     }
 
     function saveAllowance() {
