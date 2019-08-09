@@ -12,6 +12,7 @@
 	},
 	"require": {
 		"php": ">=5.3.7",
-		"phpoffice/phpspreadsheet": "^1.8"
+		"phpoffice/phpspreadsheet": "^1.8",
+		"mpdf/mpdf": "^8.0"
 	}
 }
