@@ -55,6 +55,7 @@ class Reporter
             'satuan' =>  $v['satuan'],
             'harga' =>  $harga,
             'qty' =>  $qty,
+            'group' =>  $v['group'],
             'total' =>  $v['total'],
             'kategori' =>  $this->getKategori($v['kategori']),
             'tipe_item' =>  $v['tipe_item'],
@@ -223,6 +224,7 @@ class Reporter
             `harga`,
             `qty`,
             `kategori`,
+            `group`,
             `updated_datetime`,
             `tipe_parent`,
             `nama_kategori`, SUM(rm) AS total_rm,SUM(elc) AS total_elc, SUM(pnu) AS total_pnu, SUM(hyd) AS total_hyd, SUM(mch) AS total_mch, SUM(sub) as total_sub, {$value['id']} AS id_section FROM (SELECT
@@ -332,6 +334,7 @@ class Reporter
             $temp['no'] = $no;
             $temp['id'] = $value['id'];
             $temp['qty'] = $value['qty'];
+            $temp['group'] = $value['group'];
             $temp['tipe_id'] = $value['tipe_id'];
             $temp['tipe_name'] = $value['tipe_name'];
             $temp['total_rm'] = 0;

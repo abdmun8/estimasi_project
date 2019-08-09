@@ -177,6 +177,16 @@ if ($param != null) {
         }, 1000)
     }
 
+    function checkQuotationHasItem(id_header, risk){
+        $.get(base_url + 'quotation/checkHasItem/' + id_header,(response) =>{
+            if(response.has_item == true){
+                printQuotation(id_header, risk)
+            }else{
+                notify('warning', 'Quotation Belum diisi!!');
+            }
+        },'json')
+    }
+
     function saveAllowance() {
         let allowance = $("#allowance-input").val();
         let id_header = $("#id_header-allowance").val();
@@ -192,9 +202,10 @@ if ($param != null) {
                 type: 'POST',
                 cache: false,
                 success: function(json) {
+                    $("#modal-allowance").modal('hide')
                     refreshTable();
                     loading('loading1', false);
-                    $("#modal-allowance").modal('hide')
+                    notify('success', 'Penyimpanan data berhasil');
                 },
                 error: function() {
                     loading('loading1', false);
@@ -534,18 +545,18 @@ if ($param != null) {
             option = `<option value='0'>0</option>
             <option selected value='1'>1</option>`;
         }
-        $(o).parent().siblings()[2].innerHTML = "<select id='input-section-group' style='width:100px;'>" + option + "</select>"
+        $(o).parent().siblings()[2].innerHTML = "<select id='input-section-group"+id+"' style='width:100px;'>" + option + "</select>"
         let oldValue = $(o).parent().siblings()[3].innerHTML
-        $(o).parent().siblings()[3].innerHTML = "<input min='0' id='input-section-qty' style='width:100px;' type='number' value='" + oldValue + "' />"
+        $(o).parent().siblings()[3].innerHTML = "<input min='0' id='input-section-qty"+id+"' style='width:100px;' type='number' value='" + oldValue + "' />"
         $(".save-qty-section" + id + "").css('display', 'inline')
         $(".edit-qty-section" + id + "").css('display', 'none')
     }
 
     function saveQtySection(o, id) {
-        let value = $("#input-section-qty").val()
-        let group = $("#input-group-qty").val()
-        $(o).parent().siblings()[2].innerHTML = value;
-        $(o).parent().siblings()[3].val(group)
+        let value = $("#input-section-qty"+id+"").val()
+        let group = $("#input-section-group"+id+"").val()
+        $(o).parent().siblings()[2].innerHTML = group;
+        $(o).parent().siblings()[3].innerHTML = value;
         $(".save-qty-section" + id + "").css('display', 'none')
         $(".edit-qty-section" + id + "").css('display', 'inline')
         loading('loading1', true);

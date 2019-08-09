@@ -24,6 +24,10 @@ class Quotation extends CI_Controller
         }
 
         $data['param'] = $id;
+        $has_item = $this->checkHasItem($id, FALSE);
+        /* Insert default section */
+        if (!$has_item)
+            $this->saveDefaultSection($id);
 
         $this->load->view('cms/_detail_quotation', $data);
     }
@@ -317,7 +321,7 @@ class Quotation extends CI_Controller
                     $code = 1;
                     $last_id = $this->db->insert_id();
                     /* INSERT DEFAULT SECTION */
-                    $this->saveDefaultSection($last_id);
+                    // $this->saveDefaultSection($last_id);
                 }
             } else {
                 if ($this->quotation->udpateGeneralInfo() == TRUE) {
@@ -382,6 +386,7 @@ class Quotation extends CI_Controller
         $message = '';
         $default_dept_labour = ['ENGINEERING', 'PRODUCTION'];
         $action = $this->input->post('action-item');
+        // var_dump($action);die;
         // $this->db->trans_begin();
         if ($action == 1) {
             if ($this->quotation->insertDetailPart() == TRUE) {
@@ -498,12 +503,12 @@ class Quotation extends CI_Controller
     public function getItemCode()
     {
         $obj = $this->sgedb->select('lp.stcd, lp.stcd as id , 
-            CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," [",mstchd.stcd,"]" ) as name, 
+            CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," - ",lp.mkt," - "," [",mstchd.stcd,"]" ) as name, 
             TRIM(mstchd.nama) as nama,
             TRIM(mstchd.spek) as spek, 
             TRIM(mstchd.maker) as maker, 
             TRIM(mstchd.uom) as uom, 
-            CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," [",mstchd.stcd,"]" ) as text, 
+            CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," - ",lp.mkt," - "," [",mstchd.stcd,"]" ) as text, 
             (lp.mkt) as harga, lp.remark', false)
             ->join('msprice lp', 'mstchd.stcd = lp.stcd')
             ->get('mstchd')->result();
@@ -749,13 +754,13 @@ class Quotation extends CI_Controller
     function saveSectionQty()
     {
         $post = $this->input->post();
-        $this->db->update('part_jasa', ['qty' => $post['qty'] , 'group' => $post['group']], ['id' => $post['id']]);
+        $this->db->update('part_jasa', ['qty' => $post['qty'], 'group' => $post['group']], ['id' => $post['id']]);
         echo json_encode(['code' => 1, 'success' => true]);
     }
 
     public function printPart($id_header)
     {
-        $rowTitle = $this->db->get_where('header', ['id' => $id_header])->row();
+        $rowTitle = $this->db->get_where('v_header', ['id' => $id_header])->row();
         $title = "Quot-Part-" . $rowTitle->inquiry_no . "-" . $rowTitle->project_name . "-" . $rowTitle->customer . "-" . date('dmY');
         $part = $this->getDataPart($id_header, NULL, false);
         $dataPart = array_filter($part, function ($item) {
@@ -770,7 +775,7 @@ class Quotation extends CI_Controller
 
     public function printLabour($id_header)
     {
-        $rowTitle = $this->db->get_where('header', ['id' => $id_header])->row();
+        $rowTitle = $this->db->get_where('v_header', ['id' => $id_header])->row();
         $title = "Quot-Labour-" . $rowTitle->inquiry_no . "-" . $rowTitle->project_name . "-" . $rowTitle->customer . "-" . date('dmY');
         $labour = $this->getDataLabour($id_header, NULL, false, false);
         $dataLabour = array_filter($labour, function ($item) {
@@ -781,7 +786,7 @@ class Quotation extends CI_Controller
 
     public function printSummary($id_header, $return = FALSE)
     {
-        $rowTitle = $this->db->get_where('header', ['id' => $id_header])->row();
+        $rowTitle = $this->db->get_where('v_header', ['id' => $id_header])->row();
         $title = "Quot-Summary" . $rowTitle->inquiry_no . "-" . $rowTitle->project_name . "-" . $rowTitle->customer . "-" . date('dmY');
         // $dataPart = $this->getDataPart($id_header, NULL, false);
         // $dataMaterial = $this->getDataMaterial($id_header, NULL, false);
@@ -810,8 +815,17 @@ class Quotation extends CI_Controller
     public function printDetailSummary($id_header)
     {
         $part = $this->getDataPart($id_header, NULL, false);
+        $part = array_filter($part, function ($item) {
+            return $item['deleted'] == 0;
+        });
         $material = $this->getDataMaterial($id_header, NULL, false);
+        $material = array_filter($material, function ($item) {
+            return $item['deleted'] == 0;
+        });
         $labour = $this->getDataLabour($id_header, NULL, false, false);
+        $labour = array_filter($labour, function ($item) {
+            return $item['deleted'] == 0;
+        });
 
         $sectionLabour = array_filter($labour, function ($item) {
             return $item['tipe_item'] == 'section';
@@ -830,7 +844,7 @@ class Quotation extends CI_Controller
         });
 
         $parentPart = $this->reporter->getStructureTree($part);
-        $rowTitle = $this->db->get_where('header', ['id' => $id_header])->row();
+        $rowTitle = $this->db->get_where('v_header', ['id' => $id_header])->row();
         $title = "Quot-Summary-Detail" . $rowTitle->inquiry_no . "-" . $rowTitle->project_name . "-" . $rowTitle->customer . "-" . date('dmY');
         $_GET['id'] = $id_header;
         $this->load->view(
@@ -896,5 +910,16 @@ class Quotation extends CI_Controller
         }
 
         echo json_encode(['data' => $no]);
+    }
+
+    function checkHasItem($id_header, $json = TRUE)
+    {
+        $has_item = FALSE;
+        $count = $this->db->get_where('part_jasa', ['id_header' => $id_header, 'deleted' => 0])->num_rows();
+        if ($count > 0)
+            $has_item = TRUE;
+        if (!$json)
+            return $has_item;
+        echo json_encode(['has_item' => $has_item]);
     }
 }

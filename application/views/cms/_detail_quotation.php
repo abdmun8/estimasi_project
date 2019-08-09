@@ -1686,6 +1686,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         $("#tipe_id-item").val(json.tipe_id);
                         $("#harga-item").val(parseInt(json.harga));
                         $("#item_code-item").val(json.item_code);
+                        $('#item_code-item').trigger('change');
                         $('#item_codeUnassigned-item').trigger('change');
                         $("#item_name-item").val(json.item_name);
                         $("#kategori-item").val(json.kategori);

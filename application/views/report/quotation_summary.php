@@ -23,8 +23,6 @@ $arrHeaderSummary = [
 // get data from controller
 $data = $summary;
 
-// print_r($data);die;
-
 // Create new Spreadsheet object
 $spreadsheet = new Spreadsheet();
 $activeSheet = $spreadsheet->getActiveSheet();
@@ -99,6 +97,8 @@ foreach ($data as $key => $value) {
     $total_hyd =  $value['total_hyd'] * $qty;
     $total_sub = $value['total_sub'] * $qty;
 
+    $total_eng = $value['group'] == 1 ? $value['total_eng'] * $qty : $value['total_eng'];
+
     $formatNum = ['C','D','E','F','G','H','I','J','K'];
     $activeSheet->setCellValue('A' . $row, $value['tipe_id']);
     $activeSheet->setCellValue('B' . $row, $value['tipe_name']);
@@ -108,7 +108,7 @@ foreach ($data as $key => $value) {
     $activeSheet->setCellValue('F' . $row, $total_pnu + ($allowance / 100 * $total_pnu));
     $activeSheet->setCellValue('G' . $row, $total_hyd + ($allowance / 100 * $total_hyd));
     $activeSheet->setCellValue('H' . $row, $total_sub + ($allowance / 100 * $total_sub));
-    $activeSheet->setCellValue('I' . $row, $value['total_eng']);
+    $activeSheet->setCellValue('I' . $row, $total_eng);
     $activeSheet->setCellValue('J' . $row, $value['total_prod'] * $qty);
     foreach ($formatNum as $v) {
         $activeSheet->getStyle("$v$row")->getNumberFormat()
