@@ -98,8 +98,6 @@ $route['quotation/print_labour/(:num)'] = 'Quotation/printLabour/$1';
 $route['quotation/print_summary/(:num)'] = 'Quotation/printSummary/$1';
 $route['quotation/print_detail_summary/(:num)'] = 'Quotation/printDetailSummary/$1';
 
-
-
 /* labour */
 $route['quotation/get_data_labour/(:num)'] = 'Quotation/getDataLabour/$1';
 $route['quotation/get_data_labour/(:num)/(:num)'] = 'Quotation/getDataLabour/$1/$2';
@@ -113,7 +111,6 @@ $route['quotation/save_section_qty'] = 'Quotation/saveSectionQty';
 $route['quotation/save_allowance'] = 'Quotation/saveAllowance';
 $route['quotation/get_amount_allowance'] = 'Quotation/getAmountAllowance';
 $route['quotation/get_detail_by_header/(:any)/(:any)/(:any)'] = 'Quotation/getDetailLabourByHeader/$1/$2/$3';
-
 /* Material */
 $route['quotation/get_data_material/(:num)'] = 'Quotation/getDataMaterial/$1';
 $route['quotation/get_data_material/(:num)/(:num)'] = 'Quotation/getDataMaterial/$1/$2';

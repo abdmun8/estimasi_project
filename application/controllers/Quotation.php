@@ -749,7 +749,7 @@ class Quotation extends CI_Controller
     function saveSectionQty()
     {
         $post = $this->input->post();
-        $this->db->update('part_jasa', ['qty' => $post['qty']], ['id' => $post['id']]);
+        $this->db->update('part_jasa', ['qty' => $post['qty'] , 'group' => $post['group']], ['id' => $post['id']]);
         echo json_encode(['code' => 1, 'success' => true]);
     }
 
@@ -855,9 +855,9 @@ class Quotation extends CI_Controller
     {
         $post = $this->input->post();
         $this->db->update(
-            'header',
+            'marketing',
             ['allowance' => $post['allowance']],
-            ['id' => $post['id']]
+            ['id_marketing' => $post['id']]
         );
         echo json_encode(['code' => 1, 'success' => true]);
     }
@@ -865,7 +865,7 @@ class Quotation extends CI_Controller
     public function getAmountAllowance($return = FALSE)
     {
         $get = $this->input->get();
-        $amount = $this->db->get_where('header', ['id' => $get['id']])->row()->allowance;
+        $amount = $this->db->get_where('marketing', ['id_marketing' => $get['id']])->row()->allowance;
         if ($return)
             return $amount;
         else

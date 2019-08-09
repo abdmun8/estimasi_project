@@ -1,6 +1,7 @@
 <section class="content-header">
   <h1>
     Dashboard
+    <?php var_dump($_SESSION);?>
   </h1>
   <ol class="breadcrumb">
     <li><a href="<?php echo base_url(); ?>"><i class="fa fa-dashboard"></i> Home</a></li>

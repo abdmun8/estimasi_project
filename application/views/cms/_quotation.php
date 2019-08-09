@@ -93,6 +93,7 @@ if ($param != null) {
                                 <tr>
                                     <th>No</th>
                                     <th>Section</th>
+                                    <th>Group</th>
                                     <th>Qty</th>
                                     <th>action</th>
                                 </tr>
@@ -468,6 +469,9 @@ if ($param != null) {
                         "data": "tipe_name"
                     },
                     {
+                        "data": "group"
+                    },
+                    {
                         "data": "qty",
                         "width": "25%"
                     },
@@ -520,15 +524,28 @@ if ($param != null) {
     }
 
     function editQtySection(o, id) {
-        let oldValue = $(o).parent().siblings()[2].innerHTML
-        $(o).parent().siblings()[2].innerHTML = "<input min='0' id='input-section-qty' style='width:100px;' type='number' value='" + oldValue + "' />"
+        let x = $(o).parent().siblings()[2]
+        let oldValueGroup = $(o).parent().siblings()[2].innerHTML
+        let option = "";
+        if (oldValueGroup == 0) {
+            option = `<option selected value='0'>0</option>
+            <option value='1'>1</option>`;
+        } else {
+            option = `<option value='0'>0</option>
+            <option selected value='1'>1</option>`;
+        }
+        $(o).parent().siblings()[2].innerHTML = "<select id='input-section-group' style='width:100px;'>" + option + "</select>"
+        let oldValue = $(o).parent().siblings()[3].innerHTML
+        $(o).parent().siblings()[3].innerHTML = "<input min='0' id='input-section-qty' style='width:100px;' type='number' value='" + oldValue + "' />"
         $(".save-qty-section" + id + "").css('display', 'inline')
         $(".edit-qty-section" + id + "").css('display', 'none')
     }
 
     function saveQtySection(o, id) {
         let value = $("#input-section-qty").val()
+        let group = $("#input-group-qty").val()
         $(o).parent().siblings()[2].innerHTML = value;
+        $(o).parent().siblings()[3].val(group)
         $(".save-qty-section" + id + "").css('display', 'none')
         $(".edit-qty-section" + id + "").css('display', 'inline')
         loading('loading1', true);
@@ -537,6 +554,7 @@ if ($param != null) {
                 url: base_url + 'quotation/save_section_qty',
                 data: {
                     qty: value,
+                    group: group,
                     id: id
                 },
                 dataType: 'json',
