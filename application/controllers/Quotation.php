@@ -340,8 +340,8 @@ class Quotation extends CI_Controller
     public function saveDefaultSection($id_header)
     {
         $arr = [
-            ['tipe_name-item' => 'ONSITE', 'tipe_id-item' => '19', 'id_header-item' => $id_header, 'group-item' => 0],
-            ['tipe_name-item' => 'INSTALLATION', 'tipe_id-item' => '20', 'id_header-item' => $id_header, 'group-item' => 1]
+            ['tipe_name-item' => 'ONSITE', 'tipe_id-item' => '1', 'id_header-item' => $id_header, 'group-item' => 0],
+            ['tipe_name-item' => 'INSTALLATION', 'tipe_id-item' => '2', 'id_header-item' => $id_header, 'group-item' => 1]
         ];
 
         $wrap = [
