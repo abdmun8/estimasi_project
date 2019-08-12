@@ -340,8 +340,8 @@ class Quotation extends CI_Controller
     public function saveDefaultSection($id_header)
     {
         $arr = [
-            ['tipe_name-item' => 'ONSITE', 'tipe_id-item' => '19', 'id_header-item' => $id_header],
-            ['tipe_name-item' => 'INSTALLATION', 'tipe_id-item' => '20', 'id_header-item' => $id_header]
+            ['tipe_name-item' => 'ONSITE', 'tipe_id-item' => '19', 'id_header-item' => $id_header, 'group-item' => 0],
+            ['tipe_name-item' => 'INSTALLATION', 'tipe_id-item' => '20', 'id_header-item' => $id_header, 'group-item' => 1]
         ];
 
         $wrap = [
@@ -362,8 +362,8 @@ class Quotation extends CI_Controller
             'harga-item' => '',
             'kategori-item' => '',
             'harga-item-clean' => '0',
-            'remark-harga' => '',
-            'group-item' => 1
+            'remark-harga' => ''
+            
         ];
 
         foreach ($arr as $key => $value) {
@@ -371,6 +371,7 @@ class Quotation extends CI_Controller
             $data['tipe_name-item'] = $value['tipe_name-item'];
             $data['tipe_id-item'] = $value['tipe_id-item'];
             $data['id_header-item'] = $value['id_header-item'];
+            $data['group-item'] = $value['group-item'];
             $_POST = $data;
             $code = $this->saveItem(FALSE);
         }
