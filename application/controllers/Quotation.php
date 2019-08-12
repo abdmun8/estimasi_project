@@ -349,7 +349,7 @@ class Quotation extends CI_Controller
             'item_code-item' => '',
             'spec-item' => '',
             'satuan-item' => '',
-            'qty-item' => '',
+            'qty-item' => '0',
             'item_code' => '',
             'id_parent-item' => '0',
             'id_header-item' => '',
@@ -362,7 +362,8 @@ class Quotation extends CI_Controller
             'harga-item' => '',
             'kategori-item' => '',
             'harga-item-clean' => '0',
-            'remark-harga' => ''
+            'remark-harga' => '',
+            'group-item' => 1
         ];
 
         foreach ($arr as $key => $value) {

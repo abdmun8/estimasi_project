@@ -69,7 +69,8 @@ class Quotation_model extends Model {
             "merk" => $post['merk-item'],
             "harga" => $post['harga-item-clean'],
             "remark_harga" => $post['remark-harga'],
-            "kategori" => $post['kategori-item']
+            "kategori" => $post['kategori-item'],
+            "group" => isset($post['group-item']) ? $post['group-item'] : 0
         ];
 
         return $data;
