@@ -30,7 +30,7 @@
     </ul>
 </li>
 <li class="menu" id="dashboard">
-    <a href="#" onclick="goToSomewhere('http://server/project_inquiry/table_inquiry1.php?u=<?=$this->session->userdata('username')?>&p=<?=$this->session->userdata('password')?>')">
+    <a href="#" onclick="goToSomewhere('http://<?=$_SERVER['HTTP_HOST']?>/project_inquiry/table_inquiry1.php?u=<?=$this->session->userdata('username')?>&p=<?=$this->session->userdata('password')?>')">
         <i class="fa fa-file-text-o"></i> <span>List Quotation</span> </i>
     </a>
 </li>
