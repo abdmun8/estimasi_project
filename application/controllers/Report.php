@@ -178,8 +178,8 @@ class Report extends Quotation
         $this->pdf->Cell(30, 4, 'DURATION', 1, 0);
         $this->pdf->Cell(30, 4, calcDiffDate($header->start_date, $header->finish_date) . ' MONTH(S)', 1, 0);
         $this->pdf->Cell(20);
-        $this->pdf->Cell(30, 4, 'DIFFICULTY', 1, 0);
-        $this->pdf->Cell(0, 4, $header->difficulty ? $header->difficulty : 'NORMAL', 1, 0);
+        // $this->pdf->Cell(30, 4, 'DIFFICULTY', 1, 0);
+        // $this->pdf->Cell(0, 4, $header->difficulty ? $header->difficulty : 'NORMAL', 1, 0);
         /* row 4*/
         $this->pdf->Ln(4);
         $this->pdf->Cell(50, 4, 'PIC MARKETING', 1, 0);
