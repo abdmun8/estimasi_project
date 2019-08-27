@@ -41,6 +41,7 @@ class Retriever extends CI_Controller
 					//Quotation
 				case 'header':
 					$query['table'] = 'v_header';
+					$query['where'] = ['approve' => 'A'];
 					break;
 				case 'karyawan':
 					$query['table'] = 'v_karyawan';
@@ -93,6 +94,7 @@ class Retriever extends CI_Controller
 						// Quotation
 					case 'header':
 						$query['table'] = 'v_header';
+						$query['where'] = ['approve' => 'A'];
 						break;
 					case 'karyawan':
 						$query['table'] = 'v_karyawan';
