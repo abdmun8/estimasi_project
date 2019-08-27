@@ -31,7 +31,7 @@ class Report extends Quotation
         }
         $this->pdf->Ln(4);
         $this->pdf->Cell(8, 4, $no, 1, 0, 'C');
-        $this->pdf->Cell(42, 4, isset($item['tipe_name']) ? $item['tipe_name'] : '', 1, 0);
+        $this->pdf->Cell(42, 4, isset($item['tipe_name']) ? substr($item['tipe_name'],0,25) : '', 1, 0);
         $this->pdf->Cell(8, 4, isset($qty) ? $qty : '', 1, 0, 'C');
         $this->pdf->Cell(24, 4, isset($part) ? number_format($part) : '', 1, 0, 'R');
         $this->pdf->Cell(24, 4, isset($eng) ? number_format($eng) : '', 1, 0, 'R');
