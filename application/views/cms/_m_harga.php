@@ -17,6 +17,8 @@ if ($param != null) {
     td {
         white-space: nowrap;
     }
+
+    #table-data { table-layout: fixed; }
 </style>
 <div class="nav-tabs-custom">
     <ul class="nav nav-tabs pull-right">
