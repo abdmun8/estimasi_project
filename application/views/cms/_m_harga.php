@@ -41,8 +41,8 @@ if ($param != null) {
                         <th>No</th>
                         <th>Item Code</th>
                         <th>Item Name</th>
-                        <th>Maker</th>
                         <th>Spek</th>
+                        <th>Maker</th>
                         <th>Unit</th>
                         <th>Harga</th>
                         <th>Remark</th>
@@ -54,8 +54,8 @@ if ($param != null) {
                         <th>No</th>
                         <th>Item Code</th>
                         <th>Item Name</th>
-                        <th>Maker</th>
                         <th>Spek</th>
+                        <th>Maker</th>
                         <th>Unit</th>
                         <th>Harga</th>
                         <th>Remark</th>
@@ -93,20 +93,19 @@ if ($param != null) {
             tableData = $('#table-data').DataTable({
                 "ajax": base_url + 'quotation/get_item_code/0',
                 "columns": [{
-                        'data': 'no',
-                        'width': '5%'
+                        'data': 'no'
                     },
                     {
                         'data': 'stcd'
                     },
                     {
                         'data': 'item_name'
+                    },                    
+                    {
+                        'data': 'spek'
                     },
                     {
                         'data': 'maker'
-                    },
-                    {
-                        'data': 'spek'
                     },
                     {
                         'data': 'uom'
