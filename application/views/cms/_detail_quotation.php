@@ -509,7 +509,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 }
             });
 
-            $.get(base_url + "quotation/get_item_code", function(data) {
+            $.get(base_url + "quotation/get_item_code/1", function(data) {
                 $('#item_code-item').select2({
                     placeholder: "Pilih Item Code",
                     allowClear: true,
@@ -2194,7 +2194,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         }
 
         function mockData() {
-            $.get(base_url + "quotation/get_item_code", function(data) {
+            $.get(base_url + "quotation/get_item_code/1", function(data) {
                 return data;
             }, 'json')
         }

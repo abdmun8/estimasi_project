@@ -502,9 +502,10 @@ class Quotation extends CI_Controller
         )));
     }
 
-    public function getItemCode()
+    public function getItemCode($set_null = 1)
     {
-        $obj = $this->sgedb->select('lp.stcd, lp.stcd as id , 
+        $data = [];
+        $obj = $this->sgedb->select('lp.stcd, lp.stcd as id , TRIM(mstchd.nama) as item_name,
             CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," - ",lp.mkt," - "," [",mstchd.stcd,"]" ) as name, 
             TRIM(mstchd.nama) as nama,
             TRIM(mstchd.spek) as spek, 
@@ -513,19 +514,31 @@ class Quotation extends CI_Controller
             CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," - ",lp.mkt," - "," [",mstchd.stcd,"]" ) as text, 
             (lp.mkt) as harga, lp.remark', false)
             ->join('msprice lp', 'mstchd.stcd = lp.stcd')
-            ->get('mstchd')->result();
-        array_unshift($obj, [
-            'harga' => "",
-            'id' => "",
-            'maker' => "",
-            'name' => "",
-            'remark' => "",
-            'spek' => "",
-            'stcd' => "",
-            'text' => "",
-            'uom' => ""
-        ]);
-        echo json_encode($obj);
+            ->get('mstchd')->result_array();
+        if($set_null){
+            array_unshift($obj, [
+                'harga' => "",
+                'id' => "",
+                'maker' => "",
+                'name' => "",
+                'remark' => "",
+                'spek' => "",
+                'stcd' => "",
+                'text' => "",
+                'uom' => ""
+            ]);
+            $data = $obj;
+        }else{
+            $data = [];
+            $no = 0;
+            foreach ($obj as $key => $row) {
+                $no++;
+                $row['no'] = $no;
+                $data['data'][] = $row;
+            }
+        }
+        
+        echo json_encode($data);
     }
 
     public function getKategori()
