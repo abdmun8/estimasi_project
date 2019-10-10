@@ -234,7 +234,8 @@ if ($param != null) {
                         "data": "inquiry_no"
                     },
                     {
-                        "data": "project_name"
+                        "data": "project_name",
+                        "width": "10%",
                     },
                     {
                         "data": "qty"
@@ -280,6 +281,7 @@ if ($param != null) {
                         "width": "20%"
                     }
                 ],
+                "autoWidth": false,
                 "ordering": true,
                 "deferRender": true,
                 "columnDefs": [{

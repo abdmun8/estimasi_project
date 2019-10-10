@@ -1603,10 +1603,6 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                 text: 'Object'
                             },
                             {
-                                id: 'sub_object',
-                                text: 'Sub Object'
-                            },
-                            {
                                 id: 'item',
                                 text: 'Item'
                             }
