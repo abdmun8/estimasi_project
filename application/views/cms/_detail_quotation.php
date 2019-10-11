@@ -31,16 +31,23 @@ $satuan = $this->db->get_where('tblsatuan')->result();
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/AdminLTE-2.4.9/css/skins/skin-black.min.css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/swal/sweet-alert.css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/jquery-autocomplete/jquery.auto-complete.css">
-    </link>
     <!-- daterange picker -->
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/bootstrap-daterangepicker/daterangepicker.css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/animate.css/animate.css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/dataTables.bootstrap.css">
+    <link rel="stylesheet" href="http://pc/estimasi_project/assets/cms/js/plugins/datatables/extensions/FixedColumns-3.2.5/css/fixedColumns.bootstrap.min.css">
+    <link rel="stylesheet" href="http://pc/estimasi_project/assets/cms/js/plugins/datatables/extensions/Select-1.3.0/css/select.bootstrap.min.css">
+    <link rel="stylesheet" href="http://pc/estimasi_project/assets/cms/js/plugins/datatables/extensions/Buttons-1.5.6/css/buttons.bootstrap.min.css">
     <style type="text/css">
         .padding20 {
             padding: 20px;
         }
-        
+
+        th,
+        td {
+            white-space: nowrap;
+        }
+
 
         .nav-tabs .active {
             font-weight: bolder;
@@ -125,7 +132,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                     <input disabled type="text" class="form-control" name="qty_general" id="qty_general" placeholder="Qty">
                                 </div>
                                 <div class="col-sm-7">
-                                    <select  disabled class="form-control" id="lot_general" name="lot_general">
+                                    <select disabled class="form-control" id="lot_general" name="lot_general">
                                         <?php foreach ($satuan as $key => $value) : ?>
                                             <option value="<?= $value->name; ?>"><?= $value->name; ?></option>
                                         <?php endforeach; ?>
@@ -180,10 +187,10 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                     <select disabled class="form-control" id="difficulty" name="difficulty">
                                         <option value="" selected>Pilih Difficulty</option>
                                         <?php
-                                            $difficulty = $this->db->get('difficulty')->result();
-                                            foreach ($difficulty as $key => $value) {
-                                                echo "<option value='{$value->level}'>{$value->nama}</option>";
-                                            }
+                                        $difficulty = $this->db->get('difficulty')->result();
+                                        foreach ($difficulty as $key => $value) {
+                                            echo "<option value='{$value->level}'>{$value->nama}</option>";
+                                        }
                                         ?>
                                     </select>
                                 </div>
@@ -235,8 +242,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
     <!-- /End Content -->
 
     <!-- Modal Part -->
-    <div id="modal-input-item" class="modal fade" role="dialog">
-        <div class="modal-dialog modal-lg">
+    <div class="modal fade" id="modal-input-item" role="dialog" aria-labelledby="modal-add-vendor" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
 
             <!-- Modal content-->
             <div class="modal-content">
@@ -245,83 +252,141 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     <h4 class="modal-title">Manage <span class="modal-title-input"></span></h4>
                 </div>
                 <div class="modal-body">
-                    <form role="form" id="form-input-item">
-                        <div class="box-body">
-                            <div class="col-md-6">
-                                <!-- <input type="hidden" id="tipe_item-item" name="tipe_item-item" value="section" /> -->
-                                <div class="form-group">
-                                    <label>Tipe Item</label>
-                                    <select class="form-control select2 input-sm" name="tipe_item-item" id="tipe_item-item">
-                                    </select>
+                    <!-- Custom Tabs (Pulled to the right) -->
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs pull-right">
+                            <li><a style="" href="#tab_input_item_exists" data-toggle="tab">Item Exists</a></li>
+                            <li class="active"><a href="#tab_input_item_new" data-toggle="tab">Item New</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab_input_item_new">
+                                <!-- Form Start -->
+                                <form role="form" id="form-input-item">
+                                    <div class="box-body">
+                                        <div class="col-md-6">
+                                            <!-- <input type="hidden" id="tipe_item-item" name="tipe_item-item" value="section" /> -->
+                                            <div class="form-group">
+                                                <label>Tipe Item</label>
+                                                <select class="form-control select2 input-sm" name="tipe_item-item" id="tipe_item-item">
+                                                </select>
+                                            </div>
+                                            <div class="form-group only_item">
+                                                <label>Item Code</label>
+                                                <select class="form-control select2 input-sm" style="width:100%;" name="item_code-item" id="item_code-item">
+                                                </select>
+                                            </div>
+                                            <!-- <div class="form-group only_item">
+                                                <label for="item_code-item">Item Code</label>
+                                                <input type="text" class="form-control input-sm" id="item_code-item" name="item_code-item" placeholder="Item Code" data-provide="typeahead">
+                                            </div> -->
+                                            <div class="form-group only_item">
+                                                <label for="spec-item">Spec</label>
+                                                <input type="text" class="form-control input-sm" id="spec-item" name="spec-item" placeholder="Spec">
+                                            </div>
+                                            <div class="form-group only_item">
+                                                <label for="satuan-item">Satuan</label>
+                                                <input type="text" class="form-control input-sm" id="satuan-item" name="satuan-item" placeholder="Satuan">
+                                            </div>
+                                            <div class="form-group only_item">
+                                                <label for="qty-item">Qty</label>
+                                                <input type="text" class="form-control input-sm" id="qty-item" name="qty-item" placeholder="Qty">
+                                            </div>
+
+                                            <input type="hidden" id="item_code" name="item_code" />
+                                            <input type="hidden" id="id_parent-item" name="id_parent-item" value="0" />
+                                            <input type="hidden" id="id_header-item" name="id_header-item" value="0" />
+                                            <input type="hidden" id="action-item" name="action-item" value="1" />
+                                            <input type="hidden" id="id-item" name="id-item" value="1" />
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group except_item">
+                                                <label for="tipe_id-item">Id <span class="modal-title-input"></span></label>
+                                                <input type="text" class="form-control input-sm" id="tipe_id-item" name="tipe_id-item" readonly placeholder="Id">
+                                            </div>
+                                            <div class="form-group except_item">
+                                                <label for="tipe_name-item"><span class="modal-title-input"></span> Name</label>
+                                                <input type="text" class="form-control input-sm" id="tipe_name-item" name="tipe_name-item" placeholder="Name">
+                                            </div>
+                                            <div class="form-group only_item">
+                                                <label for="item_name-item">Item Name</label>
+                                                <input type="text" class="form-control input-sm" id="item_name-item" name="item_name-item" placeholder="Item Name">
+                                            </div>
+                                            <div class="form-group only_item">
+                                                <label for="merk-item">Merk</label>
+                                                <input type="text" class="form-control input-sm" id="merk-item" name="merk-item" placeholder="Merk">
+                                            </div>
+                                            <div class="form-group only_item">
+                                                <label for="harga-item">Harga <span style="font-size:12px;font-style:italic;font-weight:normal; color:red;" class="blink-one" id="remark-harga"></span></label>
+                                                <input type="text" class="form-control input-sm" id="harga-item" name="harga-item" placeholder="Price">
+                                            </div>
+                                            <div class="form-group only_item">
+                                                <label>Kategori</label>
+                                                <select class="form-control select2 input-sm" id="kategori-item" name="kategori-item" style="width: 100%;">
+                                                    <option value="" selected="">Pilih Kategori</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div style="margin-top:1rem;">
+                                    <button style="margin-right:1rem;" type="button" class="btn btn-default pull-right" data-dismiss="modal">Close</button>
+                                    <button style="margin-right:1rem;" type="button" class="btn btn-success pull-right" onclick="saveItem()">Save</button>
                                 </div>
-                                <div class="form-group only_item">
-                                    <label>Item Code</label>
-                                    <select class="form-control select2 input-sm" style="width:100%;" name="item_code-item" id="item_code-item">
-                                    </select>
-                                </div>
-                                <!-- <div class="form-group only_item">
-                                    <label for="item_code-item">Item Code</label>
-                                    <input type="text" class="form-control input-sm" id="item_code-item" name="item_code-item" placeholder="Item Code" data-provide="typeahead">
-                                </div> -->
-                                <div class="form-group only_item">
-                                    <label for="spec-item">Spec</label>
-                                    <input type="text" class="form-control input-sm" id="spec-item" name="spec-item" placeholder="Spec">
-                                </div>
-                                <div class="form-group only_item">
-                                    <label for="satuan-item">Satuan</label>
-                                    <input type="text" class="form-control input-sm" id="satuan-item" name="satuan-item" placeholder="Satuan">
-                                </div>
-                                <div class="form-group only_item">
-                                    <label for="qty-item">Qty</label>
-                                    <input type="text" class="form-control input-sm" id="qty-item" name="qty-item" placeholder="Qty">
+                                <!-- Form End -->
+                            </div>
+                            <!-- /.tab-pane -->
+                            <div class="tab-pane" id="tab_input_item_exists">
+                                <div id="table-data-item-container">
+                                    <table style="width:100%;" id="table-data-item" class="table table-bordered table-striped table-hover table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Item Code</th>
+                                                <th>Item Name</th>
+                                                <th>Spek</th>
+                                                <th>Maker</th>
+                                                <th>Unit</th>
+                                                <th>Harga</th>
+                                                <th>Remark</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                        <!-- <tfoot>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Item Code</th>
+                                                <th>Item Name</th>
+                                                <th>Spek</th>
+                                                <th>Maker</th>
+                                                <th>Unit</th>
+                                                <th>Harga</th>
+                                                <th>Remark</th>
+                                            </tr>
+                                        </tfoot> -->
+                                    </table>
                                 </div>
 
-                                <input type="hidden" id="item_code" name="item_code" />
-                                <input type="hidden" id="id_parent-item" name="id_parent-item" value="0" />
-                                <input type="hidden" id="id_header-item" name="id_header-item" value="0" />
-                                <input type="hidden" id="action-item" name="action-item" value="1" />
-                                <input type="hidden" id="id-item" name="id-item" value="1" />
                             </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group except_item">
-                                    <label for="tipe_id-item">Id <span class="modal-title-input"></span></label>
-                                    <input type="text" class="form-control input-sm" id="tipe_id-item" name="tipe_id-item" readonly placeholder="Id">
-                                </div>
-                                <div class="form-group except_item">
-                                    <label for="tipe_name-item"><span class="modal-title-input"></span> Name</label>
-                                    <input type="text" class="form-control input-sm" id="tipe_name-item" name="tipe_name-item" placeholder="Name">
-                                </div>
-                                <div class="form-group only_item">
-                                    <label for="item_name-item">Item Name</label>
-                                    <input type="text" class="form-control input-sm" id="item_name-item" name="item_name-item" placeholder="Item Name">
-                                </div>
-                                <div class="form-group only_item">
-                                    <label for="merk-item">Merk</label>
-                                    <input type="text" class="form-control input-sm" id="merk-item" name="merk-item" placeholder="Merk">
-                                </div>
-                                <div class="form-group only_item">
-                                    <label for="harga-item">Harga <span style="font-size:12px;font-style:italic;font-weight:normal; color:red;" class="blink-one" id="remark-harga"></span></label>
-                                    <input type="text" class="form-control input-sm" id="harga-item" name="harga-item" placeholder="Price">
-                                </div>
-                                <div class="form-group only_item">
-                                    <label>Kategori</label>
-                                    <select class="form-control select2 input-sm" id="kategori-item" name="kategori-item" style="width: 100%;">
-                                        <option value="" selected="">Pilih Kategori</option>
-                                    </select>
-                                </div>
-                            </div>
+                            <!-- /.tab-pane -->
                         </div>
-                    </form>
-                    <!-- ./End modal content -->
+                        <!-- /.tab-content -->
+                    </div>
+                    <!-- nav-tabs-custom -->
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" onclick="saveItem()">Save</button>
-                </div>
+                <!-- /.col -->
             </div>
-
+            <!-- /.row -->
+            <!-- END CUSTOM TABS -->
+            <!-- ./End modal content -->
         </div>
+        <!-- <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-success" onclick="saveItem()">Save</button>
+        </div> -->
+    </div>
+
+    </div>
     </div>
     <!-- ./End Modal Part -->
 
@@ -472,15 +537,28 @@ $satuan = $this->db->get_where('tblsatuan')->result();
     <!--  -->
     <script src="<?php echo base_url(); ?>assets/cms/jquery-autocomplete/jquery.auto-complete.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/cms/bootstrap-notify/bootstrap-notify.js"></script>
+    <!-- <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/jquery.dataTables.min.js"></script> -->
     <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <script src="http://pc/estimasi_project/assets/cms/js/plugins/datatables/extensions/FixedColumns-3.2.5/js/dataTables.fixedColumns.min.js"></script>
+    <script src="http://pc/estimasi_project/assets/cms/js/plugins/datatables/extensions/Select-1.3.0/js/dataTables.select.min.js"></script>
+    <script src="http://pc/estimasi_project/assets/cms/js/plugins/datatables/extensions/Select-1.3.0/js/select.bootstrap.min.js"></script>
+    <script src="http://pc/estimasi_project/assets/cms/js/plugins/datatables/extensions/Buttons-1.5.6/js/dataTables.buttons.min.js"></script>
+    <script src="http://pc/estimasi_project/assets/cms/js/plugins/datatables/extensions/Buttons-1.5.6/js/buttons.bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.15.0/lodash.min.js"></script>
     <script type="text/javascript">
         var id_header_tree = '';
         var data_select = [];
         var tableDetailLabour;
+        var tableDataItemExist;
         // var $selTipe = $("#tipe_item-item").select2();
         $(document).ready(function() {
+            // generate table
+            // $("#table-data-item tfoot th").each(function() {
+            //     var title = $(this).text();
+            //     $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+            // });
 
             $('.total_harga').mask("#,##0", {
                 reverse: true
@@ -638,7 +716,151 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 'type_input': ''
             }));
 
+            // adjust table
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+                adjustDatatable()
+            });
+
+            // generate datatable item
+            getDatatableItem();
+
         });
+
+        // Adjust Datatable Column
+        function adjustDatatable() {
+            $($.fn.dataTable.tables(true)).DataTable()
+                .columns.adjust();
+        }
+
+        /* Generate datatable */
+        function getDatatableItem() {
+            if ($.fn.dataTable.isDataTable('#table-data-item')) {
+                tableDataItemExist = $('#table-data-item').DataTable();
+            } else {
+                tableDataItemExist = $('#table-data-item').DataTable({
+                    "ajax": base_url + 'quotation/get_item_code/0',
+                    "columns": [{
+                            'data': 'no',
+                        },
+                        {
+                            'data': 'stcd'
+                        },
+                        {
+                            'data': 'item_name'
+                        },
+                        {
+                            'data': 'spek'
+                        },
+                        {
+                            'data': 'maker'
+                        },
+                        {
+                            'data': 'uom'
+                        },
+                        {
+                            'data': 'harga',
+                            'render': function(data) {
+                                let number = parseFloat(data)
+                                return new Intl.NumberFormat().format(number)
+                            }
+                        },
+                        {
+                            'data': 'remark'
+                        },
+                    ],
+                    "ordering": true,
+                    "order": [
+                        [0, "asc"]
+                    ],
+                    "autoWidth": false,
+                    "responsive": true,
+                    "scrollX": true,
+                    columnDefs: [{
+                        orderable: false,
+                        className: 'select-checkbox',
+                        targets: 0
+                    }],
+                    select: {
+                        style: 'multi',
+                    },
+                    dom: 'Bfrtip',
+                    buttons: [
+                        {
+                            text: '<i class="fa fa-check-square-o"></i> Select all',
+                            action: function() {
+                                tableDataItemExist.rows({
+                                    search: 'applied'
+                                }).select();
+                                tableDataItemExist.page.len(-1).draw()
+                                tableDataItemExist.page.len(10).draw()
+                            }
+                        },
+                        {
+                            text: '<i class="fa fa-square-o"></i> Unselect All',
+                            action: function() {
+                                tableDataItemExist.rows().deselect();
+                            }
+                        },
+                        {
+                            text : '<i class="fa fa-plus"></i> Add Item',
+                            action: function(){
+                                addItemTotable()
+                            }
+                        }
+                    ],
+                    "fnDrawCallback": function(oSettings) {
+                        if (tableDataItemExist) {
+                            tableDataItemExist.rows().every(function(rowIdx, tableLoop, rowLoop) {
+                                if (this.data().exist == 1) {
+                                    this.select();
+                                }
+                            });
+                        }
+                        // utilsDataTable();
+                        // adjustDatatable()
+                        // alert(1)
+                    }
+                });
+
+                // tableDataItemExist.columns().every(function() {
+                //     var that = this;
+
+                //     $("input", this.footer()).on("keyup change", function() {
+                //         if (that.search() !== this.value) {
+                //             that.search(this.value).draw();
+                //         }
+                //     });
+                // });
+            }
+        }
+
+        // refresh table add item
+        function refreshTable() {
+            tableDataItemExist.ajax.url(base_url + 'quotation/get_item_code/0').load();
+        }
+
+        // add item to table
+        function addItemTotable(){
+            console.log(1)
+            let count = tableDataItemExist.rows('.selected').data().count()
+            let data = tableDataItemExist.rows('.selected').data()
+            let selected = [];
+            if (count > 0) {
+                for (let index = 0; index < count; index++) {
+                    const element = data[index];
+                    selected.push(element)
+                }
+                // console.log(selected)
+                // addToCompare('', '', '', '', selected)
+                console.log(selected)
+            } else {
+                alert('Pilih data terlebih dahulu!')
+            }
+        }
+
+        function saveItemMulti(){
+            $.post('')
+        }
 
         function notify(type, msg, delay = 100) {
             $.notify({
