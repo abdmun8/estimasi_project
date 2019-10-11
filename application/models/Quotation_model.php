@@ -159,14 +159,14 @@ class Quotation_model extends Model {
         $post = $this->input->post();
         // var_dump($post);die;
         $data = $this->getFieldPart();
-        $this->db->update( 'part_jasa', $data, ['id'=>$this->input->post('id-item')]);
-        $this->db->update( 'labour', ['tipe_name' => $post['tipe_name-item']], ['id_part_jasa'=>$this->input->post('id-item')]);
-        $this->db->update( 'rawmaterial', ['tipe_name' => $post['tipe_name-item']], ['id_part_jasa'=>$this->input->post('id-item')]);
-
-        if( $this->db->affected_rows() > 0){
+        try {
+            $this->db->update( 'labour', ['tipe_name' => $post['tipe_name-item']], ['id_part_jasa'=>$this->input->post('id-item')]);
+            $this->db->update( 'rawmaterial', ['tipe_name' => $post['tipe_name-item']], ['id_part_jasa'=>$this->input->post('id-item')]);
+            $this->db->update( 'part_jasa', $data, ['id'=>$this->input->post('id-item')]);
             return TRUE;
-        }
-        return FALSE;
+        } catch (Exception $e) {
+            return FALSE;
+        }        
     }
 
     public function insertDetailLabour()
