@@ -565,6 +565,8 @@ class Quotation extends CI_Controller
 
     public function getItemCode($set_null = 1)
     {
+        // var_dump(1);
+        // die;
         $data = [];
         $obj = $this->sgedb->select('lp.stcd, lp.stcd as id , TRIM(mstchd.nama) as item_name,
             CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," - ",lp.mkt," - "," [",mstchd.stcd,"]" ) as name, 
@@ -574,8 +576,13 @@ class Quotation extends CI_Controller
             TRIM(mstchd.uom) as uom, 
             CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," - ",lp.mkt," - "," [",mstchd.stcd,"]" ) as text, 
             (lp.mkt) as harga, lp.remark', false)
-            ->join('msprice lp', 'mstchd.stcd = lp.stcd')
-            ->get('mstchd')->result_array();
+            ->from('sgedb.mstchd')
+            ->join('sgedb.msprice lp', 'mstchd.stcd = lp.stcd')
+            ->not_like('mstchd.stcd','OFF', 'after')
+            ->not_like('mstchd.stcd','SNS', 'after')
+            ->not_like('mstchd.stcd','ATK', 'after')
+            ->not_like('mstchd.stcd','INV', 'after')
+            ->get()->result_array();
         if ($set_null) {
             array_unshift($obj, [
                 'harga' => "",
@@ -595,7 +602,7 @@ class Quotation extends CI_Controller
             foreach ($obj as $key => $row) {
                 $no++;
                 $row['qty'] = 0;
-                $row['no'] = $no;
+                $row['no'] = '';
                 $data['data'][] = $row;
             }
         }

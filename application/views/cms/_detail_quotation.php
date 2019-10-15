@@ -34,6 +34,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
     <!-- daterange picker -->
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/bootstrap-daterangepicker/daterangepicker.css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/animate.css/animate.css">
+    <!-- <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/jquery.dataTables.css"> -->
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/dataTables.bootstrap.css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/extensions/FixedColumns-3.2.5/css/fixedColumns.bootstrap.min.css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/extensions/Select-1.3.0/css/select.bootstrap.min.css">
@@ -91,9 +92,15 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         }
 
         .modal-xl {
-            width: 90%;
-            max-width: 1200px;
+            width: 100%;
+            /* max-width: 1200px; */
         }
+
+        #table-data-item tbody td {
+            width: 100px;
+        }
+
+        /* #table-data-item { table-layout: fixed; } */
     </style>
     <script>
         var base_url = '<?php echo base_url(); ?>';
@@ -343,34 +350,34 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                             <!-- /.tab-pane -->
                             <div class="tab-pane" id="tab_input_item_exists">
                                 <div id="table-data-item-container">
-                                    <table style="width:100%;" id="table-data-item" class="table table-bordered table-striped table-hover table-condensed">
+                                    <table id="table-data-item" class="table table-bordered table-striped table-hover table-condensed">
                                         <thead>
                                             <tr>
                                                 <th>No</th>
-                                                <th>Item Code</th>
+                                                <th>Action</th>
+                                                <th>Qty</th>
+                                                <th>Harga</th>
                                                 <th>Item Name</th>
                                                 <th>Spek</th>
                                                 <th>Maker</th>
                                                 <th>Unit</th>
-                                                <th>Harga</th>
-                                                <th>Qty</th>
                                                 <th>Remark</th>
-                                                <th>Action</th>
+                                                <th>Item Code</th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
                                         <tfoot>
                                             <tr>
                                                 <th>No</th>
-                                                <th>Item Code</th>
+                                                <th>Action</th>
+                                                <th>Qty</th>
+                                                <th>Harga</th>
                                                 <th>Item Name</th>
                                                 <th>Spek</th>
                                                 <th>Maker</th>
                                                 <th>Unit</th>
-                                                <th>Harga</th>
-                                                <th>Qty</th>
                                                 <th>Remark</th>
-                                                <th>Action</th>
+                                                <th>Item Code</th>
                                             </tr>
                                         </tfoot>
                                     </table>
@@ -567,7 +574,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             // generate table
             $("#table-data-item tfoot th").each(function() {
                 var title = $(this).text();
-                $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+                $(this).html('<input style="width:auto;" type="text" placeholder="Search ' + title + '" />');
             });
 
             /* Event change select */
@@ -762,10 +769,22 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     "ajax": base_url + 'quotation/get_item_code/0',
                     "columns": [{
                             'data': 'no',
-                            'width': '100px'
                         },
                         {
-                            'data': 'stcd'
+                            'data': 'remark',
+                            render: function(data, type, row) {
+                                return `<button class="btn btn-success btn-xs" onclick="editQtyItemExists(this)"><i class="fa fa-edit"></i> Edit</button>`;
+                            }
+                        },
+                        {
+                            'data': 'qty'
+                        },
+                        {
+                            'data': 'harga',
+                            'render': function(data) {
+                                let number = parseFloat(data)
+                                return new Intl.NumberFormat().format(number)
+                            }
                         },
                         {
                             'data': 'item_name'
@@ -780,37 +799,25 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                             'data': 'uom'
                         },
                         {
-                            'data': 'harga',
-                            'render': function(data) {
-                                let number = parseFloat(data)
-                                return new Intl.NumberFormat().format(number)
-                            }
-                        },
-                        {
-                            'data': 'qty'
-                        },
-                        {
                             'data': 'remark'
                         },
                         {
-                            'data': 'remark',
-                            render: function(data, type, row) {
-                                return `<button class="btn btn-success btn-xs" onclick="editQtyItemExists(this)"><i class="fa fa-edit"></i> Edit</button>`;
-                            }
+                            'data': 'stcd'
                         },
+
                     ],
                     "ordering": true,
                     "order": [
                         [0, "asc"]
                     ],
                     autoWidth: false,
+                    "bAutoWidth": false,
                     responsive: true,
                     scrollX: true,
                     columnDefs: [{
                         orderable: false,
                         className: 'select-checkbox',
                         targets: 0,
-                        width: '100px'
                     }],
                     select: {
                         style: 'multi',
@@ -867,26 +874,26 @@ $satuan = $this->db->get_where('tblsatuan')->result();
 
         // Edit item Qty Exists
         function editQtyItemExists(o) {
-            let old = $(o).parent().siblings()[7].innerHTML
-            let oldHarga = $(o).parent().siblings()[6].innerHTML.replace(/,/g, '')
+            let old = $(o).parent().siblings()[1].innerHTML
+            let oldHarga = $(o).parent().siblings()[2].innerHTML.replace(/,/g, '')
             let btn = `<button class="btn btn-primary btn-xs" onclick="saveQtyItemExists(this)"><i class="fa fa-save"></i> Save</button>`;
             option = `<input style="width:40px" type="number" min="0" value="${old}" />`;
             optionHarga = `<input style="width:100px" type="text" min="0" value="${oldHarga}" />`;
-            $(o).parent().siblings()[7].innerHTML = option
-            $(o).parent().siblings()[6].innerHTML = optionHarga
+            $(o).parent().siblings()[1].innerHTML = option
+            $(o).parent().siblings()[2].innerHTML = optionHarga
             $(o).parent().html(btn)
         }
 
         // Save item Qty
         function saveQtyItemExists(o) {
-            let input = $(o).parent().siblings()[7]
-            let inputHarga = $(o).parent().siblings()[6]
-            let item = $(o).parent().siblings()[1].innerHTML
+            let input = $(o).parent().siblings()[1]
+            let inputHarga = $(o).parent().siblings()[2]
+            let item = $(o).parent().siblings()[8].innerHTML
             let newValue = $(input).children()[0].value
             let newHarga = $(inputHarga).children()[0].value
             let btn = `<button class="btn btn-success btn-xs" onclick="editQtyItemExists(this)"><i class="fa fa-edit"></i> Edit</button>`;
-            $(o).parent().siblings()[7].innerHTML = newValue
-            $(o).parent().siblings()[6].innerHTML = new Intl.NumberFormat().format(newHarga)
+            $(o).parent().siblings()[1].innerHTML = newValue
+            $(o).parent().siblings()[2].innerHTML = new Intl.NumberFormat().format(newHarga)
             $(o).parent().html(btn)
 
             if (editedCellValueQty.length == 0) {
@@ -925,6 +932,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 alert('Input Qty')
                 return;
             }
+
             if (count > 0) {
                 for (let index = 0; index < count; index++) {
                     const element = data[index];
