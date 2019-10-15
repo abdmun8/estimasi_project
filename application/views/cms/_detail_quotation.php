@@ -35,9 +35,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/bootstrap-daterangepicker/daterangepicker.css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/animate.css/animate.css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/dataTables.bootstrap.css">
-    <link rel="stylesheet" href="http://pc/estimasi_project/assets/cms/js/plugins/datatables/extensions/FixedColumns-3.2.5/css/fixedColumns.bootstrap.min.css">
-    <link rel="stylesheet" href="http://pc/estimasi_project/assets/cms/js/plugins/datatables/extensions/Select-1.3.0/css/select.bootstrap.min.css">
-    <link rel="stylesheet" href="http://pc/estimasi_project/assets/cms/js/plugins/datatables/extensions/Buttons-1.5.6/css/buttons.bootstrap.min.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/extensions/FixedColumns-3.2.5/css/fixedColumns.bootstrap.min.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/extensions/Select-1.3.0/css/select.bootstrap.min.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/extensions/Buttons-1.5.6/css/buttons.bootstrap.min.css">
     <style type="text/css">
         .padding20 {
             padding: 20px;
@@ -359,7 +359,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
-                                        <!-- <tfoot>
+                                        <tfoot>
                                             <tr>
                                                 <th>No</th>
                                                 <th>Item Code</th>
@@ -368,9 +368,11 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                                 <th>Maker</th>
                                                 <th>Unit</th>
                                                 <th>Harga</th>
+                                                <th>Qty</th>
                                                 <th>Remark</th>
+                                                <th>Action</th>
                                             </tr>
-                                        </tfoot> -->
+                                        </tfoot>
                                     </table>
                                 </div>
 
@@ -504,7 +506,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                             <table id="table-detail-input-pr" class="table table-bordered table-striped table-hover table-condensed">
                                 <thead>
                                     <tr>
-                                        <th>No</th>
+                                        <th style="width:100px">No</th>
                                         <th>Id Labour</th>
                                         <th>Aktivitas</th>
                                         <th>Sub Aktivitas</th>
@@ -548,12 +550,12 @@ $satuan = $this->db->get_where('tblsatuan')->result();
     <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
-    <script src="http://pc/estimasi_project/assets/cms/js/plugins/datatables/extensions/FixedColumns-3.2.5/js/dataTables.fixedColumns.min.js"></script>
-    <script src="http://pc/estimasi_project/assets/cms/js/plugins/datatables/extensions/Select-1.3.0/js/dataTables.select.min.js"></script>
-    <script src="http://pc/estimasi_project/assets/cms/js/plugins/datatables/extensions/Select-1.3.0/js/select.bootstrap.min.js"></script>
-    <script src="http://pc/estimasi_project/assets/cms/js/plugins/datatables/extensions/Buttons-1.5.6/js/dataTables.buttons.min.js"></script>
-    <script src="http://pc/estimasi_project/assets/cms/js/plugins/datatables/extensions/Buttons-1.5.6/js/buttons.bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.15.0/lodash.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/extensions/FixedColumns-3.2.5/js/dataTables.fixedColumns.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/extensions/Select-1.3.0/js/dataTables.select.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/extensions/Select-1.3.0/js/select.bootstrap.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/extensions/Buttons-1.5.6/js/dataTables.buttons.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/extensions/Buttons-1.5.6/js/buttons.bootstrap.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/cms/js/lodash.min.js"></script>
     <script type="text/javascript">
         var id_header_tree = '';
         var data_select = [];
@@ -563,10 +565,10 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         // var $selTipe = $("#tipe_item-item").select2();
         $(document).ready(function() {
             // generate table
-            // $("#table-data-item tfoot th").each(function() {
-            //     var title = $(this).text();
-            //     $(this).html('<input type="text" placeholder="Search ' + title + '" />');
-            // });
+            $("#table-data-item tfoot th").each(function() {
+                var title = $(this).text();
+                $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+            });
 
             /* Event change select */
             $("#tipe_item-item").change(function(e) {
@@ -760,6 +762,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     "ajax": base_url + 'quotation/get_item_code/0',
                     "columns": [{
                             'data': 'no',
+                            'width': '100px'
                         },
                         {
                             'data': 'stcd'
@@ -800,13 +803,14 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     "order": [
                         [0, "asc"]
                     ],
-                    "autoWidth": false,
-                    "responsive": true,
-                    "scrollX": true,
+                    autoWidth: false,
+                    responsive: true,
+                    scrollX: true,
                     columnDefs: [{
                         orderable: false,
                         className: 'select-checkbox',
-                        targets: 0
+                        targets: 0,
+                        width: '100px'
                     }],
                     select: {
                         style: 'multi',
@@ -842,22 +846,22 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                     this.select();
                                 }
                             });
+                            // adjustDatatable()
                         }
                         // utilsDataTable();
-                        // adjustDatatable()
                         // alert(1)
                     }
                 });
 
-                // tableDataItemExist.columns().every(function() {
-                //     var that = this;
+                tableDataItemExist.columns().every(function() {
+                    var that = this;
 
-                //     $("input", this.footer()).on("keyup change", function() {
-                //         if (that.search() !== this.value) {
-                //             that.search(this.value).draw();
-                //         }
-                //     });
-                // });
+                    $("input", this.footer()).on("keyup change", function() {
+                        if (that.search() !== this.value) {
+                            that.search(this.value).draw();
+                        }
+                    });
+                });
             }
         }
 
@@ -954,7 +958,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         alert(res.message)
                     }
 
-                    if (res.success == true){
+                    if (res.success == true) {
                         $('#demo').bootstrapTreeTable('refresh');
                         refreshTableDataItem()
                     }

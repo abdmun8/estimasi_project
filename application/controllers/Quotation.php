@@ -399,7 +399,8 @@ class Quotation extends CI_Controller
                 [
                     'id_header' => $id_header,
                     'id_parent' => $id_parent,
-                    'item_code' => $value['stcd']
+                    'item_code' => $value['stcd'],
+                    'deleted' => 0
                 ]
             )->num_rows();
             /* Check item exist in table */
