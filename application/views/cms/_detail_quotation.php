@@ -89,6 +89,11 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         .sub_object-bg {
             background-color: #FBE1B6;
         }
+
+        .modal-xl {
+            width: 90%;
+            max-width: 1200px;
+        }
     </style>
     <script>
         var base_url = '<?php echo base_url(); ?>';
@@ -243,7 +248,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
 
     <!-- Modal Part -->
     <div class="modal fade" id="modal-input-item" role="dialog" aria-labelledby="modal-add-vendor" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-dialog modal-xl" role="document">
 
             <!-- Modal content-->
             <div class="modal-content">
@@ -255,8 +260,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     <!-- Custom Tabs (Pulled to the right) -->
                     <div class="nav-tabs-custom">
                         <ul class="nav nav-tabs pull-right">
-                            <li><a style="" href="#tab_input_item_exists" data-toggle="tab">Item Exists</a></li>
-                            <li class="active"><a href="#tab_input_item_new" data-toggle="tab">Item New</a></li>
+                            <li><a id="tab_input_item_exists-a" href="#tab_input_item_exists" data-toggle="tab">Item Exists</a></li>
+                            <li class="active"><a id="#tab_input_item_new-a" href="#tab_input_item_new" data-toggle="tab">Item New</a></li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane active" id="tab_input_item_new">
@@ -348,7 +353,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                                 <th>Maker</th>
                                                 <th>Unit</th>
                                                 <th>Harga</th>
+                                                <th>Qty</th>
                                                 <th>Remark</th>
+                                                <th>Action</th>
                                             </tr>
                                         </thead>
                                         <tbody></tbody>
@@ -552,6 +559,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         var data_select = [];
         var tableDetailLabour;
         var tableDataItemExist;
+        var editedCellValueQty = [];
         // var $selTipe = $("#tipe_item-item").select2();
         $(document).ready(function() {
             // generate table
@@ -559,6 +567,17 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             //     var title = $(this).text();
             //     $(this).html('<input type="text" placeholder="Search ' + title + '" />');
             // });
+
+            /* Event change select */
+            $("#tipe_item-item").change(function(e) {
+                if (e.target.value == 'item') {
+                    setActiveTab('tab_input_item_new')
+                    $("#tab_input_item_exists-a").css('pointer-events', 'auto')
+                } else {
+                    setActiveTab('tab_input_item_new')
+                    $("#tab_input_item_exists-a").css('pointer-events', 'none')
+                }
+            })
 
             $('.total_harga').mask("#,##0", {
                 reverse: true
@@ -765,7 +784,16 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                             }
                         },
                         {
+                            'data': 'qty'
+                        },
+                        {
                             'data': 'remark'
+                        },
+                        {
+                            'data': 'remark',
+                            render: function(data, type, row) {
+                                return `<button class="btn btn-success btn-xs" onclick="editQtyItemExists(this)"><i class="fa fa-edit"></i> Edit</button>`;
+                            }
                         },
                     ],
                     "ordering": true,
@@ -784,8 +812,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         style: 'multi',
                     },
                     dom: 'Bfrtip',
-                    buttons: [
-                        {
+                    buttons: [{
                             text: '<i class="fa fa-check-square-o"></i> Select all',
                             action: function() {
                                 tableDataItemExist.rows({
@@ -802,8 +829,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                             }
                         },
                         {
-                            text : '<i class="fa fa-plus"></i> Add Item',
-                            action: function(){
+                            text: '<i class="fa fa-plus"></i> Add Selected Item',
+                            action: function() {
                                 addItemTotable()
                             }
                         }
@@ -834,32 +861,108 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             }
         }
 
+        // Edit item Qty Exists
+        function editQtyItemExists(o) {
+            let old = $(o).parent().siblings()[7].innerHTML
+            let oldHarga = $(o).parent().siblings()[6].innerHTML.replace(/,/g, '')
+            let btn = `<button class="btn btn-primary btn-xs" onclick="saveQtyItemExists(this)"><i class="fa fa-save"></i> Save</button>`;
+            option = `<input style="width:40px" type="number" min="0" value="${old}" />`;
+            optionHarga = `<input style="width:100px" type="text" min="0" value="${oldHarga}" />`;
+            $(o).parent().siblings()[7].innerHTML = option
+            $(o).parent().siblings()[6].innerHTML = optionHarga
+            $(o).parent().html(btn)
+        }
+
+        // Save item Qty
+        function saveQtyItemExists(o) {
+            let input = $(o).parent().siblings()[7]
+            let inputHarga = $(o).parent().siblings()[6]
+            let item = $(o).parent().siblings()[1].innerHTML
+            let newValue = $(input).children()[0].value
+            let newHarga = $(inputHarga).children()[0].value
+            let btn = `<button class="btn btn-success btn-xs" onclick="editQtyItemExists(this)"><i class="fa fa-edit"></i> Edit</button>`;
+            $(o).parent().siblings()[7].innerHTML = newValue
+            $(o).parent().siblings()[6].innerHTML = new Intl.NumberFormat().format(newHarga)
+            $(o).parent().html(btn)
+
+            if (editedCellValueQty.length == 0) {
+                editedCellValueQty.push({
+                    item_code: item,
+                    qty: newValue,
+                    harga: newHarga
+                })
+            } else {
+
+                for (let index = 0; index < editedCellValueQty.length; index++) {
+                    const element = editedCellValueQty[index];
+                    if (element.item_code == item) {
+                        editedCellValueQty.pop(index)
+                    }
+                    editedCellValueQty.push({
+                        item_code: item,
+                        qty: newValue,
+                        harga: newHarga
+                    })
+                }
+            }
+        }
+
         // refresh table add item
-        function refreshTable() {
+        function refreshTableDataItem() {
             tableDataItemExist.ajax.url(base_url + 'quotation/get_item_code/0').load();
         }
 
         // add item to table
-        function addItemTotable(){
-            console.log(1)
+        function addItemTotable() {
             let count = tableDataItemExist.rows('.selected').data().count()
             let data = tableDataItemExist.rows('.selected').data()
             let selected = [];
+            if (editedCellValueQty.length == 0) {
+                alert('Input Qty')
+                return;
+            }
             if (count > 0) {
                 for (let index = 0; index < count; index++) {
                     const element = data[index];
-                    selected.push(element)
+                    for (let idx = 0; idx < editedCellValueQty.length; idx++) {
+                        const elm = editedCellValueQty[idx];
+
+                        if (element.stcd == elm.item_code) {
+                            if (elm.qty == 0 || elm.harga.replace(/,/g, '') == 0) {
+                                alert(`Qty dan Harga item ${element.stcd} - ${element.item_name} tidak boleh 0!`)
+                                return;
+                            }
+                            element.category = switchCodeToCategory(elm.item_code.substr(0, 3))
+                            element.qty = elm.qty
+                            element.harga = elm.harga.replace(/,/g, '');
+                            selected.push(element)
+                        }
+
+                    }
                 }
-                // console.log(selected)
-                // addToCompare('', '', '', '', selected)
-                console.log(selected)
+                // con
+                let id_parent_item = $("#id_parent-item").val()
+                let id_header_item = $("#id_header-item").val()
+                $.post(base_url + 'quotation/saveMultiItem', {
+                    id_parent: id_parent_item,
+                    id_header: id_header_item,
+                    data: JSON.stringify(selected)
+                }, res => {
+                    if (res.msg_exists != '') {
+                        alert(res.message + res.msg_exists)
+                    } else {
+                        alert(res.message)
+                    }
+
+                    if (res.success == true){
+                        $('#demo').bootstrapTreeTable('refresh');
+                        refreshTableDataItem()
+                    }
+
+                }, 'json')
             } else {
                 alert('Pilih data terlebih dahulu!')
             }
-        }
-
-        function saveItemMulti(){
-            $.post('')
         }
 
         function notify(type, msg, delay = 100) {
@@ -1796,6 +1899,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
          * @action : add = 1 || edit = 2
          */
         function showModalInput(title, id = '', id_parent = '', sub = false, action = 'add') {
+            refreshTableDataItem();
+            editedCellValueQty = [];
             $("#remark-harga").text('');
             $("#item_code").val('');
             $("#tipe_id-item").parent().removeClass('has-error');
@@ -1869,9 +1974,14 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 $("#tipe_item-item").append('<option value="' + value.id + '">' + value.text + '</option>')
             });
 
-            /* Set default Form value*/
+            /* Set active tab new */
+            setActiveTab('tab_input_item_new')
 
+            /* Set default Form value*/
             if (action == 'edit') {
+                /* disable lick tab */
+                $("#tab_input_item_exists-a").css('pointer-events', 'none')
+
                 data_select = [{
                         id: 'section',
                         text: 'Section'
@@ -1926,6 +2036,13 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 $("#tipe_item-item").parent().hide();
 
             } else {
+                /* disable click tab */
+                if ($("#tipe_item-item").val() != 'item') {
+                    $("#tab_input_item_exists-a").css('pointer-events', 'none')
+                } else {
+                    $("#tab_input_item_exists-a").css('pointer-events', 'auto')
+                }
+
                 if (title != 'item')
                     $.get(base_url + 'quotation/get_counter_item', {
                         'tipe_item': title,

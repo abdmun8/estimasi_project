@@ -363,7 +363,7 @@ class Quotation extends CI_Controller
             'kategori-item' => '',
             'harga-item-clean' => '0',
             'remark-harga' => ''
-            
+
         ];
 
         foreach ($arr as $key => $value) {
@@ -381,9 +381,69 @@ class Quotation extends CI_Controller
         return FALSE;
     }
 
+    // save multi item
+    public function saveMultiItem()
+    {
+        $post_data = json_decode($_POST['data'], TRUE);
+        $id_header = $_POST['id_header'];
+        $id_parent = $_POST['id_parent'];
+        $item = [];
+        $msg_exists = '';
+        $success = TRUE;
+        $msg = 'Input Data Berhasil';
+        $this->db->trans_begin();
+        foreach ($post_data as $key => $value) {
+
+            $exist = $this->db->get_where(
+                'part_jasa',
+                [
+                    'id_header' => $id_header,
+                    'id_parent' => $id_parent,
+                    'item_code' => $value['stcd']
+                ]
+            )->num_rows();
+            /* Check item exist in table */
+            if($exist > 0){
+                $msg_exists .= "\n {$value['item_name']} sudah ada!";
+                continue;
+            }
+            $temp = [];
+            $temp['tipe_item-item'] = 'item';
+            $temp['item_code-item'] = $value['stcd'];
+            $temp['spec-item'] = $value['spek'];
+            $temp['satuan-item'] = $value['uom'];
+            $temp['qty-item'] = $value['qty'];
+            $temp['item_code'] = $value['stcd'];
+            $temp['id_parent-item'] = $id_parent;
+            $temp['id_header-item'] = $id_header;
+            $temp['action-item'] = 1;
+            $temp['id-item'] = 1;
+            $temp['tipe_id-item'] = '';
+            $temp['tipe_name-item'] = '';
+            $temp['item_name-item'] = $value['item_name'];
+            $temp['merk-item'] = $value['maker'];
+            $temp['harga-item'] = $value['harga'];
+            $temp['kategori-item'] = $value['category'];
+            $temp['harga-item-clean'] = floatval($value['harga']);
+            $temp['remark-harga'] = $value['remark'];
+
+            $_POST = $temp;
+            if(!$this->quotation->insertDetailPart()){
+                $success = FALSE;      
+                $msg = 'Input Data Gagal';          
+                $this->db->trans_rollback();
+            }
+
+        }
+        $this->db->trans_commit();        
+        echo json_encode(['success' => $success, 'message' => $msg, 'msg_exists' => $msg_exists]);
+    }
+
+    // save item
     public function saveItem($json = TRUE)
     {
-        // print_r($this->input->post());die;
+        // var_dump($this->input->post());
+        // die;
         $code = 0;
         $message = '';
         $default_dept_labour = ['ENGINEERING', 'PRODUCTION'];
@@ -515,7 +575,7 @@ class Quotation extends CI_Controller
             (lp.mkt) as harga, lp.remark', false)
             ->join('msprice lp', 'mstchd.stcd = lp.stcd')
             ->get('mstchd')->result_array();
-        if($set_null){
+        if ($set_null) {
             array_unshift($obj, [
                 'harga' => "",
                 'id' => "",
@@ -528,16 +588,17 @@ class Quotation extends CI_Controller
                 'uom' => ""
             ]);
             $data = $obj;
-        }else{
+        } else {
             $data = [];
             $no = 0;
             foreach ($obj as $key => $row) {
                 $no++;
+                $row['qty'] = 0;
                 $row['no'] = $no;
                 $data['data'][] = $row;
             }
         }
-        
+
         echo json_encode($data);
     }
 
