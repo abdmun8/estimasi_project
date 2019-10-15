@@ -73,9 +73,12 @@ class Quotation extends CI_Controller
     /* Get data for part jasa tab*/
     public function getDataPart($id_header = NULL, $id_part = NULL, $json = true)
     {
+        // var_dump($_GET);
+        // die;
         $object = [];
         $data = [];
         if ($id_header != NULL) {
+            $sql_deleted = isset($_GET['show-deleted']) && $_GET['show-deleted'] == 0 ? " HAVING deleted = '0'" : "";
             if ($id_part == NULL) {
                 $object = $this->db->query("SELECT
                             j.*,
@@ -91,13 +94,14 @@ class Quotation extends CI_Controller
                                 LEFT JOIN
                             `sgedb`.`akunbg` k ON j.kategori = k.accno
                         WHERE
-                            j.id_header ='$id_header'")->result_array();
+                            j.id_header ='$id_header' $sql_deleted")->result_array();
                 $data = $this->countTotal($object);
             } else {
                 $data = $this->db->get_where('part_jasa', ['id_header' => $id_header, 'id' => $id_part])->row_array();
             }
         }
-        // echo $this->db->last_query();die;
+        // echo $this->db->last_query();
+        // die;
         if (!$json)
             return $data;
         echo json_encode($data);
@@ -404,7 +408,7 @@ class Quotation extends CI_Controller
                 ]
             )->num_rows();
             /* Check item exist in table */
-            if($exist > 0){
+            if ($exist > 0) {
                 $msg_exists .= "\n {$value['item_name']} sudah ada!";
                 continue;
             }
@@ -429,14 +433,13 @@ class Quotation extends CI_Controller
             $temp['remark-harga'] = $value['remark'];
 
             $_POST = $temp;
-            if(!$this->quotation->insertDetailPart()){
-                $success = FALSE;      
-                $msg = 'Input Data Gagal';          
+            if (!$this->quotation->insertDetailPart()) {
+                $success = FALSE;
+                $msg = 'Input Data Gagal';
                 $this->db->trans_rollback();
             }
-
         }
-        $this->db->trans_commit();        
+        $this->db->trans_commit();
         echo json_encode(['success' => $success, 'message' => $msg, 'msg_exists' => $msg_exists]);
     }
 
@@ -578,10 +581,10 @@ class Quotation extends CI_Controller
             (lp.mkt) as harga, lp.remark', false)
             ->from('sgedb.mstchd')
             ->join('sgedb.msprice lp', 'mstchd.stcd = lp.stcd')
-            ->not_like('mstchd.stcd','OFF', 'after')
-            ->not_like('mstchd.stcd','SNS', 'after')
-            ->not_like('mstchd.stcd','ATK', 'after')
-            ->not_like('mstchd.stcd','INV', 'after')
+            ->not_like('mstchd.stcd', 'OFF', 'after')
+            ->not_like('mstchd.stcd', 'SNS', 'after')
+            ->not_like('mstchd.stcd', 'ATK', 'after')
+            ->not_like('mstchd.stcd', 'INV', 'after')
             ->get()->result_array();
         if ($set_null) {
             array_unshift($obj, [

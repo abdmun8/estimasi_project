@@ -100,6 +100,10 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             width: 100px;
         }
 
+        .force-select-all {
+            user-select: all;
+        }
+
         /* #table-data-item { table-layout: fixed; } */
     </style>
     <script>
@@ -225,6 +229,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     <button id="addBtn" type="button" class="btn btn-default" onclick="showModalInput('section')">Add Section</button>
                     <button id="expandAllBtn" type="button" class="btn btn-default">Expand/Collapse All</button>
                     <button title="Export Part, jasa & Raw Material" onclick="exportExcel('part','<?= $param ?>')" id="btn-print-labour" type="button" class="btn btn-default"><i class="fa fa-file-excel-o"></i> Export</button>
+                    <label style="margin-left:1rem;">Show Deleted Item <input onchange="showDeletedPartChange(event)" style="margin-top:1rem;margin-left:1rem;transform: scale(1.5);" type="checkbox" id="hide-deleted-part" /></label>
                 </div>
                 <table id="demo"></table>
             </section>
@@ -569,6 +574,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         var tableDetailLabour;
         var tableDataItemExist;
         var editedCellValueQty = [];
+        // set show deleted part
+        localStorage.setItem('showDeletedPart', 0)
         // var $selTipe = $("#tipe_item-item").select2();
         $(document).ready(function() {
             // generate table
@@ -877,8 +884,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             let old = $(o).parent().siblings()[1].innerHTML
             let oldHarga = $(o).parent().siblings()[2].innerHTML.replace(/,/g, '')
             let btn = `<button class="btn btn-primary btn-xs" onclick="saveQtyItemExists(this)"><i class="fa fa-save"></i> Save</button>`;
-            option = `<input style="width:40px" type="number" min="0" value="${old}" />`;
-            optionHarga = `<input style="width:100px" type="text" min="0" value="${oldHarga}" />`;
+            option = `<input class="force-select-all" style="width:auto;" type="number" min="0" value="${old}" />`;
+            optionHarga = `<input class="force-select-all" style="width:auto;" type="text" min="0" value="${oldHarga}" />`;
             $(o).parent().siblings()[1].innerHTML = option
             $(o).parent().siblings()[2].innerHTML = optionHarga
             $(o).parent().html(btn)
@@ -977,6 +984,15 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             }
         }
 
+        // Show deleted part
+        function showDeletedPartChange(e){
+            let show = e.target.checked === true ? 1 : 0;
+            localStorage.setItem('showFeletedPart', show)
+            console.log($('#demo').bootstrapTreeTable())
+            // treeTable
+            
+        }
+
         function notify(type, msg, delay = 100) {
             $.notify({
                 // options
@@ -993,6 +1009,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         /*
             tree table part jasa
         */
+        var show_deleted_part = localStorage.getItem('showDeletedPart') == 1 ? 1 : 0;
         <?php echo ($param != null) ? 'id_header_tree=' . $param . ';' : ''; ?>
         var treeTable = $('#demo').bootstrapTreeTable({
             toolbar: "#demo-toolbar", //顶部工具条
@@ -1001,7 +1018,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             height: 480,
             type: 'get',
             parentId: 'id_parent',
-            url: base_url + 'quotation/get_data_part/' + id_header_tree,
+            url: base_url + 'quotation/get_data_part/' + id_header_tree + '?show-deleted=' + show_deleted_part,
             columns: [{
                     checkbox: true
                 },
