@@ -113,6 +113,7 @@ class Quotation extends CI_Controller
         $object = [];
         $data = [];
         if ($id_header != NULL) {
+            $sql_deleted = isset($_GET['show-deleted']) && $_GET['show-deleted'] == 0 ? " HAVING deleted = '0'" : "";
             if ($id_labour == NULL) {
                 // $object = $this->db->get_where('v_labour', ['id_header' => $id_header])->result_array();
                 $object = $this->db->query('SELECT
@@ -126,7 +127,7 @@ class Quotation extends CI_Controller
                         FROM
                             `labour` `l`
                         WHERE
-                            l.id_header ="' . $id_header . '" ')->result_array();
+                            l.id_header ="' . $id_header . '" '.$sql_deleted)->result_array();
 
                 // $data = $this->countTotal($object, 'labour');
                 $temp = $this->countTotal($object, 'labour');
@@ -157,8 +158,12 @@ class Quotation extends CI_Controller
         $object = [];
         $data = [];
         if ($id_header != NULL) {
+            if(isset($_GET['show-deleted']) && $_GET['show-deleted'] == 0){
+                $this->db->having('deleted',0);
+            }
             if ($id_material == NULL) {
-                $object = $this->db->get_where('v_rawmaterial', ['id_header' => $id_header])->result_array();
+                $query = $this->db->get_where('v_rawmaterial', ['id_header' => $id_header]);
+                $object = $query->result_array();
                 $data = $this->countTotal($object, 'rawmaterial');
             } else {
                 $data = $this->db->get_where('v_rawmaterial', ['id_header' => $id_header, 'id' => $id_material])->row_array();
