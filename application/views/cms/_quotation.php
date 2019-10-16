@@ -46,6 +46,7 @@ if ($param != null) {
                     </ul>
                 </li> -->
                 <button type="button" class="btn btn-default btn-sm" style="margin-right: 10px;" onclick="refreshTable()"><i class="fa fa-refresh"></i> Refresh</button>
+                <label style="margin-left:1rem;">Show Closed Inquiry <input type="checkbox" style="transform:scale(1.5);margin-left:1rem;" onchange="handleChangeShowClosedInquiry(event)" /></label>
             </div>
             <table id="table-data" class="table table-bordered table-striped table-hover table-condensed">
                 <thead>
@@ -177,14 +178,14 @@ if ($param != null) {
         }, 1000)
     }
 
-    function checkQuotationHasItem(id_header, risk){
-        $.get(base_url + 'quotation/checkHasItem/' + id_header,(response) =>{
-            if(response.has_item == true){
+    function checkQuotationHasItem(id_header, risk) {
+        $.get(base_url + 'quotation/checkHasItem/' + id_header, (response) => {
+            if (response.has_item == true) {
                 printQuotation(id_header, risk)
-            }else{
+            } else {
                 notify('warning', 'Quotation Belum diisi!!');
             }
-        },'json')
+        }, 'json')
     }
 
     function saveAllowance() {
@@ -226,7 +227,7 @@ if ($param != null) {
             tableData = $('#table-data').DataTable();
         } else {
             tableData = $('#table-data').DataTable({
-                "ajax": base_url + 'objects/header',
+                "ajax": base_url + 'objects/header?show_closed=0',
                 "columns": [{
                         "data": "no"
                     },
@@ -316,6 +317,13 @@ if ($param != null) {
                 }
             });
         }
+    }
+
+    // Show closed Inquiry Change
+    function handleChangeShowClosedInquiry(e) {
+        console.log(e)
+        let show = e.target.checked === true ? 1 : 0;
+        refreshTable(show)
     }
 
     function utilsDataTable() {
@@ -453,8 +461,8 @@ if ($param != null) {
             });
     }
 
-    function refreshTable() {
-        tableData.ajax.url(base_url + '/objects/header').load();
+    function refreshTable(show = 0) {
+        tableData.ajax.url(base_url + '/objects/header?show_closed=' + show).load();
     }
 
     function CKupdate() {
@@ -547,16 +555,16 @@ if ($param != null) {
             option = `<option value='0'>0</option>
             <option selected value='1'>1</option>`;
         }
-        $(o).parent().siblings()[2].innerHTML = "<select id='input-section-group"+id+"' style='width:100px;'>" + option + "</select>"
+        $(o).parent().siblings()[2].innerHTML = "<select id='input-section-group" + id + "' style='width:100px;'>" + option + "</select>"
         let oldValue = $(o).parent().siblings()[3].innerHTML
-        $(o).parent().siblings()[3].innerHTML = "<input min='0' id='input-section-qty"+id+"' style='width:100px;' type='number' value='" + oldValue + "' />"
+        $(o).parent().siblings()[3].innerHTML = "<input min='0' id='input-section-qty" + id + "' style='width:100px;' type='number' value='" + oldValue + "' />"
         $(".save-qty-section" + id + "").css('display', 'inline')
         $(".edit-qty-section" + id + "").css('display', 'none')
     }
 
     function saveQtySection(o, id) {
-        let value = $("#input-section-qty"+id+"").val()
-        let group = $("#input-section-group"+id+"").val()
+        let value = $("#input-section-qty" + id + "").val()
+        let group = $("#input-section-group" + id + "").val()
         $(o).parent().siblings()[2].innerHTML = group;
         $(o).parent().siblings()[3].innerHTML = value;
         $(".save-qty-section" + id + "").css('display', 'none')

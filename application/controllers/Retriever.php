@@ -40,8 +40,12 @@ class Retriever extends CI_Controller
 					// Master Data
 					//Quotation
 				case 'header':
-					$query['table'] = 'v_header';
-					$query['where'] = ['approve' => 'A'];
+					if(isset($_GET['show_closed']) && $_GET['show_closed'] == 0 ){
+						$query['where'] = ['approve' => 'A', 'status <>' => 'close'];
+					}else{
+						$query['where'] = ['approve' => 'A'];
+					}
+					$query['table'] = 'v_header';					
 					break;
 				case 'karyawan':
 					$query['table'] = 'v_karyawan';
@@ -93,8 +97,12 @@ class Retriever extends CI_Controller
 						// Master Data
 						// Quotation
 					case 'header':
-						$query['table'] = 'v_header';
-						$query['where'] = ['approve' => 'A'];
+						if(isset($_GET['show_closed']) && $_GET['show_closed'] == 0 ){
+							$query['where'] = ['approve' => 'A', 'status <>' => 'close'];
+						}else{
+							$query['where'] = ['approve' => 'A'];
+						}
+						$query['table'] = 'v_header';	
 						break;
 					case 'karyawan':
 						$query['table'] = 'v_karyawan';
