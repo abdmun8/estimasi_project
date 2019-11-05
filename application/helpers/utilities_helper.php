@@ -106,9 +106,9 @@ function cek_risk($nilai)
 
 	$ketentuan = [
 		'PROJECT NORMAL'      => ['min' => 1, 'max' => 2.25],
-		'PROJECT MEDIUM RISK' => ['min' => 2.3, 'max' => 3.7],
-		'PROJECT HIGH RISK'   => ['min' => 3.75, 'max' => 4.45],
-		'VERY HIGH RISK'      => ['min' => 4.5, 'max' => 5],
+        'PROJECT MEDIUM RISK' => ['min' => 2.3, 'max' => 3.7],
+        'PROJECT HIGH RISK'   => ['min' => 3.75, 'max' => 4.45],
+        'VERY HIGH RISK'      => ['min' => 4.5, 'max' => 8],
 	];
 
 	foreach ($ketentuan as $key => $value) {

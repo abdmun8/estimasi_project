@@ -31,16 +31,24 @@ $satuan = $this->db->get_where('tblsatuan')->result();
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/AdminLTE-2.4.9/css/skins/skin-black.min.css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/swal/sweet-alert.css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/jquery-autocomplete/jquery.auto-complete.css">
-    </link>
     <!-- daterange picker -->
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/bootstrap-daterangepicker/daterangepicker.css">
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/animate.css/animate.css">
+    <!-- <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/jquery.dataTables.css"> -->
     <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/dataTables.bootstrap.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/extensions/FixedColumns-3.2.5/css/fixedColumns.bootstrap.min.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/extensions/Select-1.3.0/css/select.bootstrap.min.css">
+    <link rel="stylesheet" href="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/extensions/Buttons-1.5.6/css/buttons.bootstrap.min.css">
     <style type="text/css">
         .padding20 {
             padding: 20px;
         }
-        
+
+        th,
+        td {
+            white-space: nowrap;
+        }
+
 
         .nav-tabs .active {
             font-weight: bolder;
@@ -82,6 +90,21 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         .sub_object-bg {
             background-color: #FBE1B6;
         }
+
+        .modal-xl {
+            width: 100%;
+            /* max-width: 1200px; */
+        }
+
+        #table-data-item tbody td {
+            width: 100px;
+        }
+
+        .force-select-all {
+            user-select: all;
+        }
+
+        /* #table-data-item { table-layout: fixed; } */
     </style>
     <script>
         var base_url = '<?php echo base_url(); ?>';
@@ -125,7 +148,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                     <input disabled type="text" class="form-control" name="qty_general" id="qty_general" placeholder="Qty">
                                 </div>
                                 <div class="col-sm-7">
-                                    <select  disabled class="form-control" id="lot_general" name="lot_general">
+                                    <select disabled class="form-control" id="lot_general" name="lot_general">
                                         <?php foreach ($satuan as $key => $value) : ?>
                                             <option value="<?= $value->name; ?>"><?= $value->name; ?></option>
                                         <?php endforeach; ?>
@@ -180,10 +203,10 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                     <select disabled class="form-control" id="difficulty" name="difficulty">
                                         <option value="" selected>Pilih Difficulty</option>
                                         <?php
-                                            $difficulty = $this->db->get('difficulty')->result();
-                                            foreach ($difficulty as $key => $value) {
-                                                echo "<option value='{$value->level}'>{$value->nama}</option>";
-                                            }
+                                        $difficulty = $this->db->get('difficulty')->result();
+                                        foreach ($difficulty as $key => $value) {
+                                            echo "<option value='{$value->level}'>{$value->nama}</option>";
+                                        }
                                         ?>
                                     </select>
                                 </div>
@@ -206,6 +229,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     <button id="addBtn" type="button" class="btn btn-default" onclick="showModalInput('section')">Add Section</button>
                     <button id="expandAllBtn" type="button" class="btn btn-default">Expand/Collapse All</button>
                     <button title="Export Part, jasa & Raw Material" onclick="exportExcel('part','<?= $param ?>')" id="btn-print-labour" type="button" class="btn btn-default"><i class="fa fa-file-excel-o"></i> Export</button>
+                    <label style="margin-left:1rem;">Show Deleted Item <input onchange="showDeletedPartChange(event)" style="margin-top:1rem;margin-left:1rem;transform: scale(1.5);" type="checkbox" id="hide-deleted-part" /></label>
                 </div>
                 <table id="demo"></table>
             </section>
@@ -217,6 +241,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 <div id="material-toolbar" class="btn-group" role="group" aria-label="...">
                     <button id="expandAllBtnMaterial" type="button" class="btn btn-default">Expand/Collapse All</button>
                     <button title="Export Part, jasa & Raw Material" onclick="exportExcel('part','<?= $param ?>')" id="btn-print-labour" type="button" class="btn btn-default"><i class="fa fa-file-excel-o"></i> Export</button>
+                    <label style="margin-left:1rem;">Show Deleted Item <input onchange="showDeletedMaterialChange(event)" style="margin-top:1rem;margin-left:1rem;transform: scale(1.5);" type="checkbox" id="hide-deleted-material" /></label>
                 </div>
                 <table id="material_table"></table>
             </section>
@@ -227,6 +252,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 <div id="labour-toolbar" class="btn-group" role="group" aria-label="...">
                     <button id="expandAllBtnLabour" type="button" class="btn btn-default">Expand/Collapse All</button>
                     <button title="Export Detail Labour" onclick="exportExcel('labour','<?= $param ?>')" id="btn-print-labour" type="button" class="btn btn-default"><i class="fa fa-file-excel-o"></i> Export</button>
+                    <label style="margin-left:1rem;">Show Deleted Item <input onchange="showDeletedLabourChange(event)" style="margin-top:1rem;margin-left:1rem;transform: scale(1.5);" type="checkbox" id="hide-deleted-labour" /></label>
                 </div>
                 <table id="labour_table"></table>
             </section>
@@ -235,8 +261,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
     <!-- /End Content -->
 
     <!-- Modal Part -->
-    <div id="modal-input-item" class="modal fade" role="dialog">
-        <div class="modal-dialog modal-lg">
+    <div class="modal fade" id="modal-input-item" role="dialog" aria-labelledby="modal-add-vendor" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
 
             <!-- Modal content-->
             <div class="modal-content">
@@ -245,83 +271,145 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     <h4 class="modal-title">Manage <span class="modal-title-input"></span></h4>
                 </div>
                 <div class="modal-body">
-                    <form role="form" id="form-input-item">
-                        <div class="box-body">
-                            <div class="col-md-6">
-                                <!-- <input type="hidden" id="tipe_item-item" name="tipe_item-item" value="section" /> -->
-                                <div class="form-group">
-                                    <label>Tipe Item</label>
-                                    <select class="form-control select2 input-sm" name="tipe_item-item" id="tipe_item-item">
-                                    </select>
+                    <!-- Custom Tabs (Pulled to the right) -->
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs pull-right">
+                            <li><a id="tab_input_item_exists-a" href="#tab_input_item_exists" data-toggle="tab">Item Exists</a></li>
+                            <li class="active"><a id="#tab_input_item_new-a" href="#tab_input_item_new" data-toggle="tab">Item New</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="tab_input_item_new">
+                                <!-- Form Start -->
+                                <form role="form" id="form-input-item">
+                                    <div class="box-body">
+                                        <div class="col-md-6">
+                                            <!-- <input type="hidden" id="tipe_item-item" name="tipe_item-item" value="section" /> -->
+                                            <div class="form-group">
+                                                <label>Tipe Item</label>
+                                                <select class="form-control select2 input-sm" name="tipe_item-item" id="tipe_item-item">
+                                                </select>
+                                            </div>
+                                            <div class="form-group only_item">
+                                                <label>Item Code</label>
+                                                <select class="form-control select2 input-sm" style="width:100%;" name="item_code-item" id="item_code-item">
+                                                </select>
+                                            </div>
+                                            <!-- <div class="form-group only_item">
+                                                <label for="item_code-item">Item Code</label>
+                                                <input type="text" class="form-control input-sm" id="item_code-item" name="item_code-item" placeholder="Item Code" data-provide="typeahead">
+                                            </div> -->
+                                            <div class="form-group only_item">
+                                                <label for="spec-item">Spec</label>
+                                                <input type="text" class="form-control input-sm" id="spec-item" name="spec-item" placeholder="Spec">
+                                            </div>
+                                            <div class="form-group only_item">
+                                                <label for="satuan-item">Satuan</label>
+                                                <input type="text" class="form-control input-sm" id="satuan-item" name="satuan-item" placeholder="Satuan">
+                                            </div>
+                                            <div class="form-group only_item">
+                                                <label for="qty-item">Qty</label>
+                                                <input type="text" class="form-control input-sm" id="qty-item" name="qty-item" placeholder="Qty">
+                                            </div>
+
+                                            <input type="hidden" id="item_code" name="item_code" />
+                                            <input type="hidden" id="id_parent-item" name="id_parent-item" value="0" />
+                                            <input type="hidden" id="id_header-item" name="id_header-item" value="0" />
+                                            <input type="hidden" id="action-item" name="action-item" value="1" />
+                                            <input type="hidden" id="id-item" name="id-item" value="1" />
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group except_item">
+                                                <label for="tipe_id-item">Id <span class="modal-title-input"></span></label>
+                                                <input type="text" class="form-control input-sm" id="tipe_id-item" name="tipe_id-item" readonly placeholder="Id">
+                                            </div>
+                                            <div class="form-group except_item">
+                                                <label for="tipe_name-item"><span class="modal-title-input"></span> Name</label>
+                                                <input type="text" class="form-control input-sm" id="tipe_name-item" name="tipe_name-item" placeholder="Name">
+                                            </div>
+                                            <div class="form-group only_item">
+                                                <label for="item_name-item">Item Name</label>
+                                                <input type="text" class="form-control input-sm" id="item_name-item" name="item_name-item" placeholder="Item Name">
+                                            </div>
+                                            <div class="form-group only_item">
+                                                <label for="merk-item">Merk</label>
+                                                <input type="text" class="form-control input-sm" id="merk-item" name="merk-item" placeholder="Merk">
+                                            </div>
+                                            <div class="form-group only_item">
+                                                <label for="harga-item">Harga <span style="font-size:12px;font-style:italic;font-weight:normal; color:red;" class="blink-one" id="remark-harga"></span></label>
+                                                <input type="text" class="form-control input-sm" id="harga-item" name="harga-item" placeholder="Price">
+                                            </div>
+                                            <div class="form-group only_item">
+                                                <label>Kategori</label>
+                                                <select class="form-control select2 input-sm" id="kategori-item" name="kategori-item" style="width: 100%;">
+                                                    <option value="" selected="">Pilih Kategori</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                                <div style="margin-top:1rem;">
+                                    <button style="margin-right:1rem;" type="button" class="btn btn-default pull-right" data-dismiss="modal">Close</button>
+                                    <button style="margin-right:1rem;" type="button" class="btn btn-success pull-right" onclick="saveItem()">Save</button>
                                 </div>
-                                <div class="form-group only_item">
-                                    <label>Item Code</label>
-                                    <select class="form-control select2 input-sm" style="width:100%;" name="item_code-item" id="item_code-item">
-                                    </select>
-                                </div>
-                                <!-- <div class="form-group only_item">
-                                    <label for="item_code-item">Item Code</label>
-                                    <input type="text" class="form-control input-sm" id="item_code-item" name="item_code-item" placeholder="Item Code" data-provide="typeahead">
-                                </div> -->
-                                <div class="form-group only_item">
-                                    <label for="spec-item">Spec</label>
-                                    <input type="text" class="form-control input-sm" id="spec-item" name="spec-item" placeholder="Spec">
-                                </div>
-                                <div class="form-group only_item">
-                                    <label for="satuan-item">Satuan</label>
-                                    <input type="text" class="form-control input-sm" id="satuan-item" name="satuan-item" placeholder="Satuan">
-                                </div>
-                                <div class="form-group only_item">
-                                    <label for="qty-item">Qty</label>
-                                    <input type="text" class="form-control input-sm" id="qty-item" name="qty-item" placeholder="Qty">
+                                <!-- Form End -->
+                            </div>
+                            <!-- /.tab-pane -->
+                            <div class="tab-pane" id="tab_input_item_exists">
+                                <div id="table-data-item-container">
+                                    <table id="table-data-item" class="table table-bordered table-striped table-hover table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Action</th>
+                                                <th>Qty</th>
+                                                <th>Harga</th>
+                                                <th>Item Name</th>
+                                                <th>Spek</th>
+                                                <th>Maker</th>
+                                                <th>Unit</th>
+                                                <th>Remark</th>
+                                                <th>Item Code</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <th>No</th>
+                                                <th>Action</th>
+                                                <th>Qty</th>
+                                                <th>Harga</th>
+                                                <th>Item Name</th>
+                                                <th>Spek</th>
+                                                <th>Maker</th>
+                                                <th>Unit</th>
+                                                <th>Remark</th>
+                                                <th>Item Code</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
                                 </div>
 
-                                <input type="hidden" id="item_code" name="item_code" />
-                                <input type="hidden" id="id_parent-item" name="id_parent-item" value="0" />
-                                <input type="hidden" id="id_header-item" name="id_header-item" value="0" />
-                                <input type="hidden" id="action-item" name="action-item" value="1" />
-                                <input type="hidden" id="id-item" name="id-item" value="1" />
                             </div>
-
-                            <div class="col-md-6">
-                                <div class="form-group except_item">
-                                    <label for="tipe_id-item">Id <span class="modal-title-input"></span></label>
-                                    <input type="text" class="form-control input-sm" id="tipe_id-item" name="tipe_id-item" readonly placeholder="Id">
-                                </div>
-                                <div class="form-group except_item">
-                                    <label for="tipe_name-item"><span class="modal-title-input"></span> Name</label>
-                                    <input type="text" class="form-control input-sm" id="tipe_name-item" name="tipe_name-item" placeholder="Name">
-                                </div>
-                                <div class="form-group only_item">
-                                    <label for="item_name-item">Item Name</label>
-                                    <input type="text" class="form-control input-sm" id="item_name-item" name="item_name-item" placeholder="Item Name">
-                                </div>
-                                <div class="form-group only_item">
-                                    <label for="merk-item">Merk</label>
-                                    <input type="text" class="form-control input-sm" id="merk-item" name="merk-item" placeholder="Merk">
-                                </div>
-                                <div class="form-group only_item">
-                                    <label for="harga-item">Harga <span style="font-size:12px;font-style:italic;font-weight:normal; color:red;" class="blink-one" id="remark-harga"></span></label>
-                                    <input type="text" class="form-control input-sm" id="harga-item" name="harga-item" placeholder="Price">
-                                </div>
-                                <div class="form-group only_item">
-                                    <label>Kategori</label>
-                                    <select class="form-control select2 input-sm" id="kategori-item" name="kategori-item" style="width: 100%;">
-                                        <option value="" selected="">Pilih Kategori</option>
-                                    </select>
-                                </div>
-                            </div>
+                            <!-- /.tab-pane -->
                         </div>
-                    </form>
-                    <!-- ./End modal content -->
+                        <!-- /.tab-content -->
+                    </div>
+                    <!-- nav-tabs-custom -->
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" onclick="saveItem()">Save</button>
-                </div>
+                <!-- /.col -->
             </div>
-
+            <!-- /.row -->
+            <!-- END CUSTOM TABS -->
+            <!-- ./End modal content -->
         </div>
+        <!-- <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-success" onclick="saveItem()">Save</button>
+        </div> -->
+    </div>
+
+    </div>
     </div>
     <!-- ./End Modal Part -->
 
@@ -432,7 +520,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                             <table id="table-detail-input-pr" class="table table-bordered table-striped table-hover table-condensed">
                                 <thead>
                                     <tr>
-                                        <th>No</th>
+                                        <th style="width:100px">No</th>
                                         <th>Id Labour</th>
                                         <th>Aktivitas</th>
                                         <th>Sub Aktivitas</th>
@@ -472,15 +560,49 @@ $satuan = $this->db->get_where('tblsatuan')->result();
     <!--  -->
     <script src="<?php echo base_url(); ?>assets/cms/jquery-autocomplete/jquery.auto-complete.min.js"></script>
     <script src="<?php echo base_url(); ?>assets/cms/bootstrap-notify/bootstrap-notify.js"></script>
+    <!-- <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/jquery.dataTables.min.js"></script> -->
     <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/dataTables.bootstrap.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.15.0/lodash.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/extensions/FixedColumns-3.2.5/js/dataTables.fixedColumns.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/extensions/Select-1.3.0/js/dataTables.select.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/extensions/Select-1.3.0/js/select.bootstrap.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/extensions/Buttons-1.5.6/js/dataTables.buttons.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/cms/js/plugins/datatables/extensions/Buttons-1.5.6/js/buttons.bootstrap.min.js"></script>
+    <script src="<?php echo base_url(); ?>assets/cms/js/lodash.min.js"></script>
     <script type="text/javascript">
-        var id_header_tree = '';
+        /* Tree Table */
+        var treeTable;
+
+        /* Global variable */
+        <?php echo ($param != null) ? 'var id_header_tree = ' . $param . ';' : ''; ?>
         var data_select = [];
         var tableDetailLabour;
-        // var $selTipe = $("#tipe_item-item").select2();
+        var tableDataItemExist;
+        var editedCellValueQty = [];
+
+        // set show deleted part
+        localStorage.setItem('showDeletedPart', 0)
+        localStorage.setItem('showDeletedMaterial', 0)
+        localStorage.setItem('showDeletedLabour', 0)
+
         $(document).ready(function() {
+            // generate table
+            $("#table-data-item tfoot th").each(function() {
+                var title = $(this).text();
+                $(this).html('<input style="width:auto;" type="text" placeholder="Search ' + title + '" />');
+            });
+
+            /* Event change select */
+            $("#tipe_item-item").change(function(e) {
+                if (e.target.value == 'item') {
+                    setActiveTab('tab_input_item_new')
+                    $("#tab_input_item_exists-a").css('pointer-events', 'auto')
+                } else {
+                    setActiveTab('tab_input_item_new')
+                    $("#tab_input_item_exists-a").css('pointer-events', 'none')
+                }
+            })
 
             $('.total_harga').mask("#,##0", {
                 reverse: true
@@ -509,7 +631,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 }
             });
 
-            $.get(base_url + "quotation/get_item_code", function(data) {
+            $.get(base_url + "quotation/get_item_code/1", function(data) {
                 $('#item_code-item').select2({
                     placeholder: "Pilih Item Code",
                     allowClear: true,
@@ -638,7 +760,309 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 'type_input': ''
             }));
 
+            // adjust table
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+                adjustDatatable()
+            });
+
+            // generate datatable item
+            getDatatableItem();
+
+            /* Generate Bootstrap treetable */
+            generatePartTable()
+            generateMaterialTable()
+            generateLabourTable()
         });
+
+        // Adjust Datatable Column
+        function adjustDatatable() {
+            $($.fn.dataTable.tables(true)).DataTable()
+                .columns.adjust();
+        }
+
+        /* Generate datatable */
+        function getDatatableItem() {
+            if ($.fn.dataTable.isDataTable('#table-data-item')) {
+                tableDataItemExist = $('#table-data-item').DataTable();
+            } else {
+                tableDataItemExist = $('#table-data-item').DataTable({
+                    "ajax": base_url + 'quotation/get_item_code/0',
+                    "columns": [{
+                            'data': 'no',
+                            render: function(data, type, row, meta) {
+                                if (type === "sort") {
+                                    if (data) {
+                                        return data;
+                                    } else {
+                                        return false;
+                                    }
+                                } else {
+                                    return '';
+                                }
+                            }
+                        },
+                        {
+                            'data': 'remark',
+                            render: function(data, type, row) {
+                                return `<button class="btn btn-success btn-xs" onclick="editQtyItemExists(this)"><i class="fa fa-edit"></i> Edit</button>`;
+                            }
+                        },
+                        {
+                            'data': 'qty'
+                        },
+                        {
+                            'data': 'harga',
+                            'render': function(data) {
+                                let number = parseFloat(data)
+                                return new Intl.NumberFormat().format(number)
+                            }
+                        },
+                        {
+                            'data': 'item_name'
+                        },
+                        {
+                            'data': 'spek'
+                        },
+                        {
+                            'data': 'maker'
+                        },
+                        {
+                            'data': 'uom'
+                        },
+                        {
+                            'data': 'remark'
+                        },
+                        {
+                            'data': 'stcd'
+                        },
+
+                    ],
+                    "ordering": true,
+                    "order": [
+                        [0, "asc"]
+                    ],
+                    autoWidth: false,
+                    deferRender: true,
+                    bAutoWidth: false,
+                    responsive: true,
+                    scrollX: true,
+                    columnDefs: [{
+                        type: "text",
+                        className: 'select-checkbox',
+                        targets: 0,
+                        width: "10px"
+                    }],
+                    select: {
+                        style: 'multi',
+                        selector: 'td:first-child'
+                    },
+                    // columnDefs: [{
+                    //     orderable: true,
+                    //     className: 'select-checkbox',
+                    //     targets: 0,
+                    // }],
+                    // select: {
+                    //     style: 'multi',
+                    // },
+                    dom: 'Bfrtip',
+                    buttons: [{
+                            text: '<i class="fa fa-check-square-o"></i> Select all',
+                            action: function() {
+                                tableDataItemExist.rows({
+                                    search: 'applied'
+                                }).select();
+                                tableDataItemExist.page.len(-1).draw()
+                                tableDataItemExist.page.len(10).draw()
+                            }
+                        },
+                        {
+                            text: '<i class="fa fa-square-o"></i> Unselect All',
+                            action: function() {
+                                tableDataItemExist.rows().deselect();
+                            }
+                        },
+                        {
+                            text: '<i class="fa fa-plus"></i> Add Selected Item',
+                            action: function() {
+                                addItemTotable()
+                            }
+                        }
+                    ],
+                    "fnDrawCallback": function(oSettings) {
+                        if (tableDataItemExist) {
+                            // tableDataItemExist.rows().every(function(rowIdx, tableLoop, rowLoop) {
+                            //     if (this.data().exist == 1) {
+                            //         this.select();
+                            //     }
+                            // });
+                            adjustDatatable()
+                        }
+                        // utilsDataTable();
+                        // alert(1)
+                    }
+                });
+
+                tableDataItemExist.columns().every(function() {
+                    var that = this;
+
+                    $("input", this.footer()).on("keyup change", function() {
+                        if (that.search() !== this.value) {
+                            that.search(this.value).draw();
+                        }
+                    });
+                });
+
+                tableDataItemExist.on('select', function(e, dt, type, indexes) {
+                    if (type === 'row') {
+                        var rows = tableDataItemExist.rows(indexes);
+                        rows.every(function(rowIdx, tableLoop, rowLoop) {
+                            var data = this.data();
+                            data.no = true;
+                            this.data(data);
+                        });
+                    }
+                });
+                tableDataItemExist.on('deselect', function(e, dt, type, indexes) {
+                    if (type === 'row') {
+                        var rows = tableDataItemExist.rows(indexes);
+                        rows.every(function(rowIdx, tableLoop, rowLoop) {
+                            var data = this.data();
+                            data.no = false;
+                            this.data(data);
+                        });
+                    }
+                });
+            }
+        }
+
+        // Edit item Qty Exists
+        function editQtyItemExists(o) {
+            let old = $(o).parent().siblings()[1].innerHTML
+            let oldHarga = $(o).parent().siblings()[2].innerHTML.replace(/,/g, '')
+            let btn = `<button class="btn btn-primary btn-xs" onclick="saveQtyItemExists(this)"><i class="fa fa-save"></i> Save</button>`;
+            option = `<input class="force-select-all" style="width:auto;color:#000000;" type="number" min="0" value="${old}" />`;
+            optionHarga = `<input class="force-select-all" style="width:auto;color:#000000;" type="text" min="0" value="${oldHarga}" />`;
+            $(o).parent().siblings()[1].innerHTML = option
+            $(o).parent().siblings()[2].innerHTML = optionHarga
+            $(o).parent().html(btn)
+        }
+
+        // Save item Qty
+        function saveQtyItemExists(o) {
+            let input = $(o).parent().siblings()[1]
+            let inputHarga = $(o).parent().siblings()[2]
+            let item = $(o).parent().siblings()[8].innerHTML
+            let newValue = $(input).children()[0].value
+            let newHarga = $(inputHarga).children()[0].value
+            let btn = `<button class="btn btn-success btn-xs" onclick="editQtyItemExists(this)"><i class="fa fa-edit"></i> Edit</button>`;
+            $(o).parent().siblings()[1].innerHTML = newValue
+            $(o).parent().siblings()[2].innerHTML = new Intl.NumberFormat().format(newHarga)
+            $(o).parent().html(btn)
+
+            if (editedCellValueQty.length == 0) {
+                editedCellValueQty.push({
+                    item_code: item,
+                    qty: newValue,
+                    harga: newHarga
+                })
+            } else {
+
+                for (let index = 0; index < editedCellValueQty.length; index++) {
+                    const element = editedCellValueQty[index];
+                    if (element.item_code == item) {
+                        editedCellValueQty.pop(index)
+                    }
+                    editedCellValueQty.push({
+                        item_code: item,
+                        qty: newValue,
+                        harga: newHarga
+                    })
+                }
+            }
+        }
+
+        // refresh table add item
+        function refreshTableDataItem() {
+            tableDataItemExist.ajax.url(base_url + 'quotation/get_item_code/0').load();
+        }
+
+        // add item to table
+        function addItemTotable() {
+            let count = tableDataItemExist.rows('.selected').data().count()
+            let data = tableDataItemExist.rows('.selected').data()
+            let selected = [];
+            if (editedCellValueQty.length == 0) {
+                alert('Input Qty')
+                return;
+            }
+
+            if (count > 0) {
+                for (let index = 0; index < count; index++) {
+                    const element = data[index];
+                    for (let idx = 0; idx < editedCellValueQty.length; idx++) {
+                        const elm = editedCellValueQty[idx];
+
+                        if (element.stcd == elm.item_code) {
+                            if (elm.qty == 0 || elm.harga.replace(/,/g, '') == 0) {
+                                alert(`Qty dan Harga item ${element.stcd} - ${element.item_name} tidak boleh 0!`)
+                                return;
+                            }
+                            element.category = switchCodeToCategory(elm.item_code.substr(0, 3))
+                            element.qty = elm.qty
+                            element.harga = elm.harga.replace(/,/g, '');
+                            selected.push(element)
+                        }
+
+                    }
+                }
+                // con
+                let id_parent_item = $("#id_parent-item").val()
+                let id_header_item = $("#id_header-item").val()
+                $.post(base_url + 'quotation/saveMultiItem', {
+                    id_parent: id_parent_item,
+                    id_header: id_header_item,
+                    data: JSON.stringify(selected)
+                }, res => {
+                    if (res.msg_exists != '') {
+                        alert(res.message + res.msg_exists)
+                    } else {
+                        alert(res.message)
+                    }
+
+                    if (res.success == true) {
+                        $('#demo').bootstrapTreeTable('refresh');
+                        refreshTableDataItem()
+                    }
+
+                }, 'json')
+            } else {
+                alert('Pilih data terlebih dahulu!')
+            }
+        }
+
+        // Show deleted part
+        function showDeletedPartChange(e) {
+            let show = e.target.checked === true ? 1 : 0;
+            localStorage.setItem('showDeletedPart', show)
+            $('#demo').bootstrapTreeTable('destroy')
+            generatePartTable(show);
+
+        }
+
+        // Show deleted Material 
+        function showDeletedMaterialChange(e) {
+            let show = e.target.checked === true ? 1 : 0;
+            localStorage.setItem('showDeletedMaterial', show)
+            $('#material_table').bootstrapTreeTable('destroy')
+            generateMaterialTable(show);
+        }
+        // Show deleted Labour
+        function showDeletedLabourChange(e) {
+            let show = e.target.checked === true ? 1 : 0;
+            localStorage.setItem('showDeletedLabour', show)
+            $('#labour_table').bootstrapTreeTable('destroy')
+            generateLabourTable(show);
+        }
 
         function notify(type, msg, delay = 100) {
             $.notify({
@@ -656,799 +1080,737 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         /*
             tree table part jasa
         */
-        <?php echo ($param != null) ? 'id_header_tree=' . $param . ';' : ''; ?>
-        var treeTable = $('#demo').bootstrapTreeTable({
-            toolbar: "#demo-toolbar", //顶部工具条
-            expandColumn: 1,
-            expandAll: true,
-            height: 480,
-            type: 'get',
-            parentId: 'id_parent',
-            url: base_url + 'quotation/get_data_part/' + id_header_tree,
-            columns: [{
-                    checkbox: true
-                },
-                {
-                    title: 'Opsi',
-                    width: '160',
-                    align: "center",
-                    fixed: true,
-                    formatter: function(value, row, index) {
-                        var actions = [];
-                        if (row.deleted == 1)
-                            return '';
-                        if (row.tipe_item !== 'item') {
-                            actions.push('<a class="btn btn-info btn-xs " title="Tambah Sub" onclick="showModalInput(\'' + row.tipe_item + '\',' + row.id + ',' + row.id_parent + ',' + true + ')" href="#"><i class="fa fa-plus"></i></a> ');
+        function generatePartTable(show_deleted = 0) {
+            treeTable = $('#demo').bootstrapTreeTable({
+                toolbar: "#demo-toolbar", //顶部工具条
+                expandColumn: 1,
+                expandAll: true,
+                height: 480,
+                type: 'get',
+                parentId: 'id_parent',
+                url: base_url + 'quotation/get_data_part/' + id_header_tree + '?show-deleted=' + show_deleted,
+                columns: [{
+                        checkbox: true
+                    },
+                    {
+                        title: 'Opsi',
+                        width: '160',
+                        align: "center",
+                        fixed: true,
+                        formatter: function(value, row, index) {
+                            var actions = [];
+                            if (row.deleted == 1)
+                                return '';
+                            if (row.tipe_item !== 'item') {
+                                actions.push('<a class="btn btn-info btn-xs " title="Tambah Sub" onclick="showModalInput(\'' + row.tipe_item + '\',' + row.id + ',' + row.id_parent + ',' + true + ')" href="#"><i class="fa fa-plus"></i></a> ');
+                            }
+                            actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="showModalInput(\'' + row.tipe_item + '\',' + row.id + ',' + row.id_parent + ',' + false + ',\'edit\')"><i class="fa fa-edit"></i></a> ');
+                            actions.push('<a class="btn btn-danger btn-xs " title="Hapus" onclick="confirmDelete(' + row.id + ',\'part_jasa\',\'' + row.tipe_item + '\')"><i class="fa fa-remove"></i></a>');
+                            return actions.join('');
                         }
-                        actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="showModalInput(\'' + row.tipe_item + '\',' + row.id + ',' + row.id_parent + ',' + false + ',\'edit\')"><i class="fa fa-edit"></i></a> ');
-                        actions.push('<a class="btn btn-danger btn-xs " title="Hapus" onclick="confirmDelete(' + row.id + ',\'part_jasa\',\'' + row.tipe_item + '\')"><i class="fa fa-remove"></i></a>');
-                        return actions.join('');
-                    }
-                },
-                {
-                    title: 'Section & Object',
-                    field: 'tipe_id',
-                    width: '200',
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item == 'section') {
-                            if (row.deleted == 1)
-                                return '<strike class="label label-success font14">' + value + '</strike>';
-                            return '<span class="label label-success font14">' + value + '</span>';
-                        } else if (row.tipe_item == 'object') {
-                            if (row.deleted == 1)
-                                return addSpace(3) + '<strike class="label label-primary font14">' + value + '</strike>';
-                            return addSpace(3) + '<span class="label label-primary font14">' + value + '</span>';
-                        } else if (row.tipe_item == 'sub_object') {
-                            if (row.deleted == 1)
-                                return addSpace(6) + '<strike class="label label-warning font14">' + value + '</strike>';
-                            return addSpace(6) + '<span class="label label-warning font14">' + value + '</span>';
-                        } else {
-                            return '';
+                    },
+                    {
+                        title: 'Section & Object',
+                        field: 'tipe_id',
+                        width: '200',
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item == 'section') {
+                                if (row.deleted == 1)
+                                    return '<strike class="label label-success font14">' + value + '</strike>';
+                                return '<span class="label label-success font14">' + value + '</span>';
+                            } else if (row.tipe_item == 'object') {
+                                if (row.deleted == 1)
+                                    return addSpace(3) + '<strike class="label label-primary font14">' + value + '</strike>';
+                                return addSpace(3) + '<span class="label label-primary font14">' + value + '</span>';
+                            } else if (row.tipe_item == 'sub_object') {
+                                if (row.deleted == 1)
+                                    return addSpace(6) + '<strike class="label label-warning font14">' + value + '</strike>';
+                                return addSpace(6) + '<span class="label label-warning font14">' + value + '</span>';
+                            } else {
+                                return '';
+                            }
                         }
-                    }
-                },
-                {
-                    field: 'tipe_name',
-                    title: 'Name',
-                    width: '300',
-                    align: "left",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item == 'section') {
-                            if (row.deleted == 1)
-                                return `<strike class="section-identity">` + value + `</strike>`;
-                            return `<span class="section-identity">` + value + `</span>`;
-                        } else if (row.tipe_item == `object`) {
-                            if (row.deleted == 1)
-                                return `<strike class="object-identity">` + addSpace(3) + value + `</strike>`;
-                            return `<span class="object-identity">` + addSpace(3) + value + `</span>`;
-                        } else if (row.tipe_item == `sub_object`) {
-                            if (row.deleted == 1)
-                                return `<strike class="sub_object-identity">` + addSpace(6) + value + `</strike>`;
-                            return `<span class="sub_object-identity">` + addSpace(6) + value + `</span>`;
-                        } else {
-                            return '';
+                    },
+                    {
+                        field: 'tipe_name',
+                        title: 'Name',
+                        width: '300',
+                        align: "left",
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item == 'section') {
+                                if (row.deleted == 1)
+                                    return `<strike class="section-identity">` + value + `</strike>`;
+                                return `<span class="section-identity">` + value + `</span>`;
+                            } else if (row.tipe_item == `object`) {
+                                if (row.deleted == 1)
+                                    return `<strike class="object-identity">` + addSpace(3) + value + `</strike>`;
+                                return `<span class="object-identity">` + addSpace(3) + value + `</span>`;
+                            } else if (row.tipe_item == `sub_object`) {
+                                if (row.deleted == 1)
+                                    return `<strike class="sub_object-identity">` + addSpace(6) + value + `</strike>`;
+                                return `<span class="sub_object-identity">` + addSpace(6) + value + `</span>`;
+                            } else {
+                                return '';
+                            }
                         }
-                    }
-                },
-                {
-                    field: 'item_code',
-                    title: 'Item Code',
-                    width: '150',
-                    align: "left",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item != 'item') {
-                            return '';
-                        }
-                        if (row.deleted == 1)
-                            return `<strike>${value}</strike>`;
-                        return value;
-                    }
-                },
-                {
-                    field: 'item_name',
-                    title: 'Item Name',
-                    width: '300',
-                    align: "left",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.deleted == 1)
-                            return `<strike>${value}</strike>`;
-                        return value;
-                    }
-                },
-                {
-                    field: 'spec',
-                    title: 'Spec',
-                    width: '200',
-                    align: "left",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.deleted == 1)
-                            return `<strike>${value}</strike>`;
-                        return value;
-                    }
-                },
-                {
-                    field: 'merk',
-                    title: 'Merk',
-                    width: '150',
-                    align: "left",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.deleted == 1)
-                            return `<strike>${value}</strike>`;
-                        return value;
-                    }
-                },
-                {
-                    field: 'satuan',
-                    title: 'Satuan',
-                    width: '100',
-                    align: "left",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.deleted == 1)
-                            return `<strike>${value}</strike>`;
-                        return value;
-                    }
-                },
-                {
-                    field: 'harga',
-                    title: 'Harga',
-                    width: '120',
-                    align: "right",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item != 'item') {
-                            return '';
-                        } else {
-                            if (row.deleted == 1)
-                                return `<strike class="total_harga">${value}</strike>`;
-                            return '<span class="total_harga">' + value + '</span>';
-                        }
-                    }
-                },
-                {
-                    field: 'qty',
-                    title: 'Qty',
-                    width: '100',
-                    align: "right",
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item != 'item') {
-                            return '';
-                        } else {
+                    },
+                    {
+                        field: 'item_code',
+                        title: 'Item Code',
+                        width: '150',
+                        align: "left",
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item != 'item') {
+                                return '';
+                            }
                             if (row.deleted == 1)
                                 return `<strike>${value}</strike>`;
                             return value;
                         }
-                    }
-                },
-                {
-                    field: 'total',
-                    title: 'Total',
-                    width: '150',
-                    align: "right",
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item != 'item') {
+                    },
+                    {
+                        field: 'item_name',
+                        title: 'Item Name',
+                        width: '300',
+                        align: "left",
+                        visible: true,
+                        formatter: function(value, row, index) {
                             if (row.deleted == 1)
-                                return '<strike class="total_harga text-bold">' + value + '</strike>';
-                            return '<span class="total_harga text-bold">' + value + '</span>';
+                                return `<strike>${value}</strike>`;
+                            return value;
                         }
-                        if (row.deleted == 1)
-                            return '<strike class="total_harga">' + value + '</strike>';
-                        return '<span class="total_harga">' + value + '</span>';
+                    },
+                    {
+                        field: 'spec',
+                        title: 'Spec',
+                        width: '200',
+                        align: "left",
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.deleted == 1)
+                                return `<strike>${value}</strike>`;
+                            return value;
+                        }
+                    },
+                    {
+                        field: 'merk',
+                        title: 'Merk',
+                        width: '150',
+                        align: "left",
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.deleted == 1)
+                                return `<strike>${value}</strike>`;
+                            return value;
+                        }
+                    },
+                    {
+                        field: 'satuan',
+                        title: 'Satuan',
+                        width: '100',
+                        align: "left",
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.deleted == 1)
+                                return `<strike>${value}</strike>`;
+                            return value;
+                        }
+                    },
+                    {
+                        field: 'harga',
+                        title: 'Harga',
+                        width: '120',
+                        align: "right",
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item != 'item') {
+                                return '';
+                            } else {
+                                if (row.deleted == 1)
+                                    return `<strike class="total_harga">${value}</strike>`;
+                                return '<span class="total_harga">' + value + '</span>';
+                            }
+                        }
+                    },
+                    {
+                        field: 'qty',
+                        title: 'Qty',
+                        width: '100',
+                        align: "right",
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item != 'item') {
+                                return '';
+                            } else {
+                                if (row.deleted == 1)
+                                    return `<strike>${value}</strike>`;
+                                return value;
+                            }
+                        }
+                    },
+                    {
+                        field: 'total',
+                        title: 'Total',
+                        width: '150',
+                        align: "right",
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item != 'item') {
+                                if (row.deleted == 1)
+                                    return '<strike class="total_harga text-bold">' + value + '</strike>';
+                                return '<span class="total_harga text-bold">' + value + '</span>';
+                            }
+                            if (row.deleted == 1)
+                                return '<strike class="total_harga">' + value + '</strike>';
+                            return '<span class="total_harga">' + value + '</span>';
+                        }
+                    },
+                    {
+                        field: 'nama_kategori',
+                        title: 'Kategori',
+                        width: '180',
+                        align: "left",
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item == 'item' && row.deleted == 1)
+                                return `<strike>${value}</strike>`;
+                            return value;
+                        }
                     }
+
+                ],
+                onAll: function(data) {
+                    let gpsection = $(".section-identity").parent().parent();
+                    for (let index = 0; index < gpsection.length; index++) {
+                        const element = gpsection[index];
+                        $(element).addClass('section-bg')
+                    }
+                    let osection = $(".object-identity").parent().parent();
+                    for (let index = 0; index < osection.length; index++) {
+                        const element = osection[index];
+                        $(element).addClass('object-bg')
+                    }
+                    let susection = $(".sub_object-identity").parent().parent();
+                    for (let index = 0; index < susection.length; index++) {
+                        const element = susection[index];
+                        $(element).addClass('sub_object-bg')
+                    }
+                    return false;
                 },
-                {
-                    field: 'nama_kategori',
-                    title: 'Kategori',
-                    width: '180',
-                    align: "left",
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item == 'item' && row.deleted == 1)
-                            return `<strike>${value}</strike>`;
-                        return value;
-                    }
-                }
-
-            ],
-            onAll: function(data) {
-                let gpsection = $(".section-identity").parent().parent();
-                for (let index = 0; index < gpsection.length; index++) {
-                    const element = gpsection[index];
-                    $(element).addClass('section-bg')
-                }
-                let osection = $(".object-identity").parent().parent();
-                for (let index = 0; index < osection.length; index++) {
-                    const element = osection[index];
-                    $(element).addClass('object-bg')
-                }
-                let susection = $(".sub_object-identity").parent().parent();
-                for (let index = 0; index < susection.length; index++) {
-                    const element = susection[index];
-                    $(element).addClass('sub_object-bg')
-                }
-                return false;
-            },
-            onLoadSuccess: function(data) {
-                // console.log("onLoadSuccess");
-                return false;
-            },
-            onLoadError: function(status) {
-                console.log("onLoadError");
-                return false;
-            },
-            onClickCell: function(field, value, row, $element) {
-                return false;
-            },
-            onDblClickCell: function(field, value, row, $element) {
-                // console.log("onDblClickCell",row);
-                return false;
-            },
-            onClickRow: function(row, $element) {
-                // console.log("onClickRow",row);
-                return false;
-            },
-            onDblClickRow: function(row, $element) {
-                // console.log("onDblClickRow",row);
-                return false;
-            },
-            // data:[]
-        });
-
-        $("#selectBtn").click(function() {
-            var selecteds = $('#demo').bootstrapTreeTable('getSelections');
-            $.each(selecteds, function(_i, _item) {
-                console.log(_item);
+                onLoadSuccess: function(data) {
+                    // console.log("onLoadSuccess");
+                    return false;
+                },
+                onLoadError: function(status) {
+                    console.log("onLoadError");
+                    return false;
+                },
+                onClickCell: function(field, value, row, $element) {
+                    return false;
+                },
+                onDblClickCell: function(field, value, row, $element) {
+                    // console.log("onDblClickCell",row);
+                    return false;
+                },
+                onClickRow: function(row, $element) {
+                    // console.log("onClickRow",row);
+                    return false;
+                },
+                onDblClickRow: function(row, $element) {
+                    // console.log("onDblClickRow",row);
+                    return false;
+                },
+                // data:[]
             });
-            //alert("看console");
-        });
 
-        var _expandFlag_all = false;
-        $("#expandAllBtn").click(function() {
-            if (_expandFlag_all) {
-                $('#demo').bootstrapTreeTable('expandAll');
-            } else {
-                $('#demo').bootstrapTreeTable('collapseAll');
-            }
-            _expandFlag_all = _expandFlag_all ? false : true;
-        });
+            $("#selectBtn").click(function() {
+                var selecteds = $('#demo').bootstrapTreeTable('getSelections');
+                $.each(selecteds, function(_i, _item) {
+                    console.log(_item);
+                });
+                //alert("看console");
+            });
+
+            var _expandFlag_all = false;
+            $("#expandAllBtn").click(function() {
+                if (_expandFlag_all) {
+                    $('#demo').bootstrapTreeTable('expandAll');
+                } else {
+                    $('#demo').bootstrapTreeTable('collapseAll');
+                }
+                _expandFlag_all = _expandFlag_all ? false : true;
+            });
+        }
 
         /*
             tree table labour
         */
 
-        var labourTable = $('#labour_table').bootstrapTreeTable({
-            toolbar: "#labour-toolbar", //顶部工具条
-            expandColumn: 1,
-            expandAll: false,
-            height: 480,
-            type: 'get',
-            parentId: 'id_parent',
-            url: base_url + 'quotation/get_data_labour/' + id_header_tree,
-            columns: [{
-                    checkbox: true
-                },
-                // {
-                //     title: 'Opsi',
-                //     width: '140',
-                //     align: "center",
-                //     fixed: true,
-                //     formatter: function(value,row, index) {
-                //         var actions = [];
-                //         if(row.tipe_item === 'item'){
-                //             actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="showModalLabour('+row.id+','+row.id_parent+','+false+',\'edit\')"><i class="fa fa-edit"></i></a> ');
-                //         }
-                //         return actions.join('');
-                //     }
-                // },
-                {
-                    title: 'Section & Object',
-                    field: 'tipe_id',
-                    width: '150',
-                    fixed: true,
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item == 'section') {
-                            if (row.deleted == 1)
-                                return '<strike class="label label-success font14">' + value + '</strike>';
-                            return '<span class="label label-success font14">' + value + '</span>';
-                        } else if (row.tipe_item == 'object') {
-                            if (row.deleted == 1)
-                                return addSpace(3) + '<strike class="label label-primary font14">' + value + '</strike>';
-                            return addSpace(3) + '<span class="label label-primary font14">' + value + '</span>';
-                        } else if (row.tipe_item == 'sub_object') {
-                            if (row.deleted == 1)
-                                return addSpace(6) + '<strike class="label label-warning font14">' + value + '</strike>';
-                            return addSpace(6) + '<span class="label label-warning font14">' + value + '</span>';
-                        } else {
-                            return '';
+        function generateLabourTable(show_deleted = 0) {
+            var labourTable = $('#labour_table').bootstrapTreeTable({
+                toolbar: "#labour-toolbar", //顶部工具条
+                expandColumn: 1,
+                expandAll: false,
+                height: 480,
+                type: 'get',
+                parentId: 'id_parent',
+                url: base_url + 'quotation/get_data_labour/' + id_header_tree + '?show-deleted=' + show_deleted,
+                columns: [{
+                        checkbox: true
+                    },
+                    {
+                        title: 'Section & Object',
+                        field: 'tipe_id',
+                        width: '150',
+                        fixed: true,
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item == 'section') {
+                                if (row.deleted == 1)
+                                    return '<strike class="label label-success font14">' + value + '</strike>';
+                                return '<span class="label label-success font14">' + value + '</span>';
+                            } else if (row.tipe_item == 'object') {
+                                if (row.deleted == 1)
+                                    return addSpace(3) + '<strike class="label label-primary font14">' + value + '</strike>';
+                                return addSpace(3) + '<span class="label label-primary font14">' + value + '</span>';
+                            } else if (row.tipe_item == 'sub_object') {
+                                if (row.deleted == 1)
+                                    return addSpace(6) + '<strike class="label label-warning font14">' + value + '</strike>';
+                                return addSpace(6) + '<span class="label label-warning font14">' + value + '</span>';
+                            } else {
+                                return '';
+                            }
                         }
-                    }
-                },
-                {
-                    field: 'opsi',
-                    title: 'Labour',
-                    width: '130',
-                    align: "center",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.deleted == 1)
-                            return '';
-                        return `<button onclick="showModalDetailLabour(${value},'ENGINEERING')" class="btn btn-xs btn-info"><i class="fa fa-plus"></i> ENG</button>
+                    },
+                    {
+                        field: 'opsi',
+                        title: 'Labour',
+                        width: '130',
+                        align: "center",
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.deleted == 1)
+                                return '';
+                            return `<button onclick="showModalDetailLabour(${value},'ENGINEERING')" class="btn btn-xs btn-info"><i class="fa fa-plus"></i> ENG</button>
                                 <button onclick="showModalDetailLabour(${value},'PRODUCTION')" class="btn btn-xs btn-info"><i class="fa fa-plus"></i> PROD</button>`;
-                    }
-                },
+                        }
+                    },
 
-                {
-                    field: 'tipe_name',
-                    title: 'Name',
-                    width: '300',
-                    align: "left",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item == 'section') {
+                    {
+                        field: 'tipe_name',
+                        title: 'Name',
+                        width: '300',
+                        align: "left",
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item == 'section') {
+                                if (row.deleted == 1)
+                                    return `<strike class="section-identity">` + value + `</strike>`;
+                                return `<span class="section-identity">` + value + `</span>`;
+                            } else if (row.tipe_item == `object`) {
+                                if (row.deleted == 1)
+                                    return `<strike class="object-identity">` + addSpace(3) + value + `</strike>`;
+                                return `<span class="object-identity">` + addSpace(3) + value + `</span>`;
+                            } else if (row.tipe_item == `sub_object`) {
+                                if (row.deleted == 1)
+                                    return `<strike class="sub_object-identity">` + addSpace(6) + value + `</strike>`;
+                                return `<span class="sub_object-identity">` + addSpace(6) + value + `</span>`;
+                            } else {
+                                return '';
+                            }
+                        }
+                    },
+                    {
+                        field: 'total',
+                        title: 'Total',
+                        width: '150',
+                        align: "right",
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item != 'item') {
+                                if (row.deleted == 1)
+                                    return '<strike class="total_harga text-bold">' + value + '</strike>';
+                                return '<span class="total_harga text-bold">' + value + '</span>';
+                            }
                             if (row.deleted == 1)
-                                return `<strike class="section-identity">` + value + `</strike>`;
-                            return `<span class="section-identity">` + value + `</span>`;
-                        } else if (row.tipe_item == `object`) {
-                            if (row.deleted == 1)
-                                return `<strike class="object-identity">` + addSpace(3) + value + `</strike>`;
-                            return `<span class="object-identity">` + addSpace(3) + value + `</span>`;
-                        } else if (row.tipe_item == `sub_object`) {
-                            if (row.deleted == 1)
-                                return `<strike class="sub_object-identity">` + addSpace(6) + value + `</strike>`;
-                            return `<span class="sub_object-identity">` + addSpace(6) + value + `</span>`;
-                        } else {
-                            return '';
+                                return '<strike class="total_harga">' + value + '</strike>';
+                            return '<span class="total_harga">' + value + '</span>';
                         }
                     }
-                },
-                // {
-                //     field: 'id_labour',
-                //     title: 'Id Labour',
-                //     width: '150',
-                //     align: "left",
-                //     visible: true
-                // },
-                // {
-                //     field: 'aktivitas',
-                //     title: 'Aktivitas',
-                //     width: '150',
-                //     align: "left",
-                //     visible: true
-                // },
-                // {
-                //     field: 'sub_aktivitas',
-                //     title: 'Sub Aktivitas',
-                //     width: '150',
-                //     align: "left",
-                //     visible: true
-                // },
-                // {
-                //     field: 'hour',
-                //     title: 'Hour',
-                //     width: '100',
-                //     align: "right",
-                //     formatter: function(value, row, index) {
 
-                //         if (row.tipe_item != 'item') {
-                //             return '';
-                //         } else {
-                //             var actions = [];
-                //             actions.push('<span id="valHour' + row.id + '">' + value + '</span>&nbsp;&nbsp;');
-                //             actions.push('<button id="btnEdit' + row.id + '"class="btn btn-success btn-xs btnEdit" title="Edit" onclick="editHour(' + row.id + ')"><span id="iconHour' + row.id + '"><i class="fa fa-edit"></i></span></button> ');
-
-                //             actions.push('<button style="display:none;" id="btnSave' + row.id + '"class="btn btn-info btn-xs btnEdit" title="Save" onclick="saveHour(' + row.id + ',' + row.id_parent + ')"><i class="fa fa-check"></i></button> ');
-                //             return actions.join('');
-                //         }
-                //     }
-                // },
-                // {
-                //     field: 'rate',
-                //     title: 'Rate',
-                //     width: '100',
-                //     align: "right",
-                //     visible: true,
-                //     formatter: function(value, row, index) {
-                //         if (row.tipe_item != 'item') {
-                //             return '';
-                //         } else {
-                //             return '<span id="rateValue' + row.id + '" class="total_harga">' + value + '</span>';
-                //         }
-                //     }
-                // },
-                {
-                    field: 'total',
-                    title: 'Total',
-                    width: '150',
-                    align: "right",
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item != 'item') {
-                            if (row.deleted == 1)
-                                return '<strike class="total_harga text-bold">' + value + '</strike>';
-                            return '<span class="total_harga text-bold">' + value + '</span>';
-                        }
-                        if (row.deleted == 1)
-                            return '<strike class="total_harga">' + value + '</strike>';
-                        return '<span class="total_harga">' + value + '</span>';
+                ],
+                onAll: function(data) {
+                    let gpsection = $(".section-identity").parent().parent();
+                    for (let index = 0; index < gpsection.length; index++) {
+                        const element = gpsection[index];
+                        $(element).addClass('section-bg')
                     }
-                }
+                    let osection = $(".object-identity").parent().parent();
+                    for (let index = 0; index < osection.length; index++) {
+                        const element = osection[index];
+                        $(element).addClass('object-bg')
+                    }
+                    let susection = $(".sub_object-identity").parent().parent();
+                    for (let index = 0; index < susection.length; index++) {
+                        const element = susection[index];
+                        $(element).addClass('sub_object-bg')
+                    }
+                    return false;
+                },
+                onLoadSuccess: function(data) {
+                    // console.log("onLoadSuccess");
+                    return false;
+                },
+                onLoadError: function(status) {
+                    console.log("onLoadError");
+                    return false;
+                },
+                onClickCell: function(field, value, row, $element) {
+                    return false;
+                },
+                onDblClickCell: function(field, value, row, $element) {
+                    // console.log("onDblClickCell",row);
+                    return false;
+                },
+                onClickRow: function(row, $element) {
+                    // console.log("onClickRow",row);
+                    return false;
+                },
+                onDblClickRow: function(row, $element) {
+                    // console.log("onDblClickRow",row);
+                    return false;
+                },
+                // data:[]
+            });
 
-            ],
-            onAll: function(data) {
-                let gpsection = $(".section-identity").parent().parent();
-                for (let index = 0; index < gpsection.length; index++) {
-                    const element = gpsection[index];
-                    $(element).addClass('section-bg')
+            var _expandFlag_all_labour = false;
+            $("#expandAllBtnLabour").click(function() {
+                if (_expandFlag_all_labour) {
+                    $('#labour_table').bootstrapTreeTable('expandAll');
+                } else {
+                    $('#labour_table').bootstrapTreeTable('collapseAll');
                 }
-                let osection = $(".object-identity").parent().parent();
-                for (let index = 0; index < osection.length; index++) {
-                    const element = osection[index];
-                    $(element).addClass('object-bg')
-                }
-                let susection = $(".sub_object-identity").parent().parent();
-                for (let index = 0; index < susection.length; index++) {
-                    const element = susection[index];
-                    $(element).addClass('sub_object-bg')
-                }
-                return false;
-            },
-            onLoadSuccess: function(data) {
-                // console.log("onLoadSuccess");
-                return false;
-            },
-            onLoadError: function(status) {
-                console.log("onLoadError");
-                return false;
-            },
-            onClickCell: function(field, value, row, $element) {
-                return false;
-            },
-            onDblClickCell: function(field, value, row, $element) {
-                // console.log("onDblClickCell",row);
-                return false;
-            },
-            onClickRow: function(row, $element) {
-                // console.log("onClickRow",row);
-                return false;
-            },
-            onDblClickRow: function(row, $element) {
-                // console.log("onDblClickRow",row);
-                return false;
-            },
-            // data:[]
-        });
-
-        var _expandFlag_all_labour = false;
-        $("#expandAllBtnLabour").click(function() {
-            if (_expandFlag_all_labour) {
-                $('#labour_table').bootstrapTreeTable('expandAll');
-            } else {
-                $('#labour_table').bootstrapTreeTable('collapseAll');
-            }
-            _expandFlag_all_labour = _expandFlag_all_labour ? false : true;
-        });
+                _expandFlag_all_labour = _expandFlag_all_labour ? false : true;
+            });
+        }
 
         /*
-            tree table labour
+            tree table material
         */
 
-        var materialTable = $('#material_table').bootstrapTreeTable({
-            toolbar: "#material-toolbar", //顶部工具条
-            expandColumn: 1,
-            expandAll: false,
-            height: 480,
-            type: 'get',
-            parentId: 'id_parent',
-            url: base_url + 'quotation/get_data_material/' + id_header_tree,
-            columns: [{
-                    checkbox: true
-                },
-                {
-                    title: 'Opsi',
-                    width: '140',
-                    align: "center",
-                    fixed: true,
-                    formatter: function(value, row, index) {
-                        var actions = [];
-                        if (row.deleted == 1)
-                            return ''
-                        if (row.tipe_item === 'item') {
-                            actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="addItemMaterial(' + row.id + ',' + row.id_parent + ',\'edit\')"><i class="fa fa-edit"></i></a> ');
-                            actions.push('<a class="btn btn-danger btn-xs " title="Hapus" onclick="confirmDelete(' + row.id + ',\'rawmaterial\',\'' + row.tipe_item + '\')"><i class="fa fa-remove"></i></a>');
-                        } else {
-                            actions.push('<a class="btn btn-info btn-xs " title="Tambah Sub" onclick="addItemMaterial(' + row.id + ',' + row.id_parent + ')" href="#"><i class="fa fa-plus"></i></a> ');
+        function generateMaterialTable(show_deleted = 0) {
+            var materialTable = $('#material_table').bootstrapTreeTable({
+                toolbar: "#material-toolbar", //顶部工具条
+                expandColumn: 1,
+                expandAll: false,
+                height: 480,
+                type: 'get',
+                parentId: 'id_parent',
+                url: base_url + 'quotation/get_data_material/' + id_header_tree + '?show-deleted=' + show_deleted,
+                columns: [{
+                        checkbox: true
+                    },
+                    {
+                        title: 'Opsi',
+                        width: '140',
+                        align: "center",
+                        fixed: true,
+                        formatter: function(value, row, index) {
+                            var actions = [];
+                            if (row.deleted == 1)
+                                return ''
+                            if (row.tipe_item === 'item') {
+                                actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="addItemMaterial(' + row.id + ',' + row.id_parent + ',\'edit\')"><i class="fa fa-edit"></i></a> ');
+                                actions.push('<a class="btn btn-danger btn-xs " title="Hapus" onclick="confirmDelete(' + row.id + ',\'rawmaterial\',\'' + row.tipe_item + '\')"><i class="fa fa-remove"></i></a>');
+                            } else {
+                                actions.push('<a class="btn btn-info btn-xs " title="Tambah Sub" onclick="addItemMaterial(' + row.id + ',' + row.id_parent + ')" href="#"><i class="fa fa-plus"></i></a> ');
+                            }
+                            return actions.join('');
                         }
-                        return actions.join('');
-                    }
-                },
-                {
-                    title: 'Section & Object',
-                    field: 'tipe_id',
-                    width: '150',
-                    fixed: true,
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item == 'section') {
-                            if (row.deleted == 1)
-                                return '<strike class="label label-success font14">' + value + '</strike>';
-                            return '<span class="label label-success font14">' + value + '</span>';
-                        } else if (row.tipe_item == 'object') {
-                            if (row.deleted == 1)
-                                return addSpace(3) + '<strike class="label label-primary font14">' + value + '</strike>';
-                            return addSpace(3) + '<span class="label label-primary font14">' + value + '</span>';
-                        } else if (row.tipe_item == 'sub_object') {
-                            if (row.deleted == 1)
-                                return addSpace(6) + '<strike class="label label-warning font14">' + value + '</strike>';
-                            return addSpace(6) + '<span class="label label-warning font14">' + value + '</span>';
-                        } else {
-                            return '';
+                    },
+                    {
+                        title: 'Section & Object',
+                        field: 'tipe_id',
+                        width: '150',
+                        fixed: true,
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item == 'section') {
+                                if (row.deleted == 1)
+                                    return '<strike class="label label-success font14">' + value + '</strike>';
+                                return '<span class="label label-success font14">' + value + '</span>';
+                            } else if (row.tipe_item == 'object') {
+                                if (row.deleted == 1)
+                                    return addSpace(3) + '<strike class="label label-primary font14">' + value + '</strike>';
+                                return addSpace(3) + '<span class="label label-primary font14">' + value + '</span>';
+                            } else if (row.tipe_item == 'sub_object') {
+                                if (row.deleted == 1)
+                                    return addSpace(6) + '<strike class="label label-warning font14">' + value + '</strike>';
+                                return addSpace(6) + '<span class="label label-warning font14">' + value + '</span>';
+                            } else {
+                                return '';
+                            }
                         }
-                    }
-                },
+                    },
 
 
-                {
-                    field: 'tipe_name',
-                    title: 'Name',
-                    width: '300',
-                    align: "left",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item == 'section') {
+                    {
+                        field: 'tipe_name',
+                        title: 'Name',
+                        width: '300',
+                        align: "left",
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item == 'section') {
+                                if (row.deleted == 1)
+                                    return `<strike class="section-identity">` + value + `</strike>`;
+                                return `<span class="section-identity">` + value + `</span>`;
+                            } else if (row.tipe_item == `object`) {
+                                if (row.deleted == 1)
+                                    return `<strike class="object-identity">` + addSpace(3) + value + `</strike>`;
+                                return `<span class="object-identity">` + addSpace(3) + value + `</span>`;
+                            } else if (row.tipe_item == `sub_object`) {
+                                if (row.deleted == 1)
+                                    return `<strike class="sub_object-identity">` + addSpace(6) + value + `</strike>`;
+                                return `<span class="sub_object-identity">` + addSpace(6) + value + `</span>`;
+                            } else {
+                                return '';
+                            }
+                        }
+                    },
+                    {
+                        field: 'item_code',
+                        title: 'Item Code',
+                        width: '150',
+                        align: "left",
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item != 'item') {
+                                return '';
+                            }
                             if (row.deleted == 1)
-                                return `<strike class="section-identity">` + value + `</strike>`;
-                            return `<span class="section-identity">` + value + `</span>`;
-                        } else if (row.tipe_item == `object`) {
+                                return `<strike>${value}</strike>`;
+                            return value;
+                        }
+                    },
+                    {
+                        field: 'part_name',
+                        title: 'Part Name',
+                        width: '150',
+                        align: "left",
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item != 'item') {
+                                return '';
+                            }
                             if (row.deleted == 1)
-                                return `<strike class="object-identity">` + addSpace(3) + value + `</strike>`;
-                            return `<span class="object-identity">` + addSpace(3) + value + `</span>`;
-                        } else if (row.tipe_item == `sub_object`) {
+                                return `<strike>${value}</strike>`;
+                            return value;
+                        }
+                    },
+                    {
+                        field: 'units',
+                        title: 'Units',
+                        width: '150',
+                        align: "left",
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item != 'item') {
+                                return '';
+                            }
                             if (row.deleted == 1)
-                                return `<strike class="sub_object-identity">` + addSpace(6) + value + `</strike>`;
-                            return `<span class="sub_object-identity">` + addSpace(6) + value + `</span>`;
-                        } else {
-                            return '';
+                                return `<strike>${value}</strike>`;
+                            return value;
                         }
-                    }
-                },
-                {
-                    field: 'item_code',
-                    title: 'Item Code',
-                    width: '150',
-                    align: "left",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item != 'item') {
-                            return '';
-                        }
-                        if (row.deleted == 1)
-                            return `<strike>${value}</strike>`;
-                        return value;
-                    }
-                },
-                {
-                    field: 'part_name',
-                    title: 'Part Name',
-                    width: '150',
-                    align: "left",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item != 'item') {
-                            return '';
-                        }
-                        if (row.deleted == 1)
-                            return `<strike>${value}</strike>`;
-                        return value;
-                    }
-                },
-                {
-                    field: 'units',
-                    title: 'Units',
-                    width: '150',
-                    align: "left",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item != 'item') {
-                            return '';
-                        }
-                        if (row.deleted == 1)
-                            return `<strike>${value}</strike>`;
-                        return value;
-                    }
-                },
-                {
-                    field: 'qty',
-                    title: 'Qty',
-                    width: '150',
-                    align: "right",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item != 'item') {
-                            return '';
-                        }
-                        if (row.deleted == 1)
-                            return `<strike>${value}</strike>`;
-                        return value;
-                    }
-                },
-                {
-                    field: 'materials',
-                    title: 'Materials',
-                    width: '150',
-                    align: "left",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item != 'item') {
-                            return '';
-                        }
-                        if (row.deleted == 1)
-                            return `<strike>${value}</strike>`;
-                        return value;
-                    }
-                },
-                {
-                    field: 'l',
-                    title: 'Length',
-                    width: '150',
-                    align: "right",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item != 'item') {
-                            return '';
-                        }
-                        if (row.deleted == 1)
-                            return `<strike>${value}</strike>`;
-                        return value;
-                    }
-                },
-                {
-                    field: 'w',
-                    title: 'Weight',
-                    width: '150',
-                    align: "right",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item != 'item') {
-                            return '';
-                        }
-                        if (row.deleted == 1)
-                            return `<strike>${value}</strike>`;
-                        return value;
-                    }
-                },
-                {
-                    field: 'h',
-                    title: 'Height',
-                    width: '150',
-                    align: "right",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item != 'item') {
-                            return '';
-                        }
-                        if (row.deleted == 1)
-                            return `<strike>${value}</strike>`;
-                        return value;
-                    }
-                },
-                {
-                    field: 't',
-                    title: 'Diameter',
-                    width: '150',
-                    align: "right",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item != 'item') {
-                            return '';
-                        }
-                        if (row.deleted == 1)
-                            return `<strike>${value}</strike>`;
-                        return value;
-                    }
-                },
-                {
-                    field: 'density',
-                    title: 'Density',
-                    width: '150',
-                    align: "right",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item != 'item') {
-                            return '';
-                        }
-                        if (row.deleted == 1)
-                            return `<strike>${value}</strike>`;
-                        return value;
-                    }
-                },
-                {
-                    field: 'weight',
-                    title: 'Weight',
-                    width: '150',
-                    align: "right",
-                    visible: true,
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item != 'item') {
-                            return '';
-                        }
-                        if (row.deleted == 1)
-                            return `<strike>${value}</strike>`;
-                        return value;
-                    }
-                },
-                {
-                    field: 'total',
-                    title: 'Total',
-                    width: '200',
-                    align: "right",
-                    formatter: function(value, row, index) {
-                        if (row.tipe_item != 'item') {
+                    },
+                    {
+                        field: 'qty',
+                        title: 'Qty',
+                        width: '150',
+                        align: "right",
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item != 'item') {
+                                return '';
+                            }
                             if (row.deleted == 1)
-                                return '<strike id="totalValue' + row.id + '" class="total_harga text-bold">' + value + '</strike>';
-                            return '<span id="totalValue' + row.id + '" class="total_harga text-bold">' + value + '</span>';
+                                return `<strike>${value}</strike>`;
+                            return value;
                         }
-                        if (row.deleted == 1)
-                            return '<strike id="totalValue' + row.id + '" class="total_harga">' + value + '</strike>';
-                        return '<span id="totalValue' + row.id + '" class="total_harga">' + value + '</span>';
+                    },
+                    {
+                        field: 'materials',
+                        title: 'Materials',
+                        width: '150',
+                        align: "left",
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item != 'item') {
+                                return '';
+                            }
+                            if (row.deleted == 1)
+                                return `<strike>${value}</strike>`;
+                            return value;
+                        }
+                    },
+                    {
+                        field: 'l',
+                        title: 'Length',
+                        width: '150',
+                        align: "right",
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item != 'item') {
+                                return '';
+                            }
+                            if (row.deleted == 1)
+                                return `<strike>${value}</strike>`;
+                            return value;
+                        }
+                    },
+                    {
+                        field: 'w',
+                        title: 'Weight',
+                        width: '150',
+                        align: "right",
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item != 'item') {
+                                return '';
+                            }
+                            if (row.deleted == 1)
+                                return `<strike>${value}</strike>`;
+                            return value;
+                        }
+                    },
+                    {
+                        field: 'h',
+                        title: 'Height',
+                        width: '150',
+                        align: "right",
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item != 'item') {
+                                return '';
+                            }
+                            if (row.deleted == 1)
+                                return `<strike>${value}</strike>`;
+                            return value;
+                        }
+                    },
+                    {
+                        field: 't',
+                        title: 'Diameter',
+                        width: '150',
+                        align: "right",
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item != 'item') {
+                                return '';
+                            }
+                            if (row.deleted == 1)
+                                return `<strike>${value}</strike>`;
+                            return value;
+                        }
+                    },
+                    {
+                        field: 'density',
+                        title: 'Density',
+                        width: '150',
+                        align: "right",
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item != 'item') {
+                                return '';
+                            }
+                            if (row.deleted == 1)
+                                return `<strike>${value}</strike>`;
+                            return value;
+                        }
+                    },
+                    {
+                        field: 'weight',
+                        title: 'Weight',
+                        width: '150',
+                        align: "right",
+                        visible: true,
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item != 'item') {
+                                return '';
+                            }
+                            if (row.deleted == 1)
+                                return `<strike>${value}</strike>`;
+                            return value;
+                        }
+                    },
+                    {
+                        field: 'total',
+                        title: 'Total',
+                        width: '200',
+                        align: "right",
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item != 'item') {
+                                if (row.deleted == 1)
+                                    return '<strike id="totalValue' + row.id + '" class="total_harga text-bold">' + value + '</strike>';
+                                return '<span id="totalValue' + row.id + '" class="total_harga text-bold">' + value + '</span>';
+                            }
+                            if (row.deleted == 1)
+                                return '<strike id="totalValue' + row.id + '" class="total_harga">' + value + '</strike>';
+                            return '<span id="totalValue' + row.id + '" class="total_harga">' + value + '</span>';
+                        }
                     }
-                }
 
-            ],
-            onAll: function(data) {
-                let gpsection = $(".section-identity").parent().parent();
-                for (let index = 0; index < gpsection.length; index++) {
-                    const element = gpsection[index];
-                    $(element).addClass('section-bg')
-                }
-                let osection = $(".object-identity").parent().parent();
-                for (let index = 0; index < osection.length; index++) {
-                    const element = osection[index];
-                    $(element).addClass('object-bg')
-                }
-                let susection = $(".sub_object-identity").parent().parent();
-                for (let index = 0; index < susection.length; index++) {
-                    const element = susection[index];
-                    $(element).addClass('sub_object-bg')
-                }
-                return false;
-            },
-            onLoadSuccess: function(data) {
-                // console.log("onLoadSuccess");
-                return false;
-            },
-            onLoadError: function(status) {
-                console.log("onLoadError");
-                return false;
-            },
-            onClickCell: function(field, value, row, $element) {
-                return false;
-            },
-            onDblClickCell: function(field, value, row, $element) {
-                // console.log("onDblClickCell",row);
-                return false;
-            },
-            onClickRow: function(row, $element) {
-                // console.log("onClickRow",row);
-                return false;
-            },
-            onDblClickRow: function(row, $element) {
-                // console.log("onDblClickRow",row);
-                return false;
-            },
-            // data:[]
-        });
+                ],
+                onAll: function(data) {
+                    let gpsection = $(".section-identity").parent().parent();
+                    for (let index = 0; index < gpsection.length; index++) {
+                        const element = gpsection[index];
+                        $(element).addClass('section-bg')
+                    }
+                    let osection = $(".object-identity").parent().parent();
+                    for (let index = 0; index < osection.length; index++) {
+                        const element = osection[index];
+                        $(element).addClass('object-bg')
+                    }
+                    let susection = $(".sub_object-identity").parent().parent();
+                    for (let index = 0; index < susection.length; index++) {
+                        const element = susection[index];
+                        $(element).addClass('sub_object-bg')
+                    }
+                    return false;
+                },
+                onLoadSuccess: function(data) {
+                    // console.log("onLoadSuccess");
+                    return false;
+                },
+                onLoadError: function(status) {
+                    console.log("onLoadError");
+                    return false;
+                },
+                onClickCell: function(field, value, row, $element) {
+                    return false;
+                },
+                onDblClickCell: function(field, value, row, $element) {
+                    // console.log("onDblClickCell",row);
+                    return false;
+                },
+                onClickRow: function(row, $element) {
+                    // console.log("onClickRow",row);
+                    return false;
+                },
+                onDblClickRow: function(row, $element) {
+                    // console.log("onDblClickRow",row);
+                    return false;
+                },
+                // data:[]
+            });
 
-        var _expandFlag_all_labour = false;
-        $("#expandAllBtnMaterial").click(function() {
-            if (_expandFlag_all_labour) {
-                $('#material_table').bootstrapTreeTable('expandAll');
-            } else {
-                $('#material_table').bootstrapTreeTable('collapseAll');
-            }
-            _expandFlag_all_labour = _expandFlag_all_labour ? false : true;
-        });
+            var _expandFlag_all_material = false;
+            $("#expandAllBtnMaterial").click(function() {
+                if (_expandFlag_all_material) {
+                    $('#material_table').bootstrapTreeTable('expandAll');
+                } else {
+                    $('#material_table').bootstrapTreeTable('collapseAll');
+                }
+                _expandFlag_all_material = _expandFlag_all_material ? false : true;
+            });
+        }
 
 
         function newForm() {
@@ -1574,6 +1936,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
          * @action : add = 1 || edit = 2
          */
         function showModalInput(title, id = '', id_parent = '', sub = false, action = 'add') {
+            refreshTableDataItem();
+            editedCellValueQty = [];
             $("#remark-harga").text('');
             $("#item_code").val('');
             $("#tipe_id-item").parent().removeClass('has-error');
@@ -1601,10 +1965,6 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         data_select = [{
                                 id: 'object',
                                 text: 'Object'
-                            },
-                            {
-                                id: 'sub_object',
-                                text: 'Sub Object'
                             },
                             {
                                 id: 'item',
@@ -1651,9 +2011,14 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 $("#tipe_item-item").append('<option value="' + value.id + '">' + value.text + '</option>')
             });
 
-            /* Set default Form value*/
+            /* Set active tab new */
+            setActiveTab('tab_input_item_new')
 
+            /* Set default Form value*/
             if (action == 'edit') {
+                /* disable lick tab */
+                $("#tab_input_item_exists-a").css('pointer-events', 'none')
+
                 data_select = [{
                         id: 'section',
                         text: 'Section'
@@ -1686,6 +2051,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         $("#tipe_id-item").val(json.tipe_id);
                         $("#harga-item").val(parseInt(json.harga));
                         $("#item_code-item").val(json.item_code);
+                        $('#item_code-item').trigger('change');
                         $('#item_codeUnassigned-item').trigger('change');
                         $("#item_name-item").val(json.item_name);
                         $("#kategori-item").val(json.kategori);
@@ -1707,6 +2073,13 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 $("#tipe_item-item").parent().hide();
 
             } else {
+                /* disable click tab */
+                if ($("#tipe_item-item").val() != 'item') {
+                    $("#tab_input_item_exists-a").css('pointer-events', 'none')
+                } else {
+                    $("#tab_input_item_exists-a").css('pointer-events', 'auto')
+                }
+
                 if (title != 'item')
                     $.get(base_url + 'quotation/get_counter_item', {
                         'tipe_item': title,
@@ -2193,7 +2566,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         }
 
         function mockData() {
-            $.get(base_url + "quotation/get_item_code", function(data) {
+            $.get(base_url + "quotation/get_item_code/1", function(data) {
                 return data;
             }, 'json')
         }

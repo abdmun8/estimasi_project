@@ -46,6 +46,7 @@ if ($param != null) {
                     </ul>
                 </li> -->
                 <button type="button" class="btn btn-default btn-sm" style="margin-right: 10px;" onclick="refreshTable()"><i class="fa fa-refresh"></i> Refresh</button>
+                <label style="margin-left:1rem;">Show Closed Inquiry <input type="checkbox" style="transform:scale(1.5);margin-left:1rem;" onchange="handleChangeShowClosedInquiry(event)" /></label>
             </div>
             <table id="table-data" class="table table-bordered table-striped table-hover table-condensed">
                 <thead>
@@ -93,6 +94,7 @@ if ($param != null) {
                                 <tr>
                                     <th>No</th>
                                     <th>Section</th>
+                                    <th>Group</th>
                                     <th>Qty</th>
                                     <th>action</th>
                                 </tr>
@@ -173,7 +175,17 @@ if ($param != null) {
         window.open(base_url + `quotation/print_summary/` + id_header);
         setTimeout(() => {
             window.open(base_url + `quotation/print_detail_summary/` + id_header);
-        }, 3000)
+        }, 1000)
+    }
+
+    function checkQuotationHasItem(id_header, risk) {
+        $.get(base_url + 'quotation/checkHasItem/' + id_header, (response) => {
+            if (response.has_item == true) {
+                printQuotation(id_header, risk)
+            } else {
+                notify('warning', 'Quotation Belum diisi!!');
+            }
+        }, 'json')
     }
 
     function saveAllowance() {
@@ -191,9 +203,10 @@ if ($param != null) {
                 type: 'POST',
                 cache: false,
                 success: function(json) {
+                    $("#modal-allowance").modal('hide')
                     refreshTable();
                     loading('loading1', false);
-                    $("#modal-allowance").modal('hide')
+                    notify('success', 'Penyimpanan data berhasil');
                 },
                 error: function() {
                     loading('loading1', false);
@@ -214,7 +227,7 @@ if ($param != null) {
             tableData = $('#table-data').DataTable();
         } else {
             tableData = $('#table-data').DataTable({
-                "ajax": base_url + 'objects/header',
+                "ajax": base_url + 'objects/header?show_closed=0',
                 "columns": [{
                         "data": "no"
                     },
@@ -222,7 +235,8 @@ if ($param != null) {
                         "data": "inquiry_no"
                     },
                     {
-                        "data": "project_name"
+                        "data": "project_name",
+                        "width": "10%",
                     },
                     {
                         "data": "qty"
@@ -268,6 +282,7 @@ if ($param != null) {
                         "width": "20%"
                     }
                 ],
+                "autoWidth": false,
                 "ordering": true,
                 "deferRender": true,
                 "columnDefs": [{
@@ -302,6 +317,13 @@ if ($param != null) {
                 }
             });
         }
+    }
+
+    // Show closed Inquiry Change
+    function handleChangeShowClosedInquiry(e) {
+        console.log(e)
+        let show = e.target.checked === true ? 1 : 0;
+        refreshTable(show)
     }
 
     function utilsDataTable() {
@@ -439,8 +461,8 @@ if ($param != null) {
             });
     }
 
-    function refreshTable() {
-        tableData.ajax.url(base_url + '/objects/header').load();
+    function refreshTable(show = 0) {
+        tableData.ajax.url(base_url + '/objects/header?show_closed=' + show).load();
     }
 
     function CKupdate() {
@@ -466,6 +488,9 @@ if ($param != null) {
                     },
                     {
                         "data": "tipe_name"
+                    },
+                    {
+                        "data": "group"
                     },
                     {
                         "data": "qty",
@@ -520,15 +545,28 @@ if ($param != null) {
     }
 
     function editQtySection(o, id) {
-        let oldValue = $(o).parent().siblings()[2].innerHTML
-        $(o).parent().siblings()[2].innerHTML = "<input min='0' id='input-section-qty' style='width:100px;' type='number' value='" + oldValue + "' />"
+        let x = $(o).parent().siblings()[2]
+        let oldValueGroup = $(o).parent().siblings()[2].innerHTML
+        let option = "";
+        if (oldValueGroup == 0) {
+            option = `<option selected value='0'>0</option>
+            <option value='1'>1</option>`;
+        } else {
+            option = `<option value='0'>0</option>
+            <option selected value='1'>1</option>`;
+        }
+        $(o).parent().siblings()[2].innerHTML = "<select id='input-section-group" + id + "' style='width:100px;'>" + option + "</select>"
+        let oldValue = $(o).parent().siblings()[3].innerHTML
+        $(o).parent().siblings()[3].innerHTML = "<input min='0' id='input-section-qty" + id + "' style='width:100px;' type='number' value='" + oldValue + "' />"
         $(".save-qty-section" + id + "").css('display', 'inline')
         $(".edit-qty-section" + id + "").css('display', 'none')
     }
 
     function saveQtySection(o, id) {
-        let value = $("#input-section-qty").val()
-        $(o).parent().siblings()[2].innerHTML = value;
+        let value = $("#input-section-qty" + id + "").val()
+        let group = $("#input-section-group" + id + "").val()
+        $(o).parent().siblings()[2].innerHTML = group;
+        $(o).parent().siblings()[3].innerHTML = value;
         $(".save-qty-section" + id + "").css('display', 'none')
         $(".edit-qty-section" + id + "").css('display', 'inline')
         loading('loading1', true);
@@ -537,6 +575,7 @@ if ($param != null) {
                 url: base_url + 'quotation/save_section_qty',
                 data: {
                     qty: value,
+                    group: group,
                     id: id
                 },
                 dataType: 'json',

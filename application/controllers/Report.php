@@ -22,12 +22,16 @@ class Report extends Quotation
         if (isset($item)) {
             $qty = $item['qty'];
             $part = $item['total_rm'] + $item['total_elc'] + $item['total_pnu'] + $item['total_hyd'] + $item['total_mch'] + $item['total_sub'] +  $item['total_prod'];
-            $eng = $item['total_eng'];
+            // $eng = $item['total_eng'];
+            // var_dump($item);
+            // die;
+            /* Using group enginering */
+            $eng = $item['group'] == 1 ? $item['total_eng'] * $qty : $item['total_eng'];
             $total = ($qty * $part) + $eng;
         }
         $this->pdf->Ln(4);
         $this->pdf->Cell(8, 4, $no, 1, 0, 'C');
-        $this->pdf->Cell(42, 4, isset($item['tipe_name']) ? $item['tipe_name'] : '', 1, 0);
+        $this->pdf->Cell(42, 4, isset($item['tipe_name']) ? substr($item['tipe_name'],0,25) : '', 1, 0);
         $this->pdf->Cell(8, 4, isset($qty) ? $qty : '', 1, 0, 'C');
         $this->pdf->Cell(24, 4, isset($part) ? number_format($part) : '', 1, 0, 'R');
         $this->pdf->Cell(24, 4, isset($eng) ? number_format($eng) : '', 1, 0, 'R');
@@ -58,7 +62,8 @@ class Report extends Quotation
         foreach ($summary as $key => $item) {
             $qty = $item['qty'];
             $part = $item['total_rm'] + $item['total_elc'] + $item['total_pnu'] + $item['total_hyd'] + $item['total_mch'] + $item['total_sub'] +  $item['total_prod'];
-            $eng = $item['total_eng'];
+            // $eng = $item['total_eng'];
+            $eng = $item['group'] == 1 ? $item['total_eng'] * $qty : $item['total_eng'];
             $total += (($qty * $part) + $eng);
         }
         return $total;
@@ -163,7 +168,7 @@ class Report extends Quotation
         $this->pdf->Cell(30, 4, date('d F Y', strtotime($header->finish_date)), 1, 0);
         $this->pdf->Cell(20);
         $this->pdf->Cell(30, 4, 'RECOMMENDATION', 1, 0);
-        $this->pdf->Cell(0, 4, $risk, 1, 0);
+        $this->pdf->Cell(0, 4, urldecode($risk), 1, 0);
 
         /* row 3*/
         $this->pdf->Ln(4);
@@ -173,8 +178,8 @@ class Report extends Quotation
         $this->pdf->Cell(30, 4, 'DURATION', 1, 0);
         $this->pdf->Cell(30, 4, calcDiffDate($header->start_date, $header->finish_date) . ' MONTH(S)', 1, 0);
         $this->pdf->Cell(20);
-        $this->pdf->Cell(30, 4, 'DIFFICULTY', 1, 0);
-        $this->pdf->Cell(0, 4, $header->difficulty ? $header->difficulty : 'NORMAL', 1, 0);
+        // $this->pdf->Cell(30, 4, 'DIFFICULTY', 1, 0);
+        // $this->pdf->Cell(0, 4, $header->difficulty ? $header->difficulty : 'NORMAL', 1, 0);
         /* row 4*/
         $this->pdf->Ln(4);
         $this->pdf->Cell(50, 4, 'PIC MARKETING', 1, 0);
@@ -218,7 +223,7 @@ class Report extends Quotation
         /* Row 2 Left*/
         $item = NULL;
         if (isset($summary[0])) {
-            $item = $summary[0];
+            $item = $summary[0];            
         }
         $this->createLeftRow(1, $item);
 
@@ -298,11 +303,25 @@ class Report extends Quotation
         /* Row 7 Right*/        
         $this->pdf->Cell(5);
         $this->pdf->Cell(30, 4, 'INTERNAL LABOUR ENGINEERING', 0, 0);
-        $sqlEng = " SELECT *, SUM(hour) as total_hour, SUM(`hour` * rate) AS total
-            FROM labour
-            WHERE id_header = $id AND tipe_name = 'ENGINEERING'
-            GROUP BY aktivitas ";
-        $sumLbEng = $this->db->query($sqlEng)->result_array();        
+        // $sqlEng = " SELECT *, SUM(l.hour) as total_hour, SUM(l.`hour` * l.rate) AS total
+        //     FROM labour l
+        //     WHERE l.id_header = $id AND l.tipe_name = 'ENGINEERING'
+        //     GROUP BY l.aktivitas ";
+        $sqlEng = " SELECT gl.id,gl.id_parent,gl.id_header,gl.tipe_name,gl.id_labour,gl.aktivitas, SUM(IF(gl.`group` = 1, (gl.`hour` * gl.qty_section), gl.`hour`)) AS `hour`, gl.rate, SUM(IF(gl.`group` = 1, gl.total * gl.qty_section, gl.total)) AS total
+        FROM
+        (
+        SELECT l.*, SUM(l.hour) AS total_hour, SUM(l.`hour` * l.rate) AS total,
+        j.qty AS qty_section,j.`group`
+        FROM labour l
+        JOIN part_jasa j ON l.id_part_jasa = j.id
+        WHERE l.id_header = $id AND l.tipe_name = 'ENGINEERING'
+        GROUP BY l.id_part_jasa, l.aktivitas
+        ) AS gl
+        GROUP BY gl.aktivitas";
+        $sumLbEng = $this->db->query($sqlEng)->result_array();     
+        // echo $this->db->last_query();
+        // var_dump($sumLbEng);
+        // die;   
 
         // Row 7 Rp
         $this->createLeftRowRp();
@@ -564,7 +583,7 @@ class Report extends Quotation
         // $this->createLeftRow(20, $item);
         $this->pdf->Ln(4);
         $this->pdf->Cell(8, 4, 20, 1, 0, 'C');
-        $this->pdf->Cell(42, 4, 'Overrageserver', 1, 0);
+        $this->pdf->Cell(42, 4, 'Overrage', 1, 0);
         $this->pdf->Cell(8, 4, '', 1, 0, 'C');
         $this->pdf->Cell(24, 4, number_format($tot_alw), 1, 0, 'R');
         $this->pdf->Cell(24, 4, 0, 1, 0, 'R');

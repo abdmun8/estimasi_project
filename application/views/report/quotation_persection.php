@@ -69,8 +69,15 @@ $arrHeaderMaterial = [
 $arrHeaderLabour = [
     'Id',
     'Name',
+    '',
+    'Labour',
     'Id labour',
+    '',
+    '',
     'Aktifitas',
+    '',
+    '',
+    '',
     'Hour',
     'Rate',
     'Total',
@@ -357,24 +364,30 @@ foreach ($sectionPart as $key => $section) {
     $row += 1;
     $activeSheet->fromArray($arrHeaderLabour, NULL, "B$row");
     $activeSheet->getStyle("B$row:O$row")->applyFromArray($headerStyle);
-    cellMerge($activeSheet, "C$row:E$row");
+    cellMerge($activeSheet, "C$row:D$row");
     cellMerge($activeSheet, "F$row:H$row");
     cellMerge($activeSheet, "I$row:L$row");
 
+    // var_dump($itemLabour);
+    // die;
     $row += 1;
     $noitem = 0;
     $sub_total = 0;
     foreach ($itemLabour as $key => $labour) {
         if ($labour['hour'] > 0) {
             $noitem++;
+            $qty_section = $labour['qty_section'] == 0 ? 1 : $labour['qty_section'];
+            $hour = $labour['group'] == 1 ? $labour['hour'] * $qty_section : $labour['hour'];
             $total = $labour['hour'] * $labour['rate'];
             $sub_total += $total;
-
+            // var_dump($labour);
+            // die;
             $activeSheet->getCell('B' . $row)->setValueExplicit(strval($labour['tipe_id']), \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
             $activeSheet->setCellValue('C' . $row, $labour['tipe_name']);
+            $activeSheet->setCellValue('E' . $row, $labour['tipe_name_view']);
             $activeSheet->setCellValue('F' . $row, $labour['nama_kategori']);
             $activeSheet->setCellValue('I' . $row, $labour['aktivitas']);
-            $activeSheet->setCellValue('M' . $row, $labour['hour']);
+            $activeSheet->setCellValue('M' . $row, $hour);
             $activeSheet->setCellValue('N' . $row, $labour['rate']);
             $activeSheet->setCellValue('O' . $row, $total);
 
@@ -382,7 +395,7 @@ foreach ($sectionPart as $key => $section) {
             numberFormat($activeSheet, "O$row");
 
             /* Merge Cells */
-            cellMerge($activeSheet, "C$row:E$row");
+            cellMerge($activeSheet, "C$row:D$row");
             cellMerge($activeSheet, "F$row:H$row");
             cellMerge($activeSheet, "I$row:L$row");
             $activeSheet->getStyle("B$row:O$row")->applyFromArray(
@@ -435,10 +448,17 @@ $spreadsheet->setActiveSheetIndex(0);
 
 
 // Redirect output to a client's web browser (Xlsx)
-header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-header('Content-Disposition: attachment;filename="' . $title . '.xlsx"');
-header('Cache-Control: max-age=0');
+// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+// header('Content-Disposition: attachment;filename="' . $title . '.xlsx"');
+// header("Access-Control-Allow-Origin: *");
+// header('Cache-Control: max-age=0');
 
-$writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-$writer->save('php://output');
-exit;
+// $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+// $writer->save('php://output');
+// exit;
+$writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+$file = 'temp/'.$title.'.xlsx';
+$writer->save($file);
+$base_url = base_url();
+
+header("location:$base_url$file");
