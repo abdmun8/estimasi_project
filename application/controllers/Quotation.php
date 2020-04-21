@@ -622,6 +622,7 @@ class Quotation extends CI_Controller
     {
         $obj = $this->sgedb->select('accno as id, TRIM(`desc`) as text', false)
             ->where_in('header', ['10000', '20000'])
+            ->or_where('accno','40006')
             // ->having('accno <>', '10001')
             ->having('accno <>', '10006')
             ->get('akunbg')

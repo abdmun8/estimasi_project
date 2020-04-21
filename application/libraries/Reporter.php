@@ -227,7 +227,7 @@ class Reporter
             `group`,
             `updated_datetime`,
             `tipe_parent`,
-            `nama_kategori`, SUM(rm) AS total_rm,SUM(elc) AS total_elc, SUM(pnu) AS total_pnu, SUM(hyd) AS total_hyd, SUM(mch) AS total_mch, SUM(sub) as total_sub, {$value['id']} AS id_section FROM (SELECT
+            `nama_kategori`,SUM(import) as total_import,SUM(onsite) as total_onsite, SUM(rm) AS total_rm,SUM(elc) AS total_elc, SUM(pnu) AS total_pnu, SUM(hyd) AS total_hyd, SUM(mch) AS total_mch, SUM(sub) as total_sub, {$value['id']} AS id_section FROM (SELECT
                 j.*,
                 (SELECT
                         tipe_item
@@ -241,7 +241,9 @@ class Reporter
                 if(j.kategori = '10004',j.harga * qty,0) AS pnu,
                 if(j.kategori = '10005',j.harga * qty,0) AS hyd,
                 if(j.kategori = '10003',j.harga * qty,0) AS mch,
-                if(j.kategori = '20001',j.harga * qty,0) AS sub
+                if(j.kategori = '20001',j.harga * qty,0) AS sub,
+                if(j.kategori = '40003',j.harga * qty,0) AS import,
+                if(j.kategori = '40006',j.harga * qty,0) AS onsite
             FROM
                 {$this->_CI->db->database}.`part_jasa` j
                     LEFT JOIN
@@ -345,6 +347,9 @@ class Reporter
             $temp['total_sub'] = 0;
             $temp['total_eng'] = 0;
             $temp['total_prod'] = 0;
+            $temp['total_onsite'] = 0;
+            $temp['total_import'] = 0;
+
 
             foreach ($storedPart as $key => $part) {
                 if ($value['id'] == $part['id_section']) {
@@ -354,6 +359,8 @@ class Reporter
                     $temp['total_hyd'] = isset($part['total_hyd']) ? $part['total_hyd'] : 0;
                     $temp['total_mch'] = isset($part['total_mch']) ? $part['total_mch'] : 0;
                     $temp['total_sub'] = isset($part['total_sub']) ? $part['total_sub'] : 0;
+                    $temp['total_import'] = isset($part['total_import']) ? $part['total_import'] : 0;
+                    $temp['total_onsite'] = isset($part['total_onsite']) ? $part['total_onsite'] : 0;
                 }
             }
 

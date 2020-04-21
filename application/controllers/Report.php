@@ -15,6 +15,8 @@ class Report extends Quotation
 
     function createLeftRow($no, $item = NULL)
     {
+        // var_dump($item);
+        // die;
         $qty = NULL;
         $part = NULL;
         $eng = NULL;
@@ -55,6 +57,11 @@ class Report extends Quotation
         $this->pdf->Ln(0);
         $this->pdf->Cell(495, 4, 'Rp', 0, 0, 'C');
     }
+    function createSingelRightRowRp()
+    {
+        $this->pdf->Ln(0);
+        $this->pdf->Cell(355, 4, 'Rp', 0, 0, 'C');
+    }
 
     function countGrandTotal($summary)
     {
@@ -83,6 +90,9 @@ class Report extends Quotation
     /* Total sudah dikali qty */
     function sumMaterialPerGroup($summary)
     {
+        // var_dump($summary);
+        // die;
+        
         $data = [
             'total_rm' => 0,
             'total_elc' => 0,
@@ -90,6 +100,8 @@ class Report extends Quotation
             'total_hyd' => 0,
             'total_mch' => 0,
             'total_sub' => 0,
+            'total_import' => 0,
+            'total_onsite' => 0,
         ];
         foreach ($summary as $key => $item) {
             $data['total_rm'] += ($item['total_rm'] * $item['qty']);
@@ -98,6 +110,9 @@ class Report extends Quotation
             $data['total_hyd'] += ($item['total_hyd'] * $item['qty']);
             $data['total_mch'] += ($item['total_mch'] * $item['qty']);
             $data['total_sub'] += ($item['total_sub'] * $item['qty']);
+            $data['total_import'] += ($item['total_import'] * $item['qty']);
+            $data['total_onsite'] += ($item['total_onsite'] * $item['qty']);
+
         }
         return $data;
     }
@@ -319,7 +334,7 @@ class Report extends Quotation
         ) AS gl
         GROUP BY gl.aktivitas";
         $sumLbEng = $this->db->query($sqlEng)->result_array();     
-        // echo $this->db->last_query();
+        //echo $this->db->last_query();
         // var_dump($sumLbEng);
         // die;   
 
@@ -452,6 +467,8 @@ class Report extends Quotation
             $n++;
         }
         $sql .= ") AS grp GROUP BY aktivitas";
+        // echo($sql);
+        // die;
         $dataLbProd = $this->db->query($sql)->result_array();// var_dump($dataSort);
         // echo $this->db->last_query();
         // print_r($dataLbProd);
@@ -537,6 +554,7 @@ class Report extends Quotation
             $item = $summary[16];
         }
         $this->createLeftRow(17, $item);
+        
 
         /* Row 17 Right*/
 
@@ -550,6 +568,9 @@ class Report extends Quotation
             $item = $summary[17];
         }
         $this->createLeftRow(18, $item);
+        $this->pdf->Cell(5);
+        $this->pdf->Cell(40, 4, 'OTHER COST', 0, 0);
+
 
         /* Row 18 Right*/
 
@@ -563,10 +584,12 @@ class Report extends Quotation
             $item = $summary[18];
         }
         $this->createLeftRow(19, $item);
-
+        
         /* Row 19 Right*/
-
+        $this->createMaterialSummary([['key' => 'total_import', 'value' => 'IMPORT']], $dataSumMaterial, $alw);
+        
         // Row 19 Rp
+        $this->createSingelRightRowRp();
         $this->createLeftRowRp();
 
         /*Row 20*/
@@ -588,10 +611,12 @@ class Report extends Quotation
         $this->pdf->Cell(24, 4, number_format($tot_alw), 1, 0, 'R');
         $this->pdf->Cell(24, 4, 0, 1, 0, 'R');
         $this->pdf->Cell(24, 4, number_format($tot_alw), 1, 0, 'R');
+        //$this->createLeftRow(20, $item);
 
         /* Row 20 Right*/
+        $this->createMaterialSummary([['key' => 'total_onsite', 'value' => 'ON SITE']], $dataSumMaterial, $alw);
+        $this->createSingelRightRowRp();
         $this->createLeftRowRp();
-
 
         /* Grand Total*/
         
@@ -601,7 +626,6 @@ class Report extends Quotation
         $this->pdf->Cell(70, 8, number_format($gt), 1, 0, 'R');
 
         /* Row 20 Right*/
-
         // Row 20 Rp
         $this->pdf->Ln(0);
         $this->pdf->Cell(130, 8, 'Rp', 0, 0, 'C');
