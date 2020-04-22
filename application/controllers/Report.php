@@ -23,7 +23,7 @@ class Report extends Quotation
         $total = NULL;
         if (isset($item)) {
             $qty = $item['qty'];
-            $part = $item['total_rm'] + $item['total_elc'] + $item['total_pnu'] + $item['total_hyd'] + $item['total_mch'] + $item['total_sub'] +  $item['total_prod'];
+            $part = $item['total_rm'] + $item['total_elc'] + $item['total_pnu'] + $item['total_hyd'] + $item['total_mch'] + $item['total_sub'] +  $item['total_prod'] + $item['total_onsite'] + $item['total_import'];
             // $eng = $item['total_eng'];
             // var_dump($item);
             // die;
@@ -68,7 +68,7 @@ class Report extends Quotation
         $total = 0;
         foreach ($summary as $key => $item) {
             $qty = $item['qty'];
-            $part = $item['total_rm'] + $item['total_elc'] + $item['total_pnu'] + $item['total_hyd'] + $item['total_mch'] + $item['total_sub'] +  $item['total_prod'];
+            $part = $item['total_rm'] + $item['total_elc'] + $item['total_pnu'] + $item['total_hyd'] + $item['total_mch'] + $item['total_sub'] +  $item['total_prod'] + $item['total_onsite'] + $item['total_import'];
             // $eng = $item['total_eng'];
             $eng = $item['group'] == 1 ? $item['total_eng'] * $qty : $item['total_eng'];
             $total += (($qty * $part) + $eng);
@@ -81,7 +81,7 @@ class Report extends Quotation
         $total = 0;
         foreach ($summary as $key => $item) {
             $qty = $item['qty'];
-            $part = $item['total_rm'] + $item['total_elc'] + $item['total_pnu'] + $item['total_hyd'] + $item['total_mch'] + $item['total_sub'];
+            $part = $item['total_rm'] + $item['total_elc'] + $item['total_pnu'] + $item['total_hyd'] + $item['total_mch'] + $item['total_sub'] + $item['total_onsite'] + $item['total_import'];
             $total += ($qty * $part);
         }
         return $total;
