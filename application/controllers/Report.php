@@ -33,7 +33,7 @@ class Report extends Quotation
         }
         $this->pdf->Ln(4);
         $this->pdf->Cell(8, 4, $no, 1, 0, 'C');
-        $this->pdf->Cell(42, 4, isset($item['tipe_name']) ? substr($item['tipe_name'],0,25) : '', 1, 0);
+        $this->pdf->Cell(42, 4, isset($item['tipe_name']) ? substr($item['tipe_name'], 0, 25) : '', 1, 0);
         $this->pdf->Cell(8, 4, isset($qty) ? $qty : '', 1, 0, 'C');
         $this->pdf->Cell(24, 4, isset($part) ? number_format($part) : '', 1, 0, 'R');
         $this->pdf->Cell(24, 4, isset($eng) ? number_format($eng) : '', 1, 0, 'R');
@@ -92,7 +92,7 @@ class Report extends Quotation
     {
         // var_dump($summary);
         // die;
-        
+
         $data = [
             'total_rm' => 0,
             'total_elc' => 0,
@@ -112,7 +112,6 @@ class Report extends Quotation
             $data['total_sub'] += ($item['total_sub'] * $item['qty']);
             $data['total_import'] += ($item['total_import'] * $item['qty']);
             $data['total_onsite'] += ($item['total_onsite'] * $item['qty']);
-
         }
         return $data;
     }
@@ -142,10 +141,11 @@ class Report extends Quotation
         // var_dump($header);die;
         /* Summary */
         $summary = $this->printSummary($id, TRUE);
+        // var_dump($summary);die;
 
         /* Total allowance & grand total */
         /* Grand Total */
-        $alw = $this->db->get_where('v_header',['id' =>  $id])->row()->allowance;
+        $alw = $this->db->get_where('v_header', ['id' =>  $id])->row()->allowance;
         $totwithoutlabour = $this->countGrandTotalWithoutLabour($summary);
         $tot = $this->countGrandTotal($summary);
 
@@ -232,13 +232,13 @@ class Report extends Quotation
         $this->pdf->Cell(24, 4, '(C)', 'R', 0, 'C');
         $this->pdf->Cell(24, 4, '(A*B)+C', 'R', 0, 'C');
 
-        /* Content*/       
+        /* Content*/
 
         /*Row 2*/
         /* Row 2 Left*/
         $item = NULL;
         if (isset($summary[0])) {
-            $item = $summary[0];            
+            $item = $summary[0];
         }
         $this->createLeftRow(1, $item);
 
@@ -291,7 +291,7 @@ class Report extends Quotation
 
         /* Row 5 Right*/
         $this->createMaterialSummary([['key' => 'total_hyd', 'value' => 'STD PART OF HYD'], ['key' => 'total_sub', 'value' => 'SUBCONT']], $dataSumMaterial, $alw);
-        
+
         // Row 5 Rp
         $this->createLeftRowRp();
         $this->createRightRowRp();
@@ -315,7 +315,7 @@ class Report extends Quotation
         }
         $this->createLeftRow(6, $item);
 
-        /* Row 7 Right*/        
+        /* Row 7 Right*/
         $this->pdf->Cell(5);
         $this->pdf->Cell(30, 4, 'INTERNAL LABOUR ENGINEERING', 0, 0);
         // $sqlEng = " SELECT *, SUM(l.hour) as total_hour, SUM(l.`hour` * l.rate) AS total
@@ -333,7 +333,7 @@ class Report extends Quotation
         GROUP BY l.id_part_jasa, l.aktivitas
         ) AS gl
         GROUP BY gl.aktivitas";
-        $sumLbEng = $this->db->query($sqlEng)->result_array();     
+        $sumLbEng = $this->db->query($sqlEng)->result_array();
         //echo $this->db->last_query();
         // var_dump($sumLbEng);
         // die;   
@@ -397,7 +397,7 @@ class Report extends Quotation
         $this->createLeftRow(10, $item);
 
         /* Row 11 Right*/
-        
+
 
         // Row 11 Rp
         $this->createLeftRowRp();
@@ -414,7 +414,7 @@ class Report extends Quotation
         $dataLabour = $this->getDataLabour($id, NULL, false, false);
         $this->pdf->Cell(5);
         $this->pdf->Cell(30, 4, 'INTERNAL LABOUR PRODUCTION', 0, 0);
-        $sumLbProd = array_filter($dataLabour, function($item){
+        $sumLbProd = array_filter($dataLabour, function ($item) {
             return $item['tipe_item'] == 'section';
         });
         // var_dump($dataLabour);
@@ -423,7 +423,7 @@ class Report extends Quotation
         foreach ($sumLbProd as $key => $value) {
             $partJasa[] = $value['id_part_jasa'];
         }
-        $id_part = implode("','",$partJasa);
+        $id_part = implode("','", $partJasa);
         $sqlProd = " SELECT l.*
             FROM labour l
             WHERE l.id_part_jasa IN('$id_part')
@@ -431,29 +431,18 @@ class Report extends Quotation
             GROUP BY l.id_part_jasa
         ";
         $dataQtyPart = $this->db->query($sqlProd)->result_array();
-        // var_dump($dataQtyPart);die;
-        // $dataLbProd = [];
-        // foreach ($sumLbProd as $s => $lb) {
-        //     foreach ($dataQtyPart as $k => $item) {
-        //         if($lb['id_part_jasa'] == $item['id']){
-        //             $lb['qty'] = $item['id'];
-        //             print_r($lb);die;
-        //         }
-        //     }
-        //     $dataLbProd[] = $lb;
-        // }
-        
-        $dataParent = array_filter($dataLabour, function($item){
+        // print_r($dataLabour);die;
+        $dataParent = array_filter($dataLabour, function ($item) {
             return $item['tipe_item'] != 'item';
         });
         // print_r($dataParent);die;
-        
+
         $dataSort = $this->reporter->getStructureTree($dataParent, 'findChildLabour');
         $sql = "SELECT id,id_parent,id_header,id_part_jasa,tipe_id,tipe_item,tipe_name,id_labour,aktivitas,sub_aktivitas,rate, SUM(total_hour) AS `total_hour`, SUM(total_all) AS total FROM (";
         $n = 0;
         foreach ($dataSort as $s => $group) {
-            $ids = implode("','",$group);
-            if($n > 0 )
+            $ids = implode("','", $group);
+            if ($n > 0)
                 $sql .= " UNION ALL";
             $sql .= " SELECT lab.*, j.qty, (totalm * qty) AS total_all FROM (
                 SELECT l.*, SUM(l.`hour`) as total_hour,SUM(l.`hour` * l.`rate`) AS totalm
@@ -469,7 +458,7 @@ class Report extends Quotation
         $sql .= ") AS grp GROUP BY aktivitas";
         // echo($sql);
         // die;
-        $dataLbProd = $this->db->query($sql)->result_array();// var_dump($dataSort);
+        $dataLbProd = $this->db->query($sql)->result_array(); // var_dump($dataSort);
         // echo $this->db->last_query();
         // print_r($dataLbProd);
         // die;
@@ -554,9 +543,9 @@ class Report extends Quotation
             $item = $summary[16];
         }
         $this->createLeftRow(17, $item);
-        
 
         /* Row 17 Right*/
+        $this->createRowIL($dataLbProd, 'Quality Control', 1);
 
         // Row 17 Rp
         $this->createLeftRowRp();
@@ -568,9 +557,12 @@ class Report extends Quotation
             $item = $summary[17];
         }
         $this->createLeftRow(18, $item);
-        $this->pdf->Cell(5);
-        $this->pdf->Cell(40, 4, 'OTHER COST', 0, 0);
 
+        // $this->pdf->Cell(5);
+        // $this->pdf->Cell(40, 4, 'OTHER COST', 0, 0);
+
+        /* Row 18 Right*/
+        $this->createRowIL($dataLbProd, 'Safety Control', 1);
 
         /* Row 18 Right*/
 
@@ -584,42 +576,74 @@ class Report extends Quotation
             $item = $summary[18];
         }
         $this->createLeftRow(19, $item);
-        
+
         /* Row 19 Right*/
-        $this->createMaterialSummary([['key' => 'total_import', 'value' => 'IMPORT']], $dataSumMaterial, $alw);
-        
+        $this->createRowIL($dataLbProd, 'After Sales', 1);
+
         // Row 19 Rp
-        $this->createSingelRightRowRp();
         $this->createLeftRowRp();
 
         /*Row 20*/
         /* Row 20 Left*/
-        
-        $tot_alw = $alw / 100 * $totwithoutlabour;
-        $gt =  $tot + $tot_alw;
 
-        
         $item = NULL;
         if (isset($summary[19])) {
             $item = $summary[19];
         }
-        // $this->createLeftRow(20, $item);
+        $this->createLeftRow(20, $item);
+
+        $this->createLeftRowRp();
+
+        /*Row 21*/
+        /* Row 21 Left*/
+
+        $item = NULL;
+        if (isset($summary[20])) {
+            $item = $summary[20];
+        }
+
+        $this->createLeftRow(21, $item);
+
+        $this->pdf->Cell(5);
+        $this->pdf->Cell(30, 4, 'OTHER COST', 0, 0);
+
+        $this->createLeftRowRp();
+
+
+        /*Row 22*/
+        /* Row 22 Left*/
+        $item = NULL;
+        if (isset($summary[21])) {
+            $item = $summary[21];
+        }
+        $this->createLeftRow(22, $item);
+
+        /* Row 22 Right*/
+        $this->createMaterialSummary([['key' => 'total_onsite', 'value' => 'ONSITE']], $dataSumMaterial, $alw);
+        $this->createSingelRightRowRp();
+        $this->createLeftRowRp();
+        /*Row 23*/
+        /* Row 23 Left*/
+
+        $tot_alw = $alw / 100 * $totwithoutlabour;
+        $gt =  $tot + $tot_alw;
+
         $this->pdf->Ln(4);
-        $this->pdf->Cell(8, 4, 20, 1, 0, 'C');
+        $this->pdf->Cell(8, 4, 23, 1, 0, 'C');
         $this->pdf->Cell(42, 4, 'Overrage', 1, 0);
-        $this->pdf->Cell(8, 4, '', 1, 0, 'C');
+        $this->pdf->Cell(8, 4, number_format($alw) . "%", 1, 0, 'C');
         $this->pdf->Cell(24, 4, number_format($tot_alw), 1, 0, 'R');
         $this->pdf->Cell(24, 4, 0, 1, 0, 'R');
         $this->pdf->Cell(24, 4, number_format($tot_alw), 1, 0, 'R');
-        //$this->createLeftRow(20, $item);
 
-        /* Row 20 Right*/
-        $this->createMaterialSummary([['key' => 'total_onsite', 'value' => 'ON SITE']], $dataSumMaterial, $alw);
+        /* Row 23 Right*/
+        $this->createMaterialSummary([['key' => 'total_import', 'value' => 'IMPORT']], $dataSumMaterial, $alw);
         $this->createSingelRightRowRp();
+
         $this->createLeftRowRp();
 
         /* Grand Total*/
-        
+
         $this->pdf->SetFont('Arial', 'B', '10');
         $this->pdf->Ln(8);
         $this->pdf->Cell(60, 8, 'GRAND TOTAL', 1, 0, 'C');
@@ -633,17 +657,13 @@ class Report extends Quotation
         /* Catatan*/
         $this->pdf->Ln(8);
         $this->pdf->SetFont('Arial', '', '7');
-        $this->pdf->Cell(130, 40, '', 1, 0, 'L');
+        $this->pdf->Cell(130, 28, '', 1, 0, 'L');
 
         $this->pdf->Ln(0);
         $this->pdf->Cell(10, 4, 'NOTE:', 0, 0, 'R');
-        // $this->pdf->Ln(0);
-        // $this->pdf->Cell(10, 10, '- Perbedaan model/dimensi benda kerja', 0, 0);
-        // $this->pdf->Ln(0);
-        // $this->pdf->Cell(10, 15, '- Perbedaan kapasitas pallet di dalam mesin.', 0, 0);
 
         /* Approval */
-        $this->pdf->Ln(18);
+        $this->pdf->Ln(6);
         $this->pdf->Cell(153);
         $this->pdf->Cell(20, 4, 'APPROVED', 1, 0, 'C');
         $this->pdf->Cell(20, 4, 'APPROVED', 1, 0, 'C');
@@ -673,15 +693,16 @@ class Report extends Quotation
         $this->pdf->Cell(20, 4, '', 1, 0);
         $this->pdf->Cell(20, 4, '', 1, 0);
 
-
-        // $this->pdf->AliasNbPages();
-        // die;
-
         $this->pdf->Output('quotation_report.pdf', 'I');
     }
 
     function createRowIL($labour, $aktivitas, $qty = 0, $qty_section = 1)
     {
+        // if ($aktivitas == "Quality Control") {
+        //     # code...
+        //     var_dump($labour);
+        //     die;
+        // }
         foreach ($labour as $key => $item) {
             if ($item['aktivitas'] == $aktivitas) {
                 $total = isset($item['qty']) && $qty != 0 ? ($item['qty'] * $item['total']) : $item['total'];
