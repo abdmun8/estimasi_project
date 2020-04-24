@@ -2156,6 +2156,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             var harga = ($("#harga-item").cleanVal() * 1);
             var qty = $("#qty-item").val();
             var tipe_id = $("#tipe_id-item").val();
+            var kategori = $("#kategori-item").val();
+            var satuan = $("#satuan-item").val();
 
 
             if ($("#tipe_item-item").val() == 'item') {
@@ -2174,6 +2176,22 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     return;
                 } else {
                     $("#qty-item").parent().removeClass('has-error');
+                }
+
+                if (satuan == '') {
+                    $("#satuan-item").parent().addClass('has-error');
+                    alert('Input satuan!');
+                    return;
+                } else {
+                    $("#satuan-item").parent().removeClass('has-error');
+                }
+
+                if (kategori == '' || (kategori) == 0) {
+                    $("#kategori-item").parent().addClass('has-error');
+                    alert('Input kategori!');
+                    return;
+                } else {
+                    $("#kategori-item").parent().removeClass('has-error');
                 }
 
             } else {
