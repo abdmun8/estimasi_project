@@ -127,7 +127,7 @@ class Quotation extends CI_Controller
                         FROM
                             `labour` `l`
                         WHERE
-                            l.id_header ="' . $id_header . '" '.$sql_deleted)->result_array();
+                            l.id_header ="' . $id_header . '" ' . $sql_deleted)->result_array();
 
                 // $data = $this->countTotal($object, 'labour');
                 $temp = $this->countTotal($object, 'labour');
@@ -158,8 +158,8 @@ class Quotation extends CI_Controller
         $object = [];
         $data = [];
         if ($id_header != NULL) {
-            if(isset($_GET['show-deleted']) && $_GET['show-deleted'] == 0){
-                $this->db->having('deleted',0);
+            if (isset($_GET['show-deleted']) && $_GET['show-deleted'] == 0) {
+                $this->db->having('deleted', 0);
             }
             if ($id_material == NULL) {
                 $query = $this->db->get_where('v_rawmaterial', ['id_header' => $id_header]);
@@ -585,7 +585,7 @@ class Quotation extends CI_Controller
             CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," - ",lp.mkt," - "," [",mstchd.stcd,"]" ) as text, 
             (lp.mkt) as harga, lp.remark', false)
             ->from('sgedb.mstchd')
-            ->join('sgedb.msprice lp', 'mstchd.stcd = lp.stcd')
+            ->join('sgedb.msprice lp', 'mstchd.stcd = lp.stcd', 'left')
             ->not_like('mstchd.stcd', 'OFF', 'after')
             ->not_like('mstchd.stcd', 'SNS', 'after')
             ->not_like('mstchd.stcd', 'ATK', 'after')
@@ -622,7 +622,7 @@ class Quotation extends CI_Controller
     {
         $obj = $this->sgedb->select('accno as id, TRIM(`desc`) as text', false)
             ->where_in('header', ['10000', '20000'])
-            ->or_where('accno','40006')
+            ->or_where('accno', '40006')
             // ->having('accno <>', '10001')
             ->having('accno <>', '10006')
             ->get('akunbg')
