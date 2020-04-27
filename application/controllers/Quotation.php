@@ -577,13 +577,13 @@ class Quotation extends CI_Controller
         // die;
         $data = [];
         $obj = $this->sgedb->select('lp.stcd, lp.stcd as id , TRIM(mstchd.nama) as item_name,
-            CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," - ",lp.mkt," - "," [",mstchd.stcd,"]" ) as name, 
+            CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," - ",ifnull(lp.mkt,0)," - "," [",mstchd.stcd,"]" ) as name, 
             TRIM(mstchd.nama) as nama,
             TRIM(mstchd.spek) as spek, 
             TRIM(mstchd.maker) as maker, 
             TRIM(mstchd.uom) as uom, 
-            CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," - ",lp.mkt," - "," [",mstchd.stcd,"]" ) as text, 
-            (lp.mkt) as harga, lp.remark', false)
+            CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," - ",ifnull(lp.mkt,0)," - "," [",mstchd.stcd,"]" ) as text, 
+            ifnull(lp.mkt,0) as harga, lp.remark', false)
             ->from('sgedb.mstchd')
             ->join('sgedb.msprice lp', 'mstchd.stcd = lp.stcd', 'left')
             ->not_like('mstchd.stcd', 'OFF', 'after')
