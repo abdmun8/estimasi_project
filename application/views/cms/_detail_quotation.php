@@ -604,6 +604,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 }
             })
 
+
+            // Auto Change Value to Masked Format
             $('.total_harga').mask("#,##0", {
                 reverse: true
             });
@@ -617,6 +619,10 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 reverse: true
             });
             $('#weight-material').mask("#,##0.00", {
+                reverse: true
+            });
+
+            $('#option-harga').mask("#,##0", {
                 reverse: true
             });
             // $('#total-material').mask("#,##0", {reverse: true});
@@ -941,7 +947,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             let oldHarga = $(o).parent().siblings()[2].innerHTML.replace(/,/g, '')
             let btn = `<button class="btn btn-primary btn-xs" onclick="saveQtyItemExists(this)"><i class="fa fa-save"></i> Save</button>`;
             option = `<input class="force-select-all" style="width:auto;color:#000000;" type="number" min="0" value="${old}" />`;
-            optionHarga = `<input class="force-select-all" style="width:auto;color:#000000;" type="text" min="0" value="${oldHarga}" />`;
+            optionHarga = `<input class="force-select-all" style="width:auto;color:#000000;" id="option-harga" name="option-harga" type="text" min="0" value="${oldHarga}" />`;
             $(o).parent().siblings()[1].innerHTML = option
             $(o).parent().siblings()[2].innerHTML = optionHarga
             $(o).parent().html(btn)
@@ -953,7 +959,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             let inputHarga = $(o).parent().siblings()[2]
             let item = $(o).parent().siblings()[8].innerHTML
             let newValue = $(input).children()[0].value
-            let newHarga = $(inputHarga).children()[0].value
+            let newHarga = $(inputHarga).children()[0].value.replace(/,/g, '')
             let btn = `<button class="btn btn-success btn-xs" onclick="editQtyItemExists(this)"><i class="fa fa-edit"></i> Edit</button>`;
             $(o).parent().siblings()[1].innerHTML = newValue
             $(o).parent().siblings()[2].innerHTML = new Intl.NumberFormat().format(newHarga)

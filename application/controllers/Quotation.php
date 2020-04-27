@@ -609,7 +609,7 @@ class Quotation extends CI_Controller
             $no = 0;
             foreach ($obj as $key => $row) {
                 $no++;
-                $row['qty'] = 0;
+                $row['qty'] = '';
                 $row['no'] = '';
                 $data['data'][] = $row;
             }
