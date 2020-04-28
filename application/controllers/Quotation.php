@@ -576,7 +576,7 @@ class Quotation extends CI_Controller
         // var_dump(1);
         // die;
         $data = [];
-        $obj = $this->sgedb->select('lp.stcd, lp.stcd as id , TRIM(mstchd.nama) as item_name,
+        $obj = $this->sgedb->select('mstchd.stcd, mstchd.stcd as id , TRIM(mstchd.nama) as item_name,
             CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," - ",ifnull(lp.mkt,0)," - "," [",mstchd.stcd,"]" ) as name, 
             TRIM(mstchd.nama) as nama,
             TRIM(mstchd.spek) as spek, 
@@ -591,6 +591,9 @@ class Quotation extends CI_Controller
             ->not_like('mstchd.stcd', 'ATK', 'after')
             ->not_like('mstchd.stcd', 'INV', 'after')
             ->get()->result_array();
+            // $str = $this->sgedb->last_query();
+            // print_r($str);
+            // die;
         if ($set_null) {
             array_unshift($obj, [
                 'harga' => "",
