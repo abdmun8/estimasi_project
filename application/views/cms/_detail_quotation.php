@@ -808,10 +808,10 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                             }
                         },
                         {
-                            'data': 'remark',
-                            render: function(data, type, row) {
-                                return `<button class="btn btn-success btn-xs" onclick="editQtyItemExists(this)"><i class="fa fa-edit"></i> Edit</button>`;
-                            }
+                            'data': 'action'
+                            // render: function(data, type, row, meta) {
+                            //     return `<button class="btn btn-success btn-xs" onclick="editQtyItemExists(this)" disabled><i class="fa fa-edit"></i> Edit</button>`;
+                            // }
                         },
                         {
                             'data': 'qty'
@@ -924,6 +924,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         rows.every(function(rowIdx, tableLoop, rowLoop) {
                             var data = this.data();
                             data.no = true;
+                            let btnEdit = `<button class="btn btn-success btn-xs" onclick="editQtyItemExists(this)"><i class="fa fa-edit"></i> Edit</button>`;
+                            tableDataItemExist.cell(rowIdx, 1).data(btnEdit);
                             this.data(data);
                         });
                     }
@@ -934,6 +936,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         rows.every(function(rowIdx, tableLoop, rowLoop) {
                             var data = this.data();
                             data.no = false;
+                            tableDataItemExist.cell(rowIdx, 1).data('');
                             this.data(data);
                         });
                     }

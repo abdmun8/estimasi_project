@@ -611,6 +611,7 @@ class Quotation extends CI_Controller
                 $no++;
                 $row['qty'] = '';
                 $row['no'] = '';
+                $row['action'] = '';
                 $data['data'][] = $row;
             }
         }
