@@ -263,6 +263,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                             <div class="form-group only_item">
                                                 <label>Item Code</label>
                                                 <select class="form-control select2 input-sm" style="width:100%;" name="item_code-item" id="item_code-item">
+                                                <option value="" selected="">Pilih Item Code</option>
                                                 </select>
                                             </div>
                                             <!-- <div class="form-group only_item">
@@ -275,7 +276,10 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                             </div>
                                             <div class="form-group only_item">
                                                 <label for="satuan-item">Satuan</label>
-                                                <input type="text" class="form-control input-sm" id="satuan-item" name="satuan-item" placeholder="Satuan">
+                                                <select class="form-control select2 input-sm" style="width:100%;" name="satuan-item" id="satuan-item">
+                                                <option value="" selected="">Pilih Satuan</option>
+                                                </select>
+                                                <!-- <input type="text" class="form-control input-sm" id="satuan-item" name="satuan-item" placeholder="Satuan"> -->
                                             </div>
                                             <div class="form-group only_item">
                                                 <label for="qty-item">Qty</label>
@@ -603,7 +607,12 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     format: 'DD-MM-YYYY'
                 }
             });
-
+            $.get(base_url + "bmaterial/get_satuan", function(data){
+                $('#satuan-item').select2({
+                    placeholder: 'Pilih Satuan',
+                    data: data
+                });
+            }, 'json');
             $.get(base_url + "bmaterial/get_item_code/1", function(data) {
                 $('#item_code-item').select2({
                     placeholder: "Pilih Item Code",
@@ -618,6 +627,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     $("#spec-item").val(o.spek);
                     $("#merk-item").val(o.maker);
                     $("#satuan-item").val(o.uom);
+                    $("#satuan-item").trigger('change')
                     $("#item_name-item").val(o.nama);
                     $("#harga-item").val(parseInt(o.harga));
                     $("#kategori-item").val(katval);
@@ -855,7 +865,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                     search: 'applied'
                                 }).select();
                                 tableDataItemExist.page.len(-1).draw()
-                                tableDataItemExist.page.len(11).draw()
+                                tableDataItemExist.page.len(10).draw()
                             }
                         },
                         {
@@ -934,7 +944,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         function saveQtyItemExists(o) {
             let input = $(o).parent().siblings()[1]
             let inputHarga = $(o).parent().siblings()[2]
-            let item = $(o).parent().siblings()[8].innerHTML
+            let item = $(o).parent().siblings()[9].innerHTML
             let newValue = $(input).children()[0].value
             let newHarga = $(inputHarga).children()[0].value
             let btn = `<button class="btn btn-success btn-xs" onclick="editQtyItemExists(this)"><i class="fa fa-edit"></i> Edit</button>`;
@@ -974,7 +984,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             let count = tableDataItemExist.rows('.selected').data().count()
             let data = tableDataItemExist.rows('.selected').data()
             let selected = [];
-            console.log(count);
+            // console.log(count);
             // console.log(data[0].stock);
             // delete data[0].stock;
             if (editedCellValueQty.length == 0) {
@@ -986,7 +996,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 for (let index = 0; index < count; index++) {
                     const element = data[index];
                     console.log(data[index]);
-                    //delete element.stock;
+                    delete element.stock;
                     for (let idx = 0; idx < editedCellValueQty.length; idx++) {
                         const elm = editedCellValueQty[idx];
                         console.log(element);
@@ -1000,7 +1010,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                 element.category = switchCodeToCategory(elm.item_code.substr(0, 3))
                                 element.qty = elm.qty
                                 element.harga = elm.harga.replace(/,/g, '');
-                                element.stock = element.stock;
+                                // element.stock = element.stock;
                                 selected.push(element)
                             }
                         console.log('cccc');
@@ -1011,7 +1021,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
 
                     }
                 }
-                console.log(selected);
+                // console.log(selected);
                 let id_parent_item = $("#id_parent-item").val()
                 let id_header_item = $("#id_header-item").val()
                 $.post(base_url + 'bmaterial/saveMultiItem', {
@@ -1929,7 +1939,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             refreshTableDataItem();
             editedCellValueQty = [];
             $("#remark-harga").text('');
-            $("#item_code").val('');
+            $("#item_code").val([]).trigger("change");
+            $("#item_code-item").val([]).trigger("change");
             $("#tipe_id-item").parent().removeClass('has-error');
             $("#harga-item").parent().removeClass('has-error');
             $("#qty-item").parent().removeClass('has-error');
@@ -2049,6 +2060,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         $("#merk-item").val(json.merk);
                         $("#qty-item").val(json.qty);
                         $("#satuan-item").val(json.satuan);
+                        $('#satuan-item').trigger('change');
                         $("#spec-item").val(json.spec);
                         $("#tipe_name-item").val(json.tipe_name);
                         $("#tipe_item-item").val(json.tipe_item);
@@ -2451,13 +2463,14 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     value: '10003'
                 },
                 {
-                    code: ['PNU', 'PNE'],
+                    code: ['PNU', 'PNE','PPG'],
                     value: '10004'
                 },
                 {
                     code: ['SNS'],
                     value: '20001'
                 },
+               
             ];
             let val = '';
             codes.forEach(element => {

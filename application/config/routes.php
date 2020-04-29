@@ -137,6 +137,8 @@ $route['bmaterial/print_part/(:num)'] = 'BMaterial/printPart/$1';
 $route['bmaterial/print_labour/(:num)'] = 'BMaterial/printLabour/$1';
 $route['bmaterial/print_summary/(:num)'] = 'BMaterial/printSummary/$1';
 $route['bmaterial/print_detail_summary/(:num)'] = 'BMaterial/printDetailSummary/$1';
+$route['bmaterial/get_satuan'] = 'BMaterial/getSatuan';
+
 
 /* labour bill material */
 $route['bmaterial/get_data_labour/(:num)'] = 'BMaterial/getDataLabour/$1';

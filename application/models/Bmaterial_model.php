@@ -70,7 +70,7 @@ class Bmaterial_model extends Model {
             "harga" => $post['harga-item-clean'],
             "remark_harga" => $post['remark-harga'],
             "kategori" => $post['kategori-item'],
-            "stock" => $post['stock'],
+            // "stock" => $post['stock'],
             "group" => isset($post['group-item']) ? $post['group-item'] : 0
         ];
 

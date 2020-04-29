@@ -440,7 +440,6 @@ class Bmaterial extends CI_Controller
             $temp['kategori-item'] = $value['category'];
             $temp['harga-item-clean'] = floatval($value['harga']);
             $temp['remark-harga'] = $value['remark'];
-            $temp['stock'] = $value['stock'];
 
             $_POST = $temp;
             if (!$this->bmaterial->insertDetailPart()) {
@@ -581,6 +580,13 @@ class Bmaterial extends CI_Controller
             'message' => $message
         )));
     }
+    function getSatuan(){
+        $data = [];
+        $sql = $this->sgedb->select('kode as id, name as text')-> get('tblsatuan');
+        $sqlData = $sql->result();
+        //$data[] = $sqlData;
+        echo json_encode($sqlData);
+    }
 
     public function getItemCode($set_null = 1)
     {
@@ -623,7 +629,6 @@ class Bmaterial extends CI_Controller
                 'spek' => "",
                 'stcd' => "",
                 'text' => "",
-                'stock' => "",
                 'uom' => ""
             ]);
             $data = $obj;
@@ -757,7 +762,6 @@ class Bmaterial extends CI_Controller
             /* current using soft delete */
             // $del = $this->db->delete($post['table'], ['id' => $post['id']]);
             $del = $this->db->update($post['table'], ['deleted' => 1], ['id' => $post['id']]);
-            echo $this->db->last_query();
             if ($del) {
                 $this->db->trans_commit();
                 $code = 1;
