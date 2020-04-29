@@ -127,8 +127,8 @@ if ($param != null) {
             <div class="modal-body">
                 <div class="form-group">
                     <label for="allowance-input" class="col-md-4 control-label">Allowance</label>
-                    <div class="col-md-8">
-                        <input type="number" min="0" class="form-control" id="allowance-input" name="allowance-input" placeholder="Allowance" />
+                    <div class="col-md-5">
+                        <input type="number" min="0" class="form-control" id="allowance-input" name="allowance-input" placeholder="Allowance"/>
                     </div>
                     <input type="text" id="id_header-allowance" hidden>
                 </div>
@@ -191,28 +191,35 @@ if ($param != null) {
     function saveAllowance() {
         let allowance = $("#allowance-input").val();
         let id_header = $("#id_header-allowance").val();
-        loading('loading1', true);
-        setTimeout(function() {
-            $.ajax({
-                url: base_url + 'quotation/save_allowance',
-                data: {
-                    allowance: allowance,
-                    id: id_header
-                },
-                dataType: 'json',
-                type: 'POST',
-                cache: false,
-                success: function(json) {
-                    $("#modal-allowance").modal('hide')
-                    refreshTable();
-                    loading('loading1', false);
-                    notify('success', 'Penyimpanan data berhasil');
-                },
-                error: function() {
-                    loading('loading1', false);
-                }
-            });
-        }, 100);
+
+        if (allowance > 15){
+            alert("Nilai Allowance Maksimum 15%");
+        } else {
+
+            loading('loading1', true);
+            setTimeout(function() {
+                $.ajax({
+                    url: base_url + 'quotation/save_allowance',
+                    data: {
+                        allowance: allowance,
+                        id: id_header
+                    },
+                    dataType: 'json',
+                    type: 'POST',
+                    cache: false,
+                    success: function(json) {
+                        $("#modal-allowance").modal('hide')
+                        refreshTable();
+                        loading('loading1', false);
+                        notify('success', 'Penyimpanan data berhasil');
+                    },
+                    error: function() {
+                        loading('loading1', false);
+                    }
+                });
+            }, 100);
+        }
+        
     }
 
 

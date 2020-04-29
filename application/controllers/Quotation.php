@@ -127,7 +127,7 @@ class Quotation extends CI_Controller
                         FROM
                             `labour` `l`
                         WHERE
-                            l.id_header ="' . $id_header . '" '.$sql_deleted)->result_array();
+                            l.id_header ="' . $id_header . '" ' . $sql_deleted)->result_array();
 
                 // $data = $this->countTotal($object, 'labour');
                 $temp = $this->countTotal($object, 'labour');
@@ -158,8 +158,8 @@ class Quotation extends CI_Controller
         $object = [];
         $data = [];
         if ($id_header != NULL) {
-            if(isset($_GET['show-deleted']) && $_GET['show-deleted'] == 0){
-                $this->db->having('deleted',0);
+            if (isset($_GET['show-deleted']) && $_GET['show-deleted'] == 0) {
+                $this->db->having('deleted', 0);
             }
             if ($id_material == NULL) {
                 $query = $this->db->get_where('v_rawmaterial', ['id_header' => $id_header]);
@@ -576,21 +576,24 @@ class Quotation extends CI_Controller
         // var_dump(1);
         // die;
         $data = [];
-        $obj = $this->sgedb->select('lp.stcd, lp.stcd as id , TRIM(mstchd.nama) as item_name,
-            CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," - ",lp.mkt," - "," [",mstchd.stcd,"]" ) as name, 
+        $obj = $this->sgedb->select('mstchd.stcd, mstchd.stcd as id , TRIM(mstchd.nama) as item_name,
+            CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," - ",ifnull(lp.mkt,0)," - "," [",mstchd.stcd,"]" ) as name, 
             TRIM(mstchd.nama) as nama,
             TRIM(mstchd.spek) as spek, 
             TRIM(mstchd.maker) as maker, 
             TRIM(mstchd.uom) as uom, 
-            CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," - ",lp.mkt," - "," [",mstchd.stcd,"]" ) as text, 
-            (lp.mkt) as harga, lp.remark', false)
+            CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," - ",ifnull(lp.mkt,0)," - "," [",mstchd.stcd,"]" ) as text, 
+            ifnull(lp.mkt,0) as harga, lp.remark', false)
             ->from('sgedb.mstchd')
-            ->join('sgedb.msprice lp', 'mstchd.stcd = lp.stcd')
+            ->join('sgedb.msprice lp', 'mstchd.stcd = lp.stcd', 'left')
             ->not_like('mstchd.stcd', 'OFF', 'after')
             ->not_like('mstchd.stcd', 'SNS', 'after')
             ->not_like('mstchd.stcd', 'ATK', 'after')
             ->not_like('mstchd.stcd', 'INV', 'after')
             ->get()->result_array();
+            // $str = $this->sgedb->last_query();
+            // print_r($str);
+            // die;
         if ($set_null) {
             array_unshift($obj, [
                 'harga' => "",
@@ -609,8 +612,9 @@ class Quotation extends CI_Controller
             $no = 0;
             foreach ($obj as $key => $row) {
                 $no++;
-                $row['qty'] = 0;
+                $row['qty'] = '';
                 $row['no'] = '';
+                $row['action'] = '';
                 $data['data'][] = $row;
             }
         }
@@ -622,7 +626,7 @@ class Quotation extends CI_Controller
     {
         $obj = $this->sgedb->select('accno as id, TRIM(`desc`) as text', false)
             ->where_in('header', ['10000', '20000'])
-            ->or_where('accno','40006')
+            ->or_where('accno', '40006')
             // ->having('accno <>', '10001')
             ->having('accno <>', '10006')
             ->get('akunbg')

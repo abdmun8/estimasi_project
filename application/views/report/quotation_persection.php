@@ -193,7 +193,7 @@ foreach ($sectionPart as $key => $section) {
 
         $activeSheet->getCell('B' . $row)->setValueExplicit($part['tipe_item'] == 'item' ? '' : strval($part['tipe_id']), DataType::TYPE_STRING);
         $activeSheet->setCellValue('C' . $row, $part['item_code']);
-        $activeSheet->setCellValue('D' . $row, $part['tipe_item'] == 'item' ? $part['item_name'] : addSpaceName($part['tipe_item']).$part['tipe_name']);
+        $activeSheet->setCellValue('D' . $row, $part['tipe_item'] == 'item' ? $part['item_name'] : addSpaceName($part['tipe_item']) . $part['tipe_name']);
         $activeSheet->setCellValue('E' . $row, $part['spec']);
         $activeSheet->setCellValue('G' . $row, $part['merk']);
         $activeSheet->setCellValue('H' . $row, $part['satuan']);
@@ -233,18 +233,30 @@ foreach ($sectionPart as $key => $section) {
         $row++;
     }
 
-    // sub total material
+    // sub total Part & Jasa
     // $row += 1;
     $tot_alw = ($allowance / 100 * $sub_total);
     $sub = $sub_total + $tot_alw;
     $grand_total += $sub;
 
+    $one = 1;
+    $last_row = $row - $one;
+
+    $activeSheet->setCellValue("M$row", "Total Part & Jasa");
+    $activeSheet->setCellValue("O$row", "=SUM(O6:O$last_row)");
+    $activeSheet->getStyle("O$row")->getNumberFormat()
+        ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+    $activeSheet->getStyle("M$row:O$row")->getFont()->setSize(9);
+    $activeSheet->getStyle("M$row:O$row")->getFont()->setBold(true);
+
+    $row += 1;
     $activeSheet->setCellValue("M$row", "Overrage $allowance %");
     $activeSheet->setCellValue("O$row", $tot_alw);
     $activeSheet->getStyle("O$row")->getNumberFormat()
         ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
     $activeSheet->getStyle("M$row:O$row")->getFont()->setSize(9);
     $activeSheet->getStyle("M$row:O$row")->getFont()->setBold(true);
+
     $row += 1;
     $activeSheet->setCellValue("M$row", "Sub Total");
     $activeSheet->setCellValue("O$row", $sub);
@@ -253,11 +265,9 @@ foreach ($sectionPart as $key => $section) {
     $activeSheet->getStyle("M$row:O$row")->getFont()->setSize(9);
     $activeSheet->getStyle("M$row:O$row")->getFont()->setBold(true);
 
-    // query material
-    // $this->db->select('m.*', false);
-    // $this->db->where(['deleted <>' => 1, 'tipe_item' => 'item']);
-    // $this->db->where_in('id_parent', $parentMaterial[$n]);
-    // $itemMaterial = $this->db->get("v_rawmaterial m")->result_array();
+    $addRow = 4;
+    $first_row_rm = $row + $addRow;
+
     $tempMaterial = $this->reporter->getStructure($dataMaterial, 'findChildMaterial');
     $itemMaterial = [];
     foreach ($tempMaterial as $key => $item) {
@@ -293,7 +303,7 @@ foreach ($sectionPart as $key => $section) {
         // $activeSheet->setCellValue('B' . $row, $noitem);
         $activeSheet->getCell('B' . $row)->setValueExplicit($material['tipe_item'] == 'item' ? '' : strval($material['tipe_id']), DataType::TYPE_STRING);
         $activeSheet->setCellValue('C' . $row, $material['tipe_item'] == 'item' ? $material['item_code'] : '');
-        $activeSheet->setCellValue('D' . $row, $material['tipe_item'] == 'item' ? $material['part_name'] : addSpaceName($material['tipe_item']).$material['tipe_name']);
+        $activeSheet->setCellValue('D' . $row, $material['tipe_item'] == 'item' ? $material['part_name'] : addSpaceName($material['tipe_item']) . $material['tipe_name']);
         // $activeSheet->setCellValue('D' . $row, isset($material['part_name']) ? $material['part_name'] : '');
         $activeSheet->setCellValue('E' . $row, isset($material['units']) ? $material['units'] : '');
         $activeSheet->setCellValue('F' . $row, isset($material['qty']) ? $material['qty'] : '');
@@ -328,12 +338,22 @@ foreach ($sectionPart as $key => $section) {
         $row++;
     }
 
-    // sub total material
+    // sub total Raw Material
     $tot_alw = 0;
     $tot_alw = ($allowance / 100 * $sub_total);
     $sub = $sub_total + $tot_alw;
     $grand_total += $sub;
 
+    $last_row = $row - $one;
+
+    $activeSheet->setCellValue("M$row", "Total Raw Material");
+    $activeSheet->setCellValue("O$row", "=SUM(O$first_row_rm:O$last_row)");
+    $activeSheet->getStyle("O$row")->getNumberFormat()
+        ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+    $activeSheet->getStyle("M$row:O$row")->getFont()->setSize(9);
+    $activeSheet->getStyle("M$row:O$row")->getFont()->setBold(true);
+
+    $row += 1;
     $activeSheet->setCellValue("M$row", "Overrage $allowance %");
     $activeSheet->setCellValue("O$row", $tot_alw);
     $activeSheet->getStyle("O$row")->getNumberFormat()
@@ -457,7 +477,7 @@ $spreadsheet->setActiveSheetIndex(0);
 // $writer->save('php://output');
 // exit;
 $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-$file = 'temp/'.$title.'.xlsx';
+$file = 'temp/' . $title . '.xlsx';
 $writer->save($file);
 $base_url = base_url();
 
