@@ -81,7 +81,24 @@ class Quotation extends CI_Controller
             $sql_deleted = isset($_GET['show-deleted']) && $_GET['show-deleted'] == 0 ? " HAVING deleted = '0'" : "";
             if ($id_part == NULL) {
                 $object = $this->db->query("SELECT
-                            j.*,
+                            j.id,
+                            j.id_header,
+                            j.id_parent,
+                            j.tipe_item,
+                            j.tipe_id,
+                            UPPER(j.tipe_name) AS tipe_name,
+                            j.item_code,
+                            UPPER(j.item_name) AS item_name,
+                            UPPER(j.spec) AS spec,
+                            UPPER(j.merk) AS merk,
+                            UPPER(j.satuan) AS satuan,
+                            j.harga,
+                            j.qty,
+                            j.kategori,
+                            j.deleted,
+                            j.group,
+                            j.remark_harga,
+                            j.updated_datetime,
                             (SELECT
                                     tipe_item
                                 FROM
@@ -117,7 +134,20 @@ class Quotation extends CI_Controller
             if ($id_labour == NULL) {
                 // $object = $this->db->get_where('v_labour', ['id_header' => $id_header])->result_array();
                 $object = $this->db->query('SELECT
-                    `l`.*,id as opsi,
+                            l.id,
+                            l.id_parent,
+                            l.id_header,
+                            l.id_part_jasa,
+                            l.tipe_id,
+                            l.tipe_item,
+                            UPPER(l.tipe_name) AS tipe_name,
+                            l.id_labour,
+                            l.aktivitas,
+                            l.sub_aktivitas,
+                            l.hour,
+                            l.rate,
+                            l.deleted,
+                            l.updated_datetime,id as opsi,
                             (SELECT
                                     tipe_item
                                 FROM
@@ -615,6 +645,7 @@ class Quotation extends CI_Controller
                 $row['qty'] = '';
                 $row['no'] = '';
                 $row['action'] = '';
+                $row['harga'] =  number_format($row['harga']);
                 $data['data'][] = $row;
             }
         }

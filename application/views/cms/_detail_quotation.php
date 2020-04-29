@@ -116,8 +116,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
     <div style="margin-top: 10px;"></div>
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#general_info_tab">General Info</a></li>
-        <li><a data-toggle="tab" href="#std_part_tab">Part & Jasa</a></li>
-        <li><a data-toggle="tab" href="#material_tab">Material</a></li>
+        <li><a data-toggle="tab" href="#std_part_tab">Std Part & Jasa</a></li>
+        <li><a data-toggle="tab" href="#material_tab">Raw Material</a></li>
         <li><a data-toggle="tab" href="#labour_tab">Labour</a></li>
     </ul>
 
@@ -268,7 +268,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Manage <span class="modal-title-input"></span></h4>
+                    <h4 class="modal-title">Manage <span class="modal-title-input-header"></span></h4>
                 </div>
                 <div class="modal-body">
                     <!-- Custom Tabs (Pulled to the right) -->
@@ -817,11 +817,11 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                             'data': 'qty'
                         },
                         {
-                            'data': 'harga',
-                            'render': function(data) {
-                                let number = parseFloat(data)
-                                return new Intl.NumberFormat().format(number)
-                            }
+                            'data': 'harga'
+                            // 'render': function(data) {
+                            //     let number = parseFloat(data)
+                            //     return new Intl.NumberFormat().format(number)
+                            // }
                         },
                         {
                             'data': 'item_name'
@@ -847,10 +847,10 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     "order": [
                         [0, "asc"]
                     ],
-                    autoWidth: false,
+                    autoWidth: true,
                     deferRender: true,
                     bAutoWidth: false,
-                    responsive: true,
+                    responsive: false,
                     scrollX: true,
                     columnDefs: [{
                         type: "text",
@@ -862,14 +862,6 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         style: 'multi',
                         selector: 'td:first-child'
                     },
-                    // columnDefs: [{
-                    //     orderable: true,
-                    //     className: 'select-checkbox',
-                    //     targets: 0,
-                    // }],
-                    // select: {
-                    //     style: 'multi',
-                    // },
                     dom: 'Bfrtip',
                     buttons: [{
                             text: '<i class="fa fa-check-square-o"></i> Select all',
@@ -918,25 +910,40 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     });
                 });
 
+                // Set global variable 
+                var oldHarga = 0;
                 tableDataItemExist.on('select', function(e, dt, type, indexes) {
                     if (type === 'row') {
                         var rows = tableDataItemExist.rows(indexes);
                         rows.every(function(rowIdx, tableLoop, rowLoop) {
                             var data = this.data();
+                            let oldQty = data.qty;
+                            oldHarga = data.harga.replace(/,/g, '');
                             data.no = true;
-                            let btnEdit = `<button class="btn btn-success btn-xs" onclick="editQtyItemExists(this)"><i class="fa fa-edit"></i> Edit</button>`;
-                            tableDataItemExist.cell(rowIdx, 1).data(btnEdit);
+
+                            //Create HTML Tag for column on row datatable
+                            let optionQty = `<input class="force-select-all" style="width:auto;color:#000000;" type="number" min="0" value="${oldQty}" />`;
+                            let optionHarga = `<input class="force-select-all" style="width:auto;color:#000000;" id="option-harga" name="option-harga" type="text" min="0" value="${oldHarga}" />`;
+                            let btnSave = `<button class="btn btn-primary btn-xs" onclick="saveQtyItemExists(this)"><i class="fa fa-save"></i> Save</button>`;
+                            tableDataItemExist.cell(rowIdx, 1).data(btnSave);
+                            tableDataItemExist.cell(rowIdx, 2).data(optionQty);
+                            tableDataItemExist.cell(rowIdx, 3).data(optionHarga);
                             this.data(data);
                         });
                     }
                 });
+
                 tableDataItemExist.on('deselect', function(e, dt, type, indexes) {
                     if (type === 'row') {
                         var rows = tableDataItemExist.rows(indexes);
                         rows.every(function(rowIdx, tableLoop, rowLoop) {
                             var data = this.data();
+                            // let oldHarga =  data.harga;
+                            // console.log(oldHarga);
                             data.no = false;
                             tableDataItemExist.cell(rowIdx, 1).data('');
+                            tableDataItemExist.cell(rowIdx, 2).data('');
+                            tableDataItemExist.cell(rowIdx, 3).data(oldHarga);
                             this.data(data);
                         });
                     }
@@ -945,16 +952,16 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         }
 
         // Edit item Qty Exists
-        function editQtyItemExists(o) {
-            let old = $(o).parent().siblings()[1].innerHTML
-            let oldHarga = $(o).parent().siblings()[2].innerHTML.replace(/,/g, '')
-            let btn = `<button class="btn btn-primary btn-xs" onclick="saveQtyItemExists(this)"><i class="fa fa-save"></i> Save</button>`;
-            option = `<input class="force-select-all" style="width:auto;color:#000000;" type="number" min="0" value="${old}" />`;
-            optionHarga = `<input class="force-select-all" style="width:auto;color:#000000;" id="option-harga" name="option-harga" type="text" min="0" value="${oldHarga}" />`;
-            $(o).parent().siblings()[1].innerHTML = option
-            $(o).parent().siblings()[2].innerHTML = optionHarga
-            $(o).parent().html(btn)
-        }
+        // function editQtyItemExists(o) {
+        //     let old = $(o).parent().siblings()[1].innerHTML
+        //     let oldHarga = $(o).parent().siblings()[2].innerHTML.replace(/,/g, '')
+        //     let btn = `<button class="btn btn-primary btn-xs" onclick="saveQtyItemExists(this)"><i class="fa fa-save"></i> Save</button>`;
+        //     option = `<input class="force-select-all" style="width:auto;color:#000000;" type="number" min="0" value="${old}" />`;
+        //     optionHarga = `<input class="force-select-all" style="width:auto;color:#000000;" id="option-harga" name="option-harga" type="text" min="0" value="${oldHarga}" />`;
+        //     $(o).parent().siblings()[1].innerHTML = option
+        //     $(o).parent().siblings()[2].innerHTML = optionHarga
+        //     $(o).parent().html(btn)
+        // }
 
         // Save item Qty
         function saveQtyItemExists(o) {
@@ -1094,7 +1101,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 toolbar: "#demo-toolbar", //顶部工具条
                 expandColumn: 1,
                 expandAll: true,
-                height: 480,
+                height: 750,
                 type: 'get',
                 parentId: 'id_parent',
                 url: base_url + 'quotation/get_data_part/' + id_header_tree + '?show-deleted=' + show_deleted,
@@ -1111,9 +1118,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                             if (row.deleted == 1)
                                 return '';
                             if (row.tipe_item !== 'item') {
-                                actions.push('<a class="btn btn-info btn-xs " title="Tambah Sub" onclick="showModalInput(\'' + row.tipe_item + '\',' + row.id + ',' + row.id_parent + ',' + true + ')" href="#"><i class="fa fa-plus"></i></a> ');
+                                actions.push('<a class="btn btn-info btn-xs " title="Tambah Sub" onclick="showModalInput(\'' + row.tipe_item + '\',\'' + row.tipe_name + '\',' + row.id + ',' + row.id_parent + ',' + true + ')" href="#"><i class="fa fa-plus"></i></a> ');
                             }
-                            actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="showModalInput(\'' + row.tipe_item + '\',' + row.id + ',' + row.id_parent + ',' + false + ',\'edit\')"><i class="fa fa-edit"></i></a> ');
+                            actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="showModalInput(\'' + row.tipe_item + '\',\'' + row.tipe_name + '\',' + row.id + ',' + row.id_parent + ',' + false + ',\'edit\')"><i class="fa fa-edit"></i></a> ');
                             actions.push('<a class="btn btn-danger btn-xs " title="Hapus" onclick="confirmDelete(' + row.id + ',\'part_jasa\',\'' + row.tipe_item + '\')"><i class="fa fa-remove"></i></a>');
                             return actions.join('');
                         }
@@ -1359,7 +1366,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 toolbar: "#labour-toolbar", //顶部工具条
                 expandColumn: 1,
                 expandAll: false,
-                height: 480,
+                height: 750,
                 type: 'get',
                 parentId: 'id_parent',
                 url: base_url + 'quotation/get_data_labour/' + id_header_tree + '?show-deleted=' + show_deleted,
@@ -1509,7 +1516,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 toolbar: "#material-toolbar", //顶部工具条
                 expandColumn: 1,
                 expandAll: false,
-                height: 480,
+                height: 750,
                 type: 'get',
                 parentId: 'id_parent',
                 url: base_url + 'quotation/get_data_material/' + id_header_tree + '?show-deleted=' + show_deleted,
@@ -1944,7 +1951,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
          * @sub : if sub true = add sub
          * @action : add = 1 || edit = 2
          */
-        function showModalInput(title, id = '', id_parent = '', sub = false, action = 'add') {
+        function showModalInput(title, tipe_name, id = '', id_parent = '', sub = false, action = 'add') {
             refreshTableDataItem();
             editedCellValueQty = [];
             $("#remark-harga").text('');
@@ -1954,9 +1961,12 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             $("#qty-item").parent().removeClass('has-error');
             $("#tipe_item-item").parent().show();
 
+            var tipeName = tipe_name;
             var title_self = title;
             var title_text = title;
 
+            // Set Section Name on Form
+            $("#tipe_name-item").val(tipeName);
 
             if (title == 'item') {
                 $(".except_item").hide();
@@ -2117,7 +2127,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             }
 
             title_text = title_text.replace('_', ' ');
-
+            // title_text = tipe_name;
+            // console.log(tipeName);
+            $(".modal-title-input-header").text(ucFirst(title_text + ' ' + tipeName));
             $(".modal-title-input").text(ucFirst(title_text));
             $('#modal-input-item').modal('show');
         }
