@@ -292,6 +292,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                             <div class="form-group only_item">
                                                 <label>Item Code</label>
                                                 <select class="form-control select2 input-sm" style="width:100%;" name="item_code-item" id="item_code-item">
+                                                <option value="" selected="">Pilih Item Code</option>
                                                 </select>
                                             </div>
                                             <!-- <div class="form-group only_item">
@@ -304,7 +305,10 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                             </div>
                                             <div class="form-group only_item">
                                                 <label for="satuan-item">Satuan</label>
-                                                <input type="text" class="form-control input-sm" id="satuan-item" name="satuan-item" placeholder="Satuan">
+                                                <select class="form-control select2 input-sm" style="width:100%;" name="satuan-item" id="satuan-item">
+                                                <option value="" selected="">Pilih Satuan</option>
+                                                </select>
+                                                <!-- <input type="text" class="form-control input-sm" id="satuan-item" name="satuan-item" placeholder="Satuan"> -->
                                             </div>
                                             <div class="form-group only_item">
                                                 <label for="qty-item">Qty</label>
@@ -422,7 +426,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Manage Material</span></h4>
+                    <h4 class="modal-title">Manage Material <span id="modal-title-material"></span></h4>
                 </div>
                 <div class="modal-body">
                     <form role="form" id="form-input-material">
@@ -636,7 +640,12 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     format: 'DD-MM-YYYY'
                 }
             });
-
+            $.get(base_url + "quotation/get_satuan", function(data){
+                $('#satuan-item').select2({
+                    placeholder: 'Pilih Satuan',
+                    data: data
+                });
+            }, 'json');
             $.get(base_url + "quotation/get_item_code/1", function(data) {
                 $('#item_code-item').select2({
                     placeholder: "Pilih Item Code",
@@ -651,6 +660,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     $("#spec-item").val(o.spek);
                     $("#merk-item").val(o.maker);
                     $("#satuan-item").val(o.uom);
+                    $("#satuan-item").trigger('change');
                     $("#item_name-item").val(o.nama);
                     $("#harga-item").val(parseInt(o.harga));
                     $("#kategori-item").val(katval);
@@ -1405,8 +1415,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         formatter: function(value, row, index) {
                             if (row.deleted == 1)
                                 return '';
-                            return `<button onclick="showModalDetailLabour(${value},'ENGINEERING')" class="btn btn-xs btn-info"><i class="fa fa-plus"></i> ENG</button>
-                                <button onclick="showModalDetailLabour(${value},'PRODUCTION')" class="btn btn-xs btn-info"><i class="fa fa-plus"></i> PROD</button>`;
+                            return `<button onclick="showModalDetailLabour(${value},\'${row.tipe_name}\','ENGINEERING')" class="btn btn-xs btn-info"><i class="fa fa-plus"></i> ENG</button>
+                                <button onclick="showModalDetailLabour(${value},\'${row.tipe_name}\','PRODUCTION')" class="btn btn-xs btn-info"><i class="fa fa-plus"></i> PROD</button>`;
                         }
                     },
 
@@ -1533,10 +1543,10 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                             if (row.deleted == 1)
                                 return ''
                             if (row.tipe_item === 'item') {
-                                actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="addItemMaterial(' + row.id + ',' + row.id_parent + ',\'edit\')"><i class="fa fa-edit"></i></a> ');
+                                actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="addItemMaterial(' + row.id + ',\'' + row.tipe_name + '\', ' + row.id_parent + ',\'edit\')"><i class="fa fa-edit"></i></a> ');
                                 actions.push('<a class="btn btn-danger btn-xs " title="Hapus" onclick="confirmDelete(' + row.id + ',\'rawmaterial\',\'' + row.tipe_item + '\')"><i class="fa fa-remove"></i></a>');
                             } else {
-                                actions.push('<a class="btn btn-info btn-xs " title="Tambah Sub" onclick="addItemMaterial(' + row.id + ',' + row.id_parent + ')" href="#"><i class="fa fa-plus"></i></a> ');
+                                actions.push('<a class="btn btn-info btn-xs " title="Tambah Sub" onclick="addItemMaterial(' + row.id + ',\'' + row.tipe_name + '\',' + row.id_parent + ')" href="#"><i class="fa fa-plus"></i></a> ');
                             }
                             return actions.join('');
                         }
@@ -2078,6 +2088,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         $("#merk-item").val(json.merk);
                         $("#qty-item").val(json.qty);
                         $("#satuan-item").val(json.satuan);
+                        $("#satuan-item").trigger('change');
                         $("#spec-item").val(json.spec);
                         $("#tipe_name-item").val(json.tipe_name);
                         $("#tipe_item-item").val(json.tipe_item);
@@ -2424,8 +2435,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             }, 100);
         }
 
-        function addItemMaterial(id, id_parent, action = 'add') {
+        function addItemMaterial(id, tipe_name, id_parent, action = 'add') {
             $("#form-input-material")[0].reset();
+            $("#modal-title-material").text(tipe_name)
             if (action == 'edit') {
                 $("#id-material").val(id)
                 $("#action-material").val(2)
@@ -2525,13 +2537,13 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         }
 
         // Show Modal Detail
-        function showModalDetailLabour(id, title) {
+        function showModalDetailLabour(id, tipe_name, title) {
             refreshTableDetail(id, title);
             localStorage.setItem('dataModalLabour', JSON.stringify({
                 'id_header': id,
                 'type_input': title
             }));
-            $("#labour-input-title").text(title)
+            $("#labour-input-title").text(title + " " + tipe_name)
             $("#modal-detail").modal('show');
         }
 

@@ -601,6 +601,15 @@ class Quotation extends CI_Controller
         )));
     }
 
+    function getSatuan()
+    {
+        $data = [];
+        $sql = $this->sgedb->select('kode as id, name as text')->get('tblsatuan');
+        $sqlData = $sql->result();
+        //$data[] = $sqlData;
+        echo json_encode($sqlData);
+    }
+
     public function getItemCode($set_null = 1)
     {
         // var_dump(1);
@@ -621,9 +630,9 @@ class Quotation extends CI_Controller
             ->not_like('mstchd.stcd', 'ATK', 'after')
             ->not_like('mstchd.stcd', 'INV', 'after')
             ->get()->result_array();
-            // $str = $this->sgedb->last_query();
-            // print_r($str);
-            // die;
+        // $str = $this->sgedb->last_query();
+        // print_r($str);
+        // die;
         if ($set_null) {
             array_unshift($obj, [
                 'harga' => "",

@@ -97,6 +97,7 @@ $route['quotation/print_part/(:num)'] = 'Quotation/printPart/$1';
 $route['quotation/print_labour/(:num)'] = 'Quotation/printLabour/$1';
 $route['quotation/print_summary/(:num)'] = 'Quotation/printSummary/$1';
 $route['quotation/print_detail_summary/(:num)'] = 'Quotation/printDetailSummary/$1';
+$route['quotation/get_satuan'] = 'Quotation/getSatuan';
 
 /* labour */
 $route['quotation/get_data_labour/(:num)'] = 'Quotation/getDataLabour/$1';
