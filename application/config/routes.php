@@ -117,6 +117,46 @@ $route['quotation/get_data_material/(:num)/(:num)'] = 'Quotation/getDataMaterial
 $route['quotation/save_material'] = 'Quotation/saveMaterial';
 $route['quotation/get_material_code'] = 'Quotation/getMaterialCode';
 
+/* header bill material */
+$route['bmaterial'] = 'BMaterial/index';
+$route['bmaterial/(:num)'] = 'BMaterial/index/$1';
+$route['bmaterial/get_data_header'] = 'BMaterial/getDataHeader';
+$route['bmaterial/get_data_header/(:num)'] = 'BMaterial/getDataHeader/$1';
+$route['bmaterial/get_customer'] = 'BMaterial/getCustomer';
+$route['bmaterial/get_pic'] = 'BMaterial/getPIC';
+
+/* Part jasa bill material*/
+$route['bmaterial/get_data_part'] = 'BMaterial/getDataPart';
+$route['bmaterial/get_data_part/(:num)'] = 'BMaterial/getDataPart/$1';
+$route['bmaterial/get_data_part/(:num)/(:num)'] = 'BMaterial/getDataPart/$1/$2';
+$route['bmaterial/save_item'] = 'BMaterial/saveitem';
+$route['bmaterial/get_kategori'] = 'BMaterial/getKategori';
+$route['bmaterial/save_gen_info'] = 'BMaterial/saveGeneralInfo';
+$route['bmaterial/get_item_code/(:num)'] = 'BMaterial/getItemCode/$1';
+$route['bmaterial/print_part/(:num)'] = 'BMaterial/printPart/$1';
+$route['bmaterial/print_labour/(:num)'] = 'BMaterial/printLabour/$1';
+$route['bmaterial/print_summary/(:num)'] = 'BMaterial/printSummary/$1';
+$route['bmaterial/print_detail_summary/(:num)'] = 'BMaterial/printDetailSummary/$1';
+
+/* labour bill material */
+$route['bmaterial/get_data_labour/(:num)'] = 'BMaterial/getDataLabour/$1';
+$route['bmaterial/get_data_labour/(:num)/(:num)'] = 'BMaterial/getDataLabour/$1/$2';
+$route['bmaterial/save_labour'] = 'BMaterial/saveLabour';
+
+$route['bmaterial/get_counter_item'] = 'BMaterial/getCounterItem';
+$route['bmaterial/del_item'] = 'BMaterial/delItem';
+$route['bmaterial/save_hour'] = 'BMaterial/saveHourLabour';
+$route['bmaterial/get_section/(:any)'] = 'BMaterial/getSection/$1';
+$route['bmaterial/save_section_qty'] = 'BMaterial/saveSectionQty';
+$route['bmaterial/save_allowance'] = 'BMaterial/saveAllowance';
+$route['bmaterial/get_amount_allowance'] = 'BMaterial/getAmountAllowance';
+$route['bmaterial/get_detail_by_header/(:any)/(:any)/(:any)'] = 'BMaterial/getDetailLabourByHeader/$1/$2/$3';
+/* Material bill material */
+$route['bmaterial/get_data_material/(:num)'] = 'BMaterial/getDataMaterial/$1';
+$route['bmaterial/get_data_material/(:num)/(:num)'] = 'BMaterial/getDataMaterial/$1/$2';
+$route['bmaterial/save_material'] = 'BMaterial/saveMaterial';
+$route['bmaterial/get_material_code'] = 'BMaterial/getMaterialCode';
+
 // Report
 
 

@@ -104,6 +104,12 @@ class Retriever extends CI_Controller
 						}
 						$query['table'] = 'v_header';	
 						break;
+					case 'headerMaterial':
+						if(isset($_GET['show_closed']) && $_GET['show_closed'] == 1 ){
+							$query['where'] = ['complete' => '1899-12-30'];
+						}
+						$query['table'] = 'v_wo_bom';	
+						break;
 					case 'karyawan':
 						$query['table'] = 'v_karyawan';
 						if ($this->input->get('type') == 1) {
@@ -115,11 +121,14 @@ class Retriever extends CI_Controller
 					default:
 						$query['table'] = $table;
 						break;
+						
 				}
-
+				
 				$records = $this->model->getList($query);
-
+				
 				$inner = '_' . $table;
+				// var_dump($inner);
+				// die;
 				$data = $this->$inner($records, $picker);
 			}
 		}
@@ -242,6 +251,52 @@ class Retriever extends CI_Controller
 				'risk' => $reccomendation,
 				'duration' => '',
 				'color' => $color_r,
+				'aksi' => $linkBtn
+			);
+		}
+
+		return $data;
+	}
+	function _headerMaterial($records, $picker = 'no')
+	{
+		// var_dump($records);
+		// die;
+		$data = array();
+		$no = 0;
+		foreach ($records as $record) {
+
+			// $reccomendation = cek_risk($record->recomen);
+			if ($picker == 'yes') {
+				$linkBtn = '<a href="#' . $record->id . '" class="btn btn-xs btn-info pickBtn" title="Pilih"><i class="fa fa-thumb-tack"></i> Pilih</a>';
+			} else if ($picker == 'no') {
+				$linkBtn = '  <a href="#' . $record->id . '" class="btn btn-xs btn-primary editBtn" title="Edit"><i class="fa fa-edit"></i> Edit</a>';
+				$linkBtn .= ' <a onclick="checkQuotationHasItem(' . $record->id .'); return false;" href="#" class="btn btn-xs btn-success " title="Print"><i class="fa fa-print"></i> Print</a>';
+			}
+
+			$color_r = '';
+			// if ($reccomendation == "PROJECT NORMAL") {
+			// 	$color_r = "#3AE375";
+			// } elseif ($reccomendation == "PROJECT MEDIUM RISK") {
+			// 	$color_r = "#E0F457";
+			// } elseif ($reccomendation == "PROJECT HIGH RISK") {
+			// 	$color_r = "#F06275";
+			// } elseif ($reccomendation == "PROJECT VERY HIGH RISK") {
+			// 	$color_r = "#940014";
+			// } else {
+			// 	$color_r = "#55B1ED";
+			// }
+			$no++;
+			$data[] = array(
+				'no' => $no,
+				'wono' => $record->wono,
+				'desc' => $record->desc,
+				'date' => $record->date,
+				'selesai' => $record->selesai,
+				'complete' => $record->complete,
+				'left' => $record->left,
+				'customer' => $record->customer,
+				'mkt' => $record->mkt,
+				'pl' => $record->pl,
 				'aksi' => $linkBtn
 			);
 		}
