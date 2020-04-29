@@ -28,6 +28,7 @@
     </a>
     <ul class="treeview-menu">
         <li><a href="#" onclick="loadContent(base_url + 'view/_quotation'); return false;"><i class="fa fa-circle-o"></i> Quotation</a></li>
+        <li><a href="#" onclick="loadContent(base_url + 'view/_material'); return false;"><i class="fa fa-circle-o"></i> Bill Of Material</a></li>
     </ul>
 </li>
 <li class="menu" id="dashboard">
