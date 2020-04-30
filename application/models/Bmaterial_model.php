@@ -55,10 +55,11 @@ class Bmaterial_model extends Model {
     public function getFieldPart()
     {
         $post = $this->input->post();
+        
         $data = [
             "id_header" => $post['id_header-item'],
             "tipe_id" => $post['tipe_id-item'],
-            "item_code" => $post['item_code'],
+            "item_code" => $post['item_code-item'],
             "item_name" => $post['item_name-item'],
             "spec" => $post['spec-item'],
             "satuan" => $post['satuan-item'],
@@ -70,9 +71,12 @@ class Bmaterial_model extends Model {
             "harga" => $post['harga-item-clean'],
             "remark_harga" => $post['remark-harga'],
             "kategori" => $post['kategori-item'],
-            // "stock" => $post['stock'],
+            "users" => $post['users'],
             "group" => isset($post['group-item']) ? $post['group-item'] : 0
         ];
+        // var_dump($data);
+        // var_dump('bbb');
+        // die;
 
         return $data;
     }
@@ -97,6 +101,7 @@ class Bmaterial_model extends Model {
     public function getFieldMaterial()
     {
         $inputs = $this->input->post();
+        
         $data = [
             'id_parent' => $inputs['id_parent-material'],
             'id_header' => $inputs['id_header-material'],
@@ -110,8 +115,10 @@ class Bmaterial_model extends Model {
             'w' => $inputs['width-material'],
             'h' => $inputs['height-material'],
             't' => $inputs['diameter-material'],
-            'weight' => $inputs['weight-material']
+            'weight' => $inputs['weight-material'],
+            'users' => $inputs['users']
         ];
+        
 
         return $data;
     }
@@ -147,6 +154,8 @@ class Bmaterial_model extends Model {
     {
         $this->input->post();
         $data = $this->getFieldPart();
+        // var_dump($data);
+        // die;
         $this->db->insert( 'bom_part_jasa', $data );
 
         if( $this->db->affected_rows() > 0){
@@ -158,8 +167,12 @@ class Bmaterial_model extends Model {
     public function udpateDetailPart()
     {
         $post = $this->input->post();
-        // var_dump($post);die;
+        // var_dump($post);
+        // die;
         $data = $this->getFieldPart();
+        // var_dump($data);
+        // var_dump('zzz');
+        // die;
         try {
             //$this->db->update( 'labour', ['tipe_name' => $post['tipe_name-item']], ['id_part_jasa'=>$this->input->post('id-item')]);
             $this->db->update( 'bom_rawmaterial', ['tipe_name' => $post['tipe_name-item']], ['id_part_jasa'=>$this->input->post('id-item')]);
