@@ -920,17 +920,15 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     });
                 });
 
-                // Set global variable 
-                var oldHarga = 0;
                 tableDataItemExist.on('select', function(e, dt, type, indexes) {
                     if (type === 'row') {
                         var rows = tableDataItemExist.rows(indexes);
                         rows.every(function(rowIdx, tableLoop, rowLoop) {
                             var data = this.data();
                             let oldQty = data.qty;
+                            let remark = data.remark;
                             oldHarga = data.harga.replace(/,/g, '');
                             data.no = true;
-
                             //Create HTML Tag for column on row datatable
                             let optionQty = `<input class="force-select-all" style="width:auto;color:#000000;" type="number" min="0" value="${oldQty}" />`;
                             let optionHarga = `<input class="force-select-all" style="width:auto;color:#000000;" id="option-harga" name="option-harga" type="text" min="0" value="${oldHarga}" />`;
@@ -961,22 +959,23 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             }
         }
 
-        // Edit item Qty Exists
-        // function editQtyItemExists(o) {
-        //     let old = $(o).parent().siblings()[1].innerHTML
-        //     let oldHarga = $(o).parent().siblings()[2].innerHTML.replace(/,/g, '')
-        //     let btn = `<button class="btn btn-primary btn-xs" onclick="saveQtyItemExists(this)"><i class="fa fa-save"></i> Save</button>`;
-        //     option = `<input class="force-select-all" style="width:auto;color:#000000;" type="number" min="0" value="${old}" />`;
-        //     optionHarga = `<input class="force-select-all" style="width:auto;color:#000000;" id="option-harga" name="option-harga" type="text" min="0" value="${oldHarga}" />`;
-        //     $(o).parent().siblings()[1].innerHTML = option
-        //     $(o).parent().siblings()[2].innerHTML = optionHarga
-        //     $(o).parent().html(btn)
-        // }
+        //Edit item Qty Exists
+        function editQtyItemExists(o) {
+            let old = $(o).parent().siblings()[1].innerHTML
+            let oldHarga = $(o).parent().siblings()[2].innerHTML.replace(/,/g, '')
+            let btn = `<button class="btn btn-primary btn-xs" onclick="saveQtyItemExists(this)"><i class="fa fa-save"></i> Save</button>`;
+            option = `<input class="force-select-all" style="width:auto;color:#000000;" type="number" min="0" value="${old}" />`;
+            optionHarga = `<input class="force-select-all" style="width:auto;color:#000000;" id="option-harga" name="option-harga" type="text" min="0" value="${oldHarga}" />`;
+            $(o).parent().siblings()[1].innerHTML = option
+            $(o).parent().siblings()[2].innerHTML = optionHarga
+            $(o).parent().html(btn)
+        }
 
         // Save item Qty
         function saveQtyItemExists(o) {
             let input = $(o).parent().siblings()[1]
             let inputHarga = $(o).parent().siblings()[2]
+            let newRemark = $(o).parent().siblings()[7].innerHTML
             let item = $(o).parent().siblings()[8].innerHTML
             let newValue = $(input).children()[0].value
             let newHarga = $(inputHarga).children()[0].value.replace(/,/g, '')
@@ -985,11 +984,16 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             $(o).parent().siblings()[2].innerHTML = new Intl.NumberFormat().format(newHarga)
             $(o).parent().html(btn)
 
+            if (oldHarga != newHarga) {
+                newRemark = "EDITED"
+            } 
+            
             if (editedCellValueQty.length == 0) {
                 editedCellValueQty.push({
                     item_code: item,
                     qty: newValue,
-                    harga: newHarga
+                    harga: newHarga,
+                    remark_harga : newRemark
                 })
             } else {
 
@@ -1001,7 +1005,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     editedCellValueQty.push({
                         item_code: item,
                         qty: newValue,
-                        harga: newHarga
+                        harga: newHarga,
+                        remark_harga : newRemark
                     })
                 }
             }
@@ -1035,8 +1040,10 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                             }
                             element.category = switchCodeToCategory(elm.item_code.substr(0, 3))
                             element.qty = elm.qty
+                            element.remark = elm.remark_harga
                             element.harga = elm.harga.replace(/,/g, '');
                             selected.push(element)
+                            console.log(element);
                         }
 
                     }
@@ -1964,6 +1971,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         function showModalInput(title, tipe_name, id = '', id_parent = '', sub = false, action = 'add') {
             refreshTableDataItem();
             editedCellValueQty = [];
+            oldHarga = 0;
             $("#remark-harga").text('');
             $("#item_code").val('');
             $("#tipe_id-item").parent().removeClass('has-error');
