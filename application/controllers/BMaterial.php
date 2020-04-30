@@ -440,6 +440,7 @@ class Bmaterial extends CI_Controller
             $temp['kategori-item'] = $value['category'];
             $temp['harga-item-clean'] = floatval($value['harga']);
             $temp['remark-harga'] = $value['remark'];
+            $temp['users'] = $value['users'];
 
             $_POST = $temp;
             if (!$this->bmaterial->insertDetailPart()) {
@@ -457,13 +458,17 @@ class Bmaterial extends CI_Controller
     // save item
     public function saveItem($json = TRUE)
     {
+        // var_dump($_POST);
+        // die;
         // var_dump($this->input->post());
+        // var_dump('vvvv');
         // die;
         $code = 0;
         $message = '';
         $default_dept_labour = ['ENGINEERING', 'PRODUCTION'];
         $action = $this->input->post('action-item');
-        // var_dump($action);die;
+        // var_dump($action);
+        // die;
         // $this->db->trans_begin();
         if ($action == 1) {
             if ($this->bmaterial->insertDetailPart() == TRUE) {
@@ -513,7 +518,8 @@ class Bmaterial extends CI_Controller
                                 'tipe_id' => $this->input->post('tipe_id-item'),
                                 'tipe_name' => $this->input->post('tipe_name-item'),
                                 'id_parent' => $id_parent_rm,
-                                'id_part_jasa' => $last_id
+                                'id_part_jasa' => $last_id,
+                                'users' => $this->input->post('users')
                                 ]
                             );
                             // print_r($this->db->last_query());

@@ -12,6 +12,10 @@ if ($param != null) {
 
 $satuan = $this->db->get_where('tblsatuan')->result();
 
+
+$id_user = $this->session->userdata['id_karyawan']; 
+
+
 ?>
 <!DOCTYPE html>
 <html lang="id_ID">
@@ -240,6 +244,10 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Manage <span class="modal-title-input"></span></h4>
+                    <?php 
+                        // echo($_SESSION);
+                        // die;
+                    ?>
                 </div>
                 <div class="modal-body">
                     <!-- Custom Tabs (Pulled to the right) -->
@@ -291,6 +299,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                             <input type="hidden" id="id_header-item" name="id_header-item" value="0" />
                                             <input type="hidden" id="action-item" name="action-item" value="1" />
                                             <input type="hidden" id="id-item" name="id-item" value="1" />
+                                            <input type="hidden" id="users" name="users" value=<?= $id_user?> />
                                         </div>
 
                                         <div class="col-md-6">
@@ -411,6 +420,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                 <input type="hidden" id="id_header-material" name="id_header-material" />
                                 <input type="hidden" id="item_code-save-material" name="item_code-save-material" />
                                 <input type="hidden" id="action-material" name="action-material" value="1" />
+                                <input type="hidden" id="users" name="users" value=<?= $id_user?> />
 
                                 <div class="form-group">
                                     <label>Item Code</label>
@@ -994,8 +1004,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
 
             if (count > 0) {
                 for (let index = 0; index < count; index++) {
+                    let users = $("#users").val();
                     const element = data[index];
-                    console.log(data[index]);
+                    element.users = users;
                     delete element.stock;
                     for (let idx = 0; idx < editedCellValueQty.length; idx++) {
                         const elm = editedCellValueQty[idx];
@@ -1014,7 +1025,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                 selected.push(element)
                             }
                         console.log('cccc');
-                        console.log(selected);
+                        // console.log(selected);
+                        //return;
                         // delete selected.stock;
                         // console.log('ccc');
                         // console.log(selected);
@@ -2154,10 +2166,12 @@ $satuan = $this->db->get_where('tblsatuan')->result();
         // function count
 
         function saveItem() {
+            
             loading('loading', true);
             var harga = ($("#harga-item").cleanVal() * 1);
             var qty = $("#qty-item").val();
             var tipe_id = $("#tipe_id-item").val();
+            var id_karyawan = $("#id_karyawan").val();
 
 
             if ($("#tipe_item-item").val() == 'item') {
@@ -2188,10 +2202,12 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     $("#tipe_id-item").parent().removeClass('has-error');
                 }
             }
-
             if ($("#item_code-item").val() == '') {
                 $("#item_code").val('')
             }
+            // console.log($("#tipe_item-item").val());
+            // console.log($("#item_code-item").val());
+            // return;
 
 
             var data = $("#form-input-item").serialize() + '&harga-item-clean=' + harga + '&remark-harga=' + $("#remark-harga").text();
