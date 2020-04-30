@@ -310,7 +310,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                             <div class="form-group only_item">
                                                 <label for="satuan-item">Satuan</label>
                                                 <select class="form-control select2 input-sm" style="width:100%;" name="satuan-item" id="satuan-item">
-                                                <option value="" selected="">Pilih Satuan</option>
+                                                    <option value="" selected="">Pilih Satuan</option>
                                                 </select>
                                                 <!-- <input type="text" class="form-control input-sm" id="satuan-item" name="satuan-item" placeholder="Satuan"> -->
                                             </div>
@@ -644,7 +644,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     format: 'DD-MM-YYYY'
                 }
             });
-            $.get(base_url + "quotation/get_satuan", function(data){
+            $.get(base_url + "quotation/get_satuan", function(data) {
                 $('#satuan-item').select2({
                     placeholder: 'Pilih Satuan',
                     data: data
@@ -990,14 +990,14 @@ $satuan = $this->db->get_where('tblsatuan')->result();
 
             if (oldHarga != newHarga) {
                 newRemark = "EDITED"
-            } 
-            
+            }
+
             if (editedCellValueQty.length == 0) {
                 editedCellValueQty.push({
                     item_code: item,
                     qty: newValue,
                     harga: newHarga,
-                    remark_harga : newRemark
+                    remark_harga: newRemark
                 })
             } else {
 
@@ -1010,7 +1010,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                         item_code: item,
                         qty: newValue,
                         harga: newHarga,
-                        remark_harga : newRemark
+                        remark_harga: newRemark
                     })
                 }
             }
@@ -2203,7 +2203,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             var tipe_id = $("#tipe_id-item").val();
             var kategori = $("#kategori-item").val();
             var satuan = $("#satuan-item").val();
-
+            $("#item_code-item").removeAttr("disabled");
 
             if ($("#tipe_item-item").val() == 'item') {
                 /* validate item */
