@@ -24,11 +24,11 @@ class Bmaterial extends CI_Controller
         }
         
         $data['param'] = $id;
-        $has_item = $this->checkHasItem($id, FALSE);
+        // $has_item = $this->checkHasItem($id, FALSE);
         
         /* Insert default section */
-        if (!$has_item)
-            $this->saveDefaultSection($id);
+        // if (!$has_item)
+        //     $this->saveDefaultSection($id);
 
         $this->load->view('cms/_detail_bill_material', $data);
     }
@@ -162,11 +162,11 @@ class Bmaterial extends CI_Controller
                 $this->db->having('deleted',0);
             }
             if ($id_material == NULL) {
-                $query = $this->db->get_where('v_rawmaterial', ['id_header' => $id_header]);
+                $query = $this->db->get_where('v_bom_rawmaterial', ['id_header' => $id_header]);
                 $object = $query->result_array();
-                $data = $this->countTotal($object, 'rawmaterial');
+                $data = $this->countTotal($object, 'bom_rawmaterial');
             } else {
-                $data = $this->db->get_where('v_rawmaterial', ['id_header' => $id_header, 'id' => $id_material])->row_array();
+                $data = $this->db->get_where('v_bom_rawmaterial', ['id_header' => $id_header, 'id' => $id_material])->row_array();
             }
         }
         // print_r($data);
@@ -881,8 +881,8 @@ class Bmaterial extends CI_Controller
 
     public function printPart($id_header)
     {
-        $rowTitle = $this->db->get_where('v_header', ['id' => $id_header])->row();
-        $title = "Quot-Part-" . $rowTitle->inquiry_no . "-" . $rowTitle->project_name . "-" . $rowTitle->customer . "-" . date('dmY');
+        $rowTitle = $this->db->get_where('v_wo_bom', ['id' => $id_header])->row();
+        $title = "BOM-Part-" . $rowTitle->wono . "-" . $rowTitle->desc . "-" . $rowTitle->customer . "-" . date('dmY');
         $part = $this->getDataPart($id_header, NULL, false);
         $dataPart = array_filter($part, function ($item) {
             return $item['deleted'] == 0;
@@ -891,7 +891,7 @@ class Bmaterial extends CI_Controller
         $dataMaterial = array_filter($material, function ($item) {
             return $item['deleted'] == 0;
         });
-        $this->load->view('report/quotation_part', ['part' => $dataPart, 'material' => $dataMaterial, 'title' => $title]);
+        $this->load->view('report/bom_part', ['part' => $dataPart, 'material' => $dataMaterial, 'title' => $title]);
     }
 
     public function printLabour($id_header)
@@ -965,8 +965,8 @@ class Bmaterial extends CI_Controller
         });
 
         $parentPart = $this->reporter->getStructureTree($part);
-        $rowTitle = $this->db->get_where('v_header', ['id' => $id_header])->row();
-        $title = "Quot-Summary-Detail" . $rowTitle->inquiry_no . "-" . $rowTitle->project_name . "-" . $rowTitle->customer . "-" . date('dmY');
+        $rowTitle = $this->db->get_where('v_wo_bom', ['id' => $id_header])->row();
+        $title = "Quot-Summary-Detail" . $rowTitle->wono . "-" . $rowTitle->dec . "-" . $rowTitle->customer . "-" . date('dmY');
         $_GET['id'] = $id_header;
         $this->load->view(
             'report/quotation_persection',
