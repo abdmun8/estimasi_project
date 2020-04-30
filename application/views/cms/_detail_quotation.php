@@ -290,11 +290,15 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                                 </select>
                                             </div>
                                             <div class="form-group only_item">
+                                                <label for="spec-item">Item Code</label>
+                                                <input type="text" class="form-control input-sm" id="item_code-item" name="item_code-item" placeholder="Item Code" disabled>
+                                            </div>
+                                            <!-- <div class="form-group only_item">
                                                 <label>Item Code</label>
                                                 <select class="form-control select2 input-sm" style="width:100%;" name="item_code-item" id="item_code-item">
                                                 <option value="" selected="">Pilih Item Code</option>
                                                 </select>
-                                            </div>
+                                            </div> -->
                                             <!-- <div class="form-group only_item">
                                                 <label for="item_code-item">Item Code</label>
                                                 <input type="text" class="form-control input-sm" id="item_code-item" name="item_code-item" placeholder="Item Code" data-provide="typeahead">
@@ -646,28 +650,28 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                     data: data
                 });
             }, 'json');
-            $.get(base_url + "quotation/get_item_code/1", function(data) {
-                $('#item_code-item').select2({
-                    placeholder: "Pilih Item Code",
-                    allowClear: true,
-                    multiple: false,
-                    data: data
-                }).on('select2:select', function(e) {
-                    var o = e.params.data;
-                    let code = o.stcd.substr(0, 3);
-                    let katval = switchCodeToCategory(code)
-                    $("#item_code").val(o.stcd);
-                    $("#spec-item").val(o.spek);
-                    $("#merk-item").val(o.maker);
-                    $("#satuan-item").val(o.uom);
-                    $("#satuan-item").trigger('change');
-                    $("#item_name-item").val(o.nama);
-                    $("#harga-item").val(parseInt(o.harga));
-                    $("#kategori-item").val(katval);
-                    $("#kategori-item").trigger('change')
-                    $("#remark-harga").text(o.remark);
-                });
-            }, 'json')
+            // $.get(base_url + "quotation/get_item_code/1", function(data) {
+            //     $('#item_code-item').select2({
+            //         placeholder: "Pilih Item Code",
+            //         allowClear: true,
+            //         multiple: false,
+            //         data: data
+            //     }).on('select2:select', function(e) {
+            //         var o = e.params.data;
+            //         let code = o.stcd.substr(0, 3);
+            //         let katval = switchCodeToCategory(code)
+            //         $("#item_code").val(o.stcd);
+            //         $("#spec-item").val(o.spek);
+            //         $("#merk-item").val(o.maker);
+            //         $("#satuan-item").val(o.uom);
+            //         $("#satuan-item").trigger('change');
+            //         $("#item_name-item").val(o.nama);
+            //         $("#harga-item").val(parseInt(o.harga));
+            //         $("#kategori-item").val(katval);
+            //         $("#kategori-item").trigger('change')
+            //         $("#remark-harga").text(o.remark);
+            //     });
+            // }, 'json')
 
             $("#tipe_item-item").change(function() {
                 $("#item_code").val('');
@@ -1974,6 +1978,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
             oldHarga = 0;
             $("#remark-harga").text('');
             $("#item_code").val('');
+            $("#item_code-item").val([]).trigger('change');
             $("#tipe_id-item").parent().removeClass('has-error');
             $("#harga-item").parent().removeClass('has-error');
             $("#qty-item").parent().removeClass('has-error');

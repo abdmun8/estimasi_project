@@ -616,19 +616,20 @@ class Quotation extends CI_Controller
         // die;
         $data = [];
         $obj = $this->sgedb->select('mstchd.stcd, mstchd.stcd as id , TRIM(mstchd.nama) as item_name,
-            CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," - ",ifnull(lp.mkt,0)," - "," [",mstchd.stcd,"]" ) as name, 
             TRIM(mstchd.nama) as nama,
             TRIM(mstchd.spek) as spek, 
             TRIM(mstchd.maker) as maker, 
             TRIM(mstchd.uom) as uom, 
-            CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," - ",ifnull(lp.mkt,0)," - "," [",mstchd.stcd,"]" ) as text, 
+            CONCAT( TRIM(mstchd.nama)," ",TRIM(mstchd.spek)," ",TRIM(mstchd.maker)," "," [",mstchd.stcd,"]" ) as text, 
             ifnull(lp.mkt,0) as harga, lp.remark', false)
             ->from('sgedb.mstchd')
             ->join('sgedb.msprice lp', 'mstchd.stcd = lp.stcd', 'left')
-            ->not_like('mstchd.stcd', 'OFF', 'after')
-            ->not_like('mstchd.stcd', 'SNS', 'after')
-            ->not_like('mstchd.stcd', 'ATK', 'after')
-            ->not_like('mstchd.stcd', 'INV', 'after')
+            // ->not_like('mstchd.stcd', 'OFF', 'after')
+            // ->not_like('mstchd.stcd', 'SNS', 'after')
+            // ->not_like('mstchd.stcd', 'ATK', 'after')
+            // ->not_like('mstchd.stcd', 'INV', 'after')
+            ->not_like('mstchd.nama', '[X]', 'after')
+            // ->limit(10)
             ->get()->result_array();
         // $str = $this->sgedb->last_query();
         // print_r($str);
@@ -638,14 +639,14 @@ class Quotation extends CI_Controller
                 'harga' => "",
                 'id' => "",
                 'maker' => "",
-                'name' => "",
+                // 'name' => "",
                 'remark' => "",
                 'spek' => "",
                 'stcd' => "",
                 'text' => "",
                 'uom' => ""
             ]);
-            $data = $obj;
+            $data = [];
         } else {
             $data = [];
             $no = 0;

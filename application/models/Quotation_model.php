@@ -58,7 +58,7 @@ class Quotation_model extends Model {
         $data = [
             "id_header" => $post['id_header-item'],
             "tipe_id" => $post['tipe_id-item'],
-            "item_code" => $post['item_code'],
+            "item_code" => $post['item_code-item'],
             "item_name" => $post['item_name-item'],
             "spec" => $post['spec-item'],
             "satuan" => $post['satuan-item'],
