@@ -116,7 +116,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
     <div style="margin-top: 10px;"></div>
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#general_info_tab">General Info Bill Material</a></li>
-        <li><a data-toggle="tab" href="#std_part_tab">Part & Jasa</a></li>
+        <li><a data-toggle="tab" href="#std_part_tab">Std Part & Jasa</a></li>
         <li><a data-toggle="tab" href="#material_tab">Material</a></li>
         <!-- <li><a data-toggle="tab" href="#labour_tab">Labour</a></li> -->
     </ul>
@@ -1525,7 +1525,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                 return ''
                             if (row.tipe_item === 'item') {
                                 actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="addItemMaterial(' + row.id + ',' + row.id_parent + ',\'edit\')"><i class="fa fa-edit"></i></a> ');
-                                actions.push('<a class="btn btn-danger btn-xs " title="Hapus" onclick="confirmDelete(' + row.id + ',\'rawmaterial\',\'' + row.tipe_item + '\')"><i class="fa fa-remove"></i></a>');
+                                actions.push('<a class="btn btn-danger btn-xs " title="Hapus" onclick="confirmDelete(' + row.id + ',\'bom_rawmaterial\',\'' + row.tipe_item + '\')"><i class="fa fa-remove"></i></a>');
                             } else {
                                 actions.push('<a class="btn btn-info btn-xs " title="Tambah Sub" onclick="addItemMaterial(' + row.id + ',' + row.id_parent + ')" href="#"><i class="fa fa-plus"></i></a> ');
                             }
@@ -1879,9 +1879,9 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                 loading('loading', false);
                                 if (json.data.code === 1) {
                                     notify('success', 'Hapus data berhasil');
-                                    if (table == 'bom_part_jasa') {
+                                    if (table == 'bom_part_jasa' ) {
                                         $('#demo').bootstrapTreeTable('refresh');
-                                    } else if (table == 'bom_part_jasa') {
+                                    } else if (table == 'bom_rawmaterial') {
                                         $('#material_table').bootstrapTreeTable('refresh');
                                     }
 
