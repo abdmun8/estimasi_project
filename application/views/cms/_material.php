@@ -163,18 +163,18 @@ if ($param != null) {
 
     });
 
-    function printQuotation(id_header, risk) {
-        window.open(base_url + 'report/quotationreport/' + id_header + '/' + risk)
+    function printBill(id_header, risk) {
+        window.open(base_url + 'reportbill/billreport/' + id_header + '/' + risk)
         window.open(base_url + `bmaterial/print_summary/` + id_header);
         setTimeout(() => {
             window.open(base_url + `bmaterial/print_detail_summary/` + id_header);
         }, 1000)
     }
 
-    function checkQuotationHasItem(id_header, risk) {
+    function checkBillHasItem(id_header, risk) {
         $.get(base_url + 'bmaterial/checkHasItem/' + id_header, (response) => {
             if (response.has_item == true) {
-                printQuotation(id_header, risk)
+                printBill(id_header, risk)
             } else {
                 notify('warning', 'Material Belum diisi!!');
             }

@@ -119,7 +119,7 @@ $id_user = $this->session->userdata['id_karyawan'];
     <!-- Contaent -->
     <div style="margin-top: 10px;"></div>
     <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#general_info_tab">General Info Bill Material</a></li>
+        <li class="active"><a data-toggle="tab" href="#general_info_tab">General Info Bill of Material</a></li>
         <li><a data-toggle="tab" href="#std_part_tab">Std Part & Jasa</a></li>
         <li><a data-toggle="tab" href="#material_tab">Material</a></li>
         <!-- <li><a data-toggle="tab" href="#labour_tab">Labour</a></li> -->
@@ -2061,6 +2061,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                     type: 'POST',
                     cache: false,
                     success: function(json) {
+                        var itcode = json.item_code;
                         $("#tipe_id-item").val(json.tipe_id);
                         $("#harga-item").val(parseInt(json.harga));
                         $("#item_code-item").val(json.item_code);
@@ -2078,9 +2079,27 @@ $id_user = $this->session->userdata['id_karyawan'];
                         $("#tipe_item-item").val(json.tipe_item);
                         $("#id-item").val(json.id);
                         $("#remark-harga").text(json.remark_harga);
+                        if(itcode){
+                            $("#harga-item").css('pointer-events', 'none');
+                            $("#item_code-item").attr("disabled",true);
+                            $("#item_name-item").css('pointer-events', 'none');
+                            $("#merk-item").css('pointer-events', 'none');
+                            $("#satuan-item").attr("disabled",true);
+                            $("#spec-item").css('pointer-events', 'none');
+                            $("#tipe_name-item").css('pointer-events', 'none');
+                            $("#tipe_item-item").css('pointer-events', 'none');
+                        }else{
+                            $("#harga-item").css('pointer-events', '');
+                            $("#item_code-item").removeAttr('disabled'); 
+                            $("#item_name-item").css('pointer-events', '');
+                            $("#merk-item").css('pointer-events', '');
+                            $("#satuan-item").removeAttr('disabled');
+                            $("#spec-item").css('pointer-events', '');
+                            $("#tipe_name-item").css('pointer-events', '');
+                            $("#tipe_item-item").css('pointer-events', '');
+                        }
                     }
                 });
-
                 $("#id_parent-item").val(id_parent);
                 $("#action-item").val(2);
                 $("#tipe_item-item").val(title);
@@ -2168,6 +2187,8 @@ $id_user = $this->session->userdata['id_karyawan'];
         function saveItem() {
             
             loading('loading', true);
+            $("#item_code-item").removeAttr('disabled'); 
+            $("#satuan-item").removeAttr("disabled",true);
             var harga = ($("#harga-item").cleanVal() * 1);
             var qty = $("#qty-item").val();
             var tipe_id = $("#tipe_id-item").val();

@@ -913,8 +913,10 @@ class Bmaterial extends CI_Controller
 
     public function printSummary($id_header, $return = FALSE)
     {
-        $rowTitle = $this->db->get_where('v_header', ['id' => $id_header])->row();
-        $title = "Quot-Summary" . $rowTitle->inquiry_no . "-" . $rowTitle->project_name . "-" . $rowTitle->customer . "-" . date('dmY');
+        $rowTitle = $this->db->get_where('v_wo_bom', ['id' => $id_header])->row();
+        // var_dump($rowTitle);
+        // die;
+        $title = "BOM-Summary";
         // $dataPart = $this->getDataPart($id_header, NULL, false);
         // $dataMaterial = $this->getDataMaterial($id_header, NULL, false);
         // $dataLabour = $this->getDataLabour($id_header, NULL, false, false);
@@ -935,7 +937,7 @@ class Bmaterial extends CI_Controller
         if ($return) {
             return $summary;
         } else {
-            $this->load->view('report/quotation_summary', ['summary' => $summary, 'title' => $title, 'inquiry_no' => $rowTitle->inquiry_no, 'allowance' => $this->getAmountAllowance(TRUE)]);
+            $this->load->view('report/bom_summary', ['summary' => $summary, 'title' => $title, 'inquiry_no' => $rowTitle->wono, 'allowance' => $this->getAmountAllowance(TRUE)]);
         }
     }
 
@@ -972,10 +974,10 @@ class Bmaterial extends CI_Controller
 
         $parentPart = $this->reporter->getStructureTree($part);
         $rowTitle = $this->db->get_where('v_wo_bom', ['id' => $id_header])->row();
-        $title = "Quot-Summary-Detail" . $rowTitle->wono . "-" . $rowTitle->dec . "-" . $rowTitle->customer . "-" . date('dmY');
+        $title = "BOM-Summary-Detail" . $rowTitle->wono . "-" . $rowTitle->dec . "-" . $rowTitle->customer . "-" . date('dmY');
         $_GET['id'] = $id_header;
         $this->load->view(
-            'report/quotation_persection',
+            'report/bom_persection',
             [
                 'dataPart' => $part,
                 'parentPart' => $parentPart,
@@ -1006,11 +1008,11 @@ class Bmaterial extends CI_Controller
     public function getAmountAllowance($return = FALSE)
     {
         $get = $this->input->get();
-        $amount = $this->db->get_where('marketing', ['id_marketing' => $get['id']])->row()->allowance;
-        if ($return)
-            return $amount;
-        else
-            echo json_encode(['data' => $amount, 'code' => 1, 'success' => true]);
+        // $amount = $this->db->get_where('marketing', ['id_marketing' => $get['id']])->row()->allowance;
+        // if ($return)
+        //     return $amount;
+        // else
+        //     echo json_encode(['data' => $amount, 'code' => 1, 'success' => true]);
     }
 
     // get counter except item

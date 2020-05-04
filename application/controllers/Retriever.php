@@ -264,13 +264,15 @@ class Retriever extends CI_Controller
 		$data = array();
 		$no = 0;
 		foreach ($records as $record) {
+			// var_dump($record);
+			// die;
 
-			// $reccomendation = cek_risk($record->recomen);
+			$reccomendation = 'FALSE';
 			if ($picker == 'yes') {
 				$linkBtn = '<a href="#' . $record->id . '" class="btn btn-xs btn-info pickBtn" title="Pilih"><i class="fa fa-thumb-tack"></i> Pilih</a>';
 			} else if ($picker == 'no') {
 				$linkBtn = '  <a href="#' . $record->id . '" class="btn btn-xs btn-primary editBtn" title="Edit"><i class="fa fa-edit"></i> Edit</a>';
-				$linkBtn .= ' <a onclick="checkQuotationHasItem(' . $record->id .'); return false;" href="#" class="btn btn-xs btn-success " title="Print"><i class="fa fa-print"></i> Print</a>';
+				$linkBtn .= ' <a onclick="checkBillHasItem(' . $record->id . ',\'' . $reccomendation . '\'); return false;" href="#" class="btn btn-xs btn-success " title="Print"><i class="fa fa-print"></i> Print</a>';
 			}
 
 			$color_r = '';

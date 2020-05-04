@@ -174,8 +174,8 @@ if ($param != null) {
 
     });
 
-    function printQuotation(id){
-        window.open(base_url + 'report/quotationreport/'+id)
+    function printBill(id){
+        window.open(base_url + 'reportbill/billreport/'+id)
     }
 
     function setImage(val){
