@@ -16,6 +16,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
 $id_user = $this->session->userdata['id_karyawan']; 
 
 
+
 ?>
 <!DOCTYPE html>
 <html lang="id_ID">
@@ -268,16 +269,16 @@ $id_user = $this->session->userdata['id_karyawan'];
                                                 <select class="form-control select2 input-sm" name="tipe_item-item" id="tipe_item-item">
                                                 </select>
                                             </div>
-                                            <div class="form-group only_item">
+                                            <!-- <div class="form-group only_item">
                                                 <label>Item Code</label>
                                                 <select class="form-control select2 input-sm" style="width:100%;" name="item_code-item" id="item_code-item">
                                                 <option value="" selected="">Pilih Item Code</option>
                                                 </select>
-                                            </div>
-                                            <!-- <div class="form-group only_item">
-                                                <label for="item_code-item">Item Code</label>
-                                                <input type="text" class="form-control input-sm" id="item_code-item" name="item_code-item" placeholder="Item Code" data-provide="typeahead">
                                             </div> -->
+                                            <div class="form-group only_item">
+                                                <label for="item_code-item">Item Code</label>
+                                                <input type="text" class="form-control input-sm" id="item_code-item" name="item_code-item" placeholder="Item Code" data-provide="typeahead" disabled>
+                                            </div>
                                             <div class="form-group only_item">
                                                 <label for="spec-item">Spec</label>
                                                 <input type="text" class="form-control input-sm" id="spec-item" name="spec-item" placeholder="Spec">
@@ -623,28 +624,28 @@ $id_user = $this->session->userdata['id_karyawan'];
                     data: data
                 });
             }, 'json');
-            $.get(base_url + "bmaterial/get_item_code/1", function(data) {
-                $('#item_code-item').select2({
-                    placeholder: "Pilih Item Code",
-                    allowClear: true,
-                    multiple: false,
-                    data: data
-                }).on('select2:select', function(e) {
-                    var o = e.params.data;
-                    let code = o.stcd.substr(0, 3);
-                    let katval = switchCodeToCategory(code)
-                    $("#item_code").val(o.stcd);
-                    $("#spec-item").val(o.spek);
-                    $("#merk-item").val(o.maker);
-                    $("#satuan-item").val(o.uom);
-                    $("#satuan-item").trigger('change')
-                    $("#item_name-item").val(o.nama);
-                    $("#harga-item").val(parseInt(o.harga));
-                    $("#kategori-item").val(katval);
-                    $("#kategori-item").trigger('change')
-                    $("#remark-harga").text(o.remark);
-                });
-            }, 'json')
+            // $.get(base_url + "bmaterial/get_item_code/1", function(data) {
+            //     $('#item_code-item').select2({
+            //         placeholder: "Pilih Item Code",
+            //         allowClear: true,
+            //         multiple: false,
+            //         data: data
+            //     }).on('select2:select', function(e) {
+            //         var o = e.params.data;
+            //         let code = o.stcd.substr(0, 3);
+            //         let katval = switchCodeToCategory(code)
+            //         $("#item_code").val(o.stcd);
+            //         $("#spec-item").val(o.spek);
+            //         $("#merk-item").val(o.maker);
+            //         $("#satuan-item").val(o.uom);
+            //         $("#satuan-item").trigger('change')
+            //         $("#item_name-item").val(o.nama);
+            //         $("#harga-item").val(parseInt(o.harga));
+            //         $("#kategori-item").val(katval);
+            //         $("#kategori-item").trigger('change')
+            //         $("#remark-harga").text(o.remark);
+            //     });
+            // }, 'json')
 
             $("#tipe_item-item").change(function() {
                 $("#item_code").val('');
@@ -2090,7 +2091,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                             $("#tipe_item-item").css('pointer-events', 'none');
                         }else{
                             $("#harga-item").css('pointer-events', '');
-                            $("#item_code-item").removeAttr('disabled'); 
+                            // $("#item_code-item").removeAttr('disabled'); 
                             $("#item_name-item").css('pointer-events', '');
                             $("#merk-item").css('pointer-events', '');
                             $("#satuan-item").removeAttr('disabled');
@@ -2187,7 +2188,7 @@ $id_user = $this->session->userdata['id_karyawan'];
         function saveItem() {
             
             loading('loading', true);
-            $("#item_code-item").removeAttr('disabled'); 
+            // $("#item_code-item").removeAttr('disabled'); 
             $("#satuan-item").removeAttr("disabled",true);
             var harga = ($("#harga-item").cleanVal() * 1);
             var qty = $("#qty-item").val();
