@@ -273,6 +273,8 @@ class Retriever extends CI_Controller
 			} else if ($picker == 'no') {
 				$linkBtn = '  <a href="#' . $record->id . '" class="btn btn-xs btn-primary editBtn" title="Edit"><i class="fa fa-edit"></i> Edit</a>';
 				$linkBtn .= ' <a onclick="checkBillHasItem(' . $record->id . ',\'' . $reccomendation . '\'); return false;" href="#" class="btn btn-xs btn-success " title="Print"><i class="fa fa-print"></i> Print</a>';
+				$linkBtn .= ' <a onclick="uploadPart(' . $record->id . '); return false;" href="#" class="btn btn-xs btn-danger" title="Print"><i class="fa fa-upload"></i>U.Part</a>';
+				$linkBtn .= ' <a onclick="checkBillHasItem(' . $record->id . ',\'' . $reccomendation . '\'); return false;" href="#" class="btn btn-xs btn-warning" title="Print"><i class="fa fa-upload"></i>U.Material</a>';
 			}
 
 			$color_r = '';

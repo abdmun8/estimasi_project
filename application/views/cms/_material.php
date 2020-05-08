@@ -117,25 +117,57 @@ if ($param != null) {
                     <span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">Input Overrage</h4>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="allowance-input" class="col-md-4 control-label">Allowance</label>
-                    <div class="col-md-8">
-                        <input type="number" min="0" class="form-control" id="allowance-input" name="allowance-input" placeholder="Allowance" />
+            <form id="form_upload_file"  method="post" enctype="multipart/form-data">    
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="allowance-input" class="col-md-4 control-label">Allowance</label>
+                        <div class="col-md-8">
+                            <input type="number" min="0" class="form-control" id="allowance-input" name="allowance-input" placeholder="Allowance" />
+                        </div>
+                            <input type="text" id="id_header-allowance" hidden>
                     </div>
-                    <input type="text" id="id_header-allowance" hidden>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success pull-right" onclick="saveAllowance()">Save</button>
-            </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success pull-right" onclick="saveAllowance()">Save</button>
+                </div>
+            </form>
         </div>
         <!-- /.modal-content -->
     </div>
     <!-- /.modal-dialog -->
 </div>
 <!-- /End modal Detail Labour -->
+<!-- Modal Upload Part -->
+<div class="modal fade" id="modal-upload-part" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div id="loading1"></div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Upload Part BOM</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="inputPart" class="col-md-4 control-label">File</label>
+                    <div class="col-md-8">
+                        <input type="file" min="0" class="form-control" id="FilePart" name="FilePart" placeholder="File" />
+                    </div>
+                    <input type="hidden" id="idEdit" value="" >
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success pull-right" data-dismiss="modal" onclick="saveBomPart()">Save</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<!-- End Modal Upload Part -->
 <script>
     var tableData, tableSection;
     $(document).ready(function() {
@@ -179,6 +211,46 @@ if ($param != null) {
                 notify('warning', 'Material Belum diisi!!');
             }
         }, 'json')
+    }
+    function uploadPart(id_records){
+        //console.log(id_records);
+        $('#modal-upload-part').modal('show'); 
+        $('#idEdit').val(id_records);
+    }
+    function saveBomPart(){
+        // fileUpload = $('#FilePart').val();
+        var FilePart = $('#FilePart').val();
+        var extendsType = FilePart.split(".");
+        if($('#FilePart').val() == '' || extendsType != 'xlsx'){
+            alert('File masih kososng');
+            $('#FilePart').val('');
+            return;
+        }
+        var idPart = $('#idEdit').val();
+        var fd = new FormData();
+        var files = $('#FilePart')[0].files[0];
+        fd.append('FilePart',files);
+        fd.append('idFiles',idPart);
+        var dd = base_url + 'view/upload_part';
+        // console.log(idPart);
+
+        $.ajax({
+            url: dd,
+            type: 'POST',
+            data:fd,
+            dataType: 'json',
+            type: 'POST',
+            processData:false,
+            contentType:false,
+            cache:false,
+            async:false,
+            success: function(json) {
+                $('#modal-upload-part').modal('hide')
+                alert(json.message)
+                $('#FilePart').val('');
+                
+            }
+        })
     }
 
     function saveAllowance() {

@@ -145,7 +145,6 @@ $route['bmaterial/get_satuan'] = 'BMaterial/getSatuan';
 $route['bmaterial/get_data_labour/(:num)'] = 'BMaterial/getDataLabour/$1';
 $route['bmaterial/get_data_labour/(:num)/(:num)'] = 'BMaterial/getDataLabour/$1/$2';
 $route['bmaterial/save_labour'] = 'BMaterial/saveLabour';
-
 $route['bmaterial/get_counter_item'] = 'BMaterial/getCounterItem';
 $route['bmaterial/del_item'] = 'BMaterial/delItem';
 $route['bmaterial/save_hour'] = 'BMaterial/saveHourLabour';
@@ -154,6 +153,7 @@ $route['bmaterial/save_section_qty'] = 'BMaterial/saveSectionQty';
 $route['bmaterial/save_allowance'] = 'BMaterial/saveAllowance';
 $route['bmaterial/get_amount_allowance'] = 'BMaterial/getAmountAllowance';
 $route['bmaterial/get_detail_by_header/(:any)/(:any)/(:any)'] = 'BMaterial/getDetailLabourByHeader/$1/$2/$3';
+$route['bmaterial/upload_part'] = 'BMaterial/uploadPart';
 /* Material bill material */
 $route['bmaterial/get_data_material/(:num)'] = 'BMaterial/getDataMaterial/$1';
 $route['bmaterial/get_data_material/(:num)/(:num)'] = 'BMaterial/getDataMaterial/$1/$2';

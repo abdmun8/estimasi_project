@@ -643,8 +643,10 @@ class Bmaterial extends CI_Controller
             $no = 0;
             foreach ($obj as $key => $row) {
                 $no++;
-                $row['qty'] = 0;
+                $row['qty'] = '';
                 $row['no'] = '';
+                $row['action'] ='';
+                $row['harga'] =  number_format($row['harga']);
                 $data['data'][] = $row;
             }
         }
@@ -992,6 +994,13 @@ class Bmaterial extends CI_Controller
                 'title' => $title
             ]
         );
+    }
+    public function uploadPart()
+    {
+        $post = $this->input->post();
+        var_dump($post);
+        var_dump($_FILES);
+        var_dump($_GET);
     }
 
     public function saveAllowance()

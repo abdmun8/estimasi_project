@@ -796,20 +796,20 @@ $id_user = $this->session->userdata['id_karyawan'];
                             }
                         },
                         {
-                            'data': 'remark',
-                            render: function(data, type, row) {
-                                return `<button class="btn btn-success btn-xs" onclick="editQtyItemExists(this)"><i class="fa fa-edit"></i> Edit</button>`;
-                            }
+                            'data': 'action',
+                            // render: function(data, type, row) {
+                            //     return `<button class="btn btn-success btn-xs" onclick="editQtyItemExists(this)"><i class="fa fa-edit"></i> Edit</button>`;
+                            // }
                         },
                         {
                             'data': 'qty'
                         },
                         {
-                            'data': 'harga',
-                            'render': function(data) {
-                                let number = parseFloat(data)
-                                return new Intl.NumberFormat().format(number)
-                            }
+                            'data': 'harga'
+                            // 'render': function(data) {
+                            //     let number = parseFloat(data)
+                            //     return new Intl.NumberFormat().format(number)
+                            // }
                         },
                         {
                             'data': 'stock',
@@ -845,10 +845,12 @@ $id_user = $this->session->userdata['id_karyawan'];
                     "order": [
                         [0, "asc"]
                     ],
-                    autoWidth: false,
+                    //autoWidth: false,
+                    autoWidth:true,
                     deferRender: true,
                     bAutoWidth: false,
-                    responsive: true,
+                    //responsive: true,
+                    responsive: false,
                     scrollX: true,
                     columnDefs: [{
                         type: "text",
@@ -916,12 +918,26 @@ $id_user = $this->session->userdata['id_karyawan'];
                     });
                 });
 
+                // Set global variable 
+                var oldHarga = 0;
                 tableDataItemExist.on('select', function(e, dt, type, indexes) {
                     if (type === 'row') {
                         var rows = tableDataItemExist.rows(indexes);
                         rows.every(function(rowIdx, tableLoop, rowLoop) {
                             var data = this.data();
+                            let oldQty = data.qty;
+                            oldHarga = data.harga.replace(/,/g, '');
                             data.no = true;
+                            let btnEdit = `<button class="btn btn-success btn-xs" onclick="editQtyItemExists(this)"><i class="fa fa-edit"></i> Edit</button>`;
+                            tableDataItemExist.cell(rowIdx, 1).data(btnEdit);
+
+                            //Create HTML Tag for column on row datatable
+                            let optionQty = `<input class="force-select-all" style="width:auto;color:#000000;" type="number" min="0" value="${oldQty}" />`;
+                            // let optionHarga = `<input class="force-select-all" style="width:auto;color:#000000;" id="option-harga" name="option-harga" type="text" min="0" value="${oldHarga}" />`;
+                            let btnSave = `<button class="btn btn-primary btn-xs" onclick="saveQtyItemExists(this)"><i class="fa fa-save"></i> Save</button>`;
+                            tableDataItemExist.cell(rowIdx, 1).data(btnSave);
+                            tableDataItemExist.cell(rowIdx, 2).data(optionQty);
+                            // tableDataItemExist.cell(rowIdx, 3).data(optionHarga);
                             this.data(data);
                         });
                     }
@@ -931,7 +947,12 @@ $id_user = $this->session->userdata['id_karyawan'];
                         var rows = tableDataItemExist.rows(indexes);
                         rows.every(function(rowIdx, tableLoop, rowLoop) {
                             var data = this.data();
+                            // let oldHarga =  data.harga;
+                            // console.log(oldHarga);
                             data.no = false;
+                            tableDataItemExist.cell(rowIdx, 1).data('');
+                            tableDataItemExist.cell(rowIdx, 2).data('');
+                            tableDataItemExist.cell(rowIdx, 3).data(oldHarga);
                             this.data(data);
                         });
                     }
@@ -940,16 +961,16 @@ $id_user = $this->session->userdata['id_karyawan'];
         }
 
         // Edit item Qty Exists
-        function editQtyItemExists(o) {
-            let old = $(o).parent().siblings()[1].innerHTML
-            let oldHarga = $(o).parent().siblings()[2].innerHTML.replace(/,/g, '')
-            let btn = `<button class="btn btn-primary btn-xs" onclick="saveQtyItemExists(this)"><i class="fa fa-save"></i> Save</button>`;
-            option = `<input class="force-select-all" style="width:auto;color:#000000;" type="number" min="0" value="${old}" />`;
-            optionHarga = `<input class="force-select-all" style="width:auto;color:#000000;" type="text" min="0" value="${oldHarga}" />`;
-            $(o).parent().siblings()[1].innerHTML = option
-            $(o).parent().siblings()[2].innerHTML = optionHarga
-            $(o).parent().html(btn)
-        }
+        // function editQtyItemExists(o) {
+        //     let old = $(o).parent().siblings()[1].innerHTML
+        //     let oldHarga = $(o).parent().siblings()[2].innerHTML.replace(/,/g, '')
+        //     let btn = `<button class="btn btn-primary btn-xs" onclick="saveQtyItemExists(this)"><i class="fa fa-save"></i> Save</button>`;
+        //     option = `<input class="force-select-all" style="width:auto;color:#000000;" type="number" min="0" value="${old}" />`;
+        //     optionHarga = `<input class="force-select-all" style="width:auto;color:#000000;" type="text" min="0" value="${oldHarga}" />`;
+        //     $(o).parent().siblings()[1].innerHTML = option
+        //     $(o).parent().siblings()[2].innerHTML = optionHarga
+        //     $(o).parent().html(btn)
+        // }
 
         // Save item Qty
         function saveQtyItemExists(o) {
@@ -1122,9 +1143,11 @@ $id_user = $this->session->userdata['id_karyawan'];
                             if (row.deleted == 1)
                                 return '';
                             if (row.tipe_item !== 'item') {
-                                actions.push('<a class="btn btn-info btn-xs " title="Tambah Sub" onclick="showModalInput(\'' + row.tipe_item + '\',' + row.id + ',' + row.id_parent + ',' + true + ')" href="#"><i class="fa fa-plus"></i></a> ');
+                                // actions.push('<a class="btn btn-info btn-xs " title="Tambah Sub" onclick="showModalInput(\'' + row.tipe_item + '\',' + row.id + ',' + row.id_parent + ',' + true + ')" href="#"><i class="fa fa-plus"></i></a> ');
+                                actions.push('<a class="btn btn-info btn-xs " title="Tambah Sub" onclick="showModalInput(\'' + row.tipe_item + '\',\'' + row.tipe_name + '\',' + row.id + ',' + row.id_parent + ',' + true + ')" href="#"><i class="fa fa-plus"></i></a> ');
                             }
-                            actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="showModalInput(\'' + row.tipe_item + '\',' + row.id + ',' + row.id_parent + ',' + false + ',\'edit\')"><i class="fa fa-edit"></i></a> ');
+                            // actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="showModalInput(\'' + row.tipe_item + '\',' + row.id + ',' + row.id_parent + ',' + false + ',\'edit\')"><i class="fa fa-edit"></i></a> ');
+                            actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="showModalInput(\'' + row.tipe_item + '\',\'' + row.tipe_name + '\',' + row.id + ',' + row.id_parent + ',' + false + ',\'edit\')"><i class="fa fa-edit"></i></a> ');
                             actions.push('<a class="btn btn-danger btn-xs " title="Hapus" onclick="confirmDelete(' + row.id + ',\'bom_part_jasa\',\'' + row.tipe_item + '\')"><i class="fa fa-remove"></i></a>');
                             return actions.join('');
                         }
@@ -1370,7 +1393,8 @@ $id_user = $this->session->userdata['id_karyawan'];
                 toolbar: "#labour-toolbar", //顶部工具条
                 expandColumn: 1,
                 expandAll: false,
-                height: 480,
+                // height: 480,
+                height: 750,
                 type: 'get',
                 parentId: 'id_parent',
                 url: base_url + 'bmaterial/get_data_labour/' + id_header_tree + '?show-deleted=' + show_deleted,
@@ -1520,7 +1544,8 @@ $id_user = $this->session->userdata['id_karyawan'];
                 toolbar: "#material-toolbar", //顶部工具条
                 expandColumn: 1,
                 expandAll: false,
-                height: 480,
+                // height: 480,
+                height:750,
                 type: 'get',
                 parentId: 'id_parent',
                 url: base_url + 'bmaterial/get_data_material/' + id_header_tree + '?show-deleted=' + show_deleted,
@@ -1948,7 +1973,8 @@ $id_user = $this->session->userdata['id_karyawan'];
          * @sub : if sub true = add sub
          * @action : add = 1 || edit = 2
          */
-        function showModalInput(title, id = '', id_parent = '', sub = false, action = 'add') {
+        // function showModalInput(title, id = '', id_parent = '', sub = false, action = 'add') {
+        function showModalInput(title, tipe_name, id = '', id_parent = '', sub = false, action = 'add') {
             refreshTableDataItem();
             editedCellValueQty = [];
             $("#remark-harga").text('');
@@ -1959,8 +1985,12 @@ $id_user = $this->session->userdata['id_karyawan'];
             $("#qty-item").parent().removeClass('has-error');
             $("#tipe_item-item").parent().show();
 
+            var tipeName = tipe_name;
             var title_self = title;
             var title_text = title;
+
+            // Set Section Name on Form
+            $("#tipe_name-item").val(tipeName);
 
 
             if (title == 'item') {
@@ -2143,6 +2173,7 @@ $id_user = $this->session->userdata['id_karyawan'];
 
             title_text = title_text.replace('_', ' ');
 
+            $(".modal-title-input-header").text(ucFirst(title_text + ' ' + tipeName));
             $(".modal-title-input").text(ucFirst(title_text));
             $('#modal-input-item').modal('show');
         }
