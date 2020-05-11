@@ -926,7 +926,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                         rows.every(function(rowIdx, tableLoop, rowLoop) {
                             var data = this.data();
                             let oldQty = data.qty;
-                            oldHarga = data.harga.replace(/,/g, '');
+                            oldHarga = data.harga;
                             data.no = true;
                             let btnEdit = `<button class="btn btn-success btn-xs" onclick="editQtyItemExists(this)"><i class="fa fa-edit"></i> Edit</button>`;
                             tableDataItemExist.cell(rowIdx, 1).data(btnEdit);
@@ -952,7 +952,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                             data.no = false;
                             tableDataItemExist.cell(rowIdx, 1).data('');
                             tableDataItemExist.cell(rowIdx, 2).data('');
-                            tableDataItemExist.cell(rowIdx, 3).data(oldHarga);
+                            // tableDataItemExist.cell(rowIdx, 3).data(oldHarga);
                             this.data(data);
                         });
                     }
@@ -961,34 +961,37 @@ $id_user = $this->session->userdata['id_karyawan'];
         }
 
         // Edit item Qty Exists
-        // function editQtyItemExists(o) {
-        //     let old = $(o).parent().siblings()[1].innerHTML
-        //     let oldHarga = $(o).parent().siblings()[2].innerHTML.replace(/,/g, '')
-        //     let btn = `<button class="btn btn-primary btn-xs" onclick="saveQtyItemExists(this)"><i class="fa fa-save"></i> Save</button>`;
-        //     option = `<input class="force-select-all" style="width:auto;color:#000000;" type="number" min="0" value="${old}" />`;
-        //     optionHarga = `<input class="force-select-all" style="width:auto;color:#000000;" type="text" min="0" value="${oldHarga}" />`;
-        //     $(o).parent().siblings()[1].innerHTML = option
-        //     $(o).parent().siblings()[2].innerHTML = optionHarga
-        //     $(o).parent().html(btn)
-        // }
+        function editQtyItemExists(o) {
+            let old = $(o).parent().siblings()[1].innerHTML
+            // let oldHarga = $(o).parent().siblings()[2].innerHTML.replace(/,/g, '')
+            let btn = `<button class="btn btn-primary btn-xs" onclick="saveQtyItemExists(this)"><i class="fa fa-save"></i> Save</button>`;
+            option = `<input class="force-select-all" style="width:auto;color:#000000;" type="number" min="0" value="${old}" />`;
+            // optionHarga = `<input class="force-select-all" style="width:auto;color:#000000;" type="text" min="0" value="${oldHarga}" />`;
+            $(o).parent().siblings()[1].innerHTML = option
+            // $(o).parent().siblings()[2].innerHTML = optionHarga
+            $(o).parent().html(btn)
+        }
 
         // Save item Qty
         function saveQtyItemExists(o) {
             let input = $(o).parent().siblings()[1]
-            let inputHarga = $(o).parent().siblings()[2]
+            // let inputHarga = $(o).parent().siblings()[2]
+            let oldHarga = $(o).parent().siblings()[2].innerHTML.replace(/,/g, '')
             let item = $(o).parent().siblings()[9].innerHTML
             let newValue = $(input).children()[0].value
-            let newHarga = $(inputHarga).children()[0].value
+            // let newHarga = $(inputHarga).children()[0].value
             let btn = `<button class="btn btn-success btn-xs" onclick="editQtyItemExists(this)"><i class="fa fa-edit"></i> Edit</button>`;
             $(o).parent().siblings()[1].innerHTML = newValue
-            $(o).parent().siblings()[2].innerHTML = new Intl.NumberFormat().format(newHarga)
+            // $(o).parent().siblings()[2].innerHTML = new Intl.NumberFormat().format(newHarga)
             $(o).parent().html(btn)
-
+            // console.log(newValue);
+            // console.log(oldHarga);
             if (editedCellValueQty.length == 0) {
                 editedCellValueQty.push({
                     item_code: item,
                     qty: newValue,
-                    harga: newHarga
+                    harga: oldHarga
+
                 })
             } else {
 
@@ -1000,7 +1003,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                     editedCellValueQty.push({
                         item_code: item,
                         qty: newValue,
-                        harga: newHarga
+                        harga: oldHarga
                     })
                 }
             }
@@ -1032,12 +1035,12 @@ $id_user = $this->session->userdata['id_karyawan'];
                     delete element.stock;
                     for (let idx = 0; idx < editedCellValueQty.length; idx++) {
                         const elm = editedCellValueQty[idx];
-                        console.log(element);
-                        console.log(elm);
+                        // console.log(element);
+                        // console.log(elm);
 
                             if (element.stcd == elm.item_code) {
-                                if (elm.qty == 0 || elm.harga.replace(/,/g, '') == 0) {
-                                    alert(`Qty dan Harga item ${element.stcd} - ${element.item_name} tidak boleh 0!`)
+                                if (elm.qty == 0) {
+                                    alert(`Qty ${element.stcd} - ${element.item_name} tidak boleh 0!`)
                                     return;
                                 }
                                 element.category = switchCodeToCategory(elm.item_code.substr(0, 3))
@@ -1046,7 +1049,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                                 // element.stock = element.stock;
                                 selected.push(element)
                             }
-                        console.log('cccc');
+                        // console.log('cccc');
                         // console.log(selected);
                         //return;
                         // delete selected.stock;
@@ -1126,7 +1129,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                 toolbar: "#demo-toolbar", //顶部工具条
                 expandColumn: 1,
                 expandAll: true,
-                height: 480,
+                height: 750,
                 type: 'get',
                 parentId: 'id_parent',
                 url: base_url + 'bmaterial/get_data_part/' + id_header_tree + '?show-deleted=' + show_deleted,
@@ -1863,7 +1866,7 @@ $id_user = $this->session->userdata['id_karyawan'];
         }
 
         function getDataHeader(idx) {
-            console.log('xxxx');
+            // console.log('xxxx');
 
             $.ajax({
                 url: base_url + 'bmaterial/get_data_header/' + idx,
@@ -1871,7 +1874,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                 type: 'POST',
                 cache: false,
                 success: function(json) {
-                    console.log(json.data.object[0].wono)
+                    // console.log(json.data.object[0].wono)
                     if (json.data.code === 0) {
                         notify('danger', 'Terjadi kesalahan!');
 
@@ -2219,7 +2222,7 @@ $id_user = $this->session->userdata['id_karyawan'];
         function saveItem() {
             
             loading('loading', true);
-            // $("#item_code-item").removeAttr('disabled'); 
+            $("#item_code-item").removeAttr('disabled'); 
             $("#satuan-item").removeAttr("disabled",true);
             var harga = ($("#harga-item").cleanVal() * 1);
             var qty = $("#qty-item").val();
