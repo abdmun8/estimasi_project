@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-class Reporter
+class Breporter
 {
     var $_CI;
     function __construct()
@@ -155,7 +155,9 @@ class Reporter
     }
 
     public function getStructureTree($data)
-    {
+    {   
+        // var_dump($data);
+        // die;
         $arrId = [];
         $struct = [];
         $arrData = [];
@@ -200,7 +202,7 @@ class Reporter
     public function getDataSummary($part, $material, $labour)
     {
 
-        var_dump($part);die;
+        // var_dump($part);die;
         $dataSectionPart = array_filter($part, function ($item) {
             return $item['tipe_item'] == 'section';
         });
@@ -232,7 +234,7 @@ class Reporter
                 (SELECT
                         tipe_item
                     FROM
-                        {$this->_CI->db->database}.part_jasa p
+                        {$this->_CI->db->database}.bom_part_jasa p
                     WHERE
                         p.id = j.id_parent) AS tipe_parent,
                 k.`desc` AS nama_kategori, 
@@ -245,7 +247,7 @@ class Reporter
                 if(j.kategori = '40003',j.harga * qty,0) AS import,
                 if(j.kategori = '40006',j.harga * qty,0) AS onsite
             FROM
-                {$this->_CI->db->database}.`part_jasa` j
+                {$this->_CI->db->database}.`bom_part_jasa` j
                     LEFT JOIN
                 `sgedb`.`akunbg` k ON j.kategori = k.accno
             WHERE
@@ -310,11 +312,11 @@ class Reporter
             SELECT
                 tipe_item
             FROM
-                labour b
+                bom_labour b
             WHERE
                 b.id = l.id_parent) AS tipe_parent, if(l.tipe_name = 'ENGINEERING', (l.`hour` * l.rate),0) AS eng,if(l.tipe_name = 'PRODUCTION', (l.`hour` * l.rate),0) AS prod, {$value['id_part_jasa']} AS id_section
             FROM
-                `labour` `l`
+                `bom_labour` `l`
             WHERE
                 l.id_header ='{$value['id_header']}' AND l.id_parent IN ('$parent') AND l.tipe_item = 'item') AS grouping GROUP BY id_section";
             // echo $sql;die;

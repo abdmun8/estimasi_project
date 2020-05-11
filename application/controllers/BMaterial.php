@@ -13,7 +13,7 @@ class Bmaterial extends CI_Controller
         $this->load->model('Bmaterial_model', 'bmaterial');
         $this->load->library('form_validation');
         $this->sgedb = $this->load->database('sgedb', TRUE);
-        $this->load->library('reporter');
+        $this->load->library('breporter');
     }
 
     public function index($id = NULL)
@@ -73,7 +73,9 @@ class Bmaterial extends CI_Controller
     /* Get data for part jasa tab*/
     public function getDataPart($id_header = NULL, $id_part = NULL, $json = true)
     {
-        // var_dump($_GET);
+        // var_dump($id_header);
+        // var_dump($id_part);
+        // var_dump($json);
         // die;
         $object = [];
         $data = [];
@@ -88,7 +90,7 @@ class Bmaterial extends CI_Controller
                                     {$this->db->database}.bom_part_jasa p
                                 WHERE
                                     p.id = j.id_parent) AS tipe_parent,
-                            k.`desc` AS nama_kategori
+                            trim(k.`desc`) AS nama_kategori
                         FROM
                             {$this->db->database}.`bom_part_jasa` j
                                 LEFT JOIN
@@ -934,7 +936,9 @@ class Bmaterial extends CI_Controller
         $dataLabour = array_filter($labour, function ($item) {
             return $item['deleted'] == 0;
         });
-        $summary = $this->reporter->getDataSummary($dataPart, $dataMaterial, $dataLabour);
+        // var_dump($material);
+        // die;
+        $summary = $this->breporter->getDataSummary($dataPart, $dataMaterial, $dataLabour);
         $_GET['id'] = $id_header;
         if ($return) {
             return $summary;
@@ -962,19 +966,19 @@ class Bmaterial extends CI_Controller
             return $item['tipe_item'] == 'section';
         });
 
-        $parentLabour = $this->reporter->getStructureTree($labour);
+        $parentLabour = $this->breporter->getStructureTree($labour);
 
         $sectionMaterial = array_filter($material, function ($item) {
             return $item['tipe_item'] == 'section';
         });
 
-        $parentMaterial = $this->reporter->getStructureTree($material);
+        $parentMaterial = $this->breporter->getStructureTree($material);
 
         $sectionPart = array_filter($part, function ($item) {
             return $item['tipe_item'] == 'section';
         });
 
-        $parentPart = $this->reporter->getStructureTree($part);
+        $parentPart = $this->breporter->getStructureTree($part);
         $rowTitle = $this->db->get_where('v_wo_bom', ['id' => $id_header])->row();
         $title = "BOM-Summary-Detail" . $rowTitle->wono . "-" . $rowTitle->dec . "-" . $rowTitle->customer . "-" . date('dmY');
         $_GET['id'] = $id_header;
