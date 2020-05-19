@@ -105,9 +105,9 @@ class Retriever extends CI_Controller
 						$query['table'] = 'v_header';	
 						break;
 					case 'headerMaterial':
-						if(isset($_GET['show_closed']) && $_GET['show_closed'] == 1 ){
+						if(isset($_GET['show_closed']) && $_GET['show_closed'] == 0 ){
 							$query['where'] = ['complete' => '1899-12-30'];
-						}
+						} 
 						$query['table'] = 'v_wo_bom';	
 						break;
 					case 'karyawan':

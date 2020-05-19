@@ -89,7 +89,8 @@ $activeSheet->fromArray($arrHeaderSummary, NULL, 'C4');
 
 // Looping part & jasa 
 // total = value * qty 
-
+// var_dump($data);
+// die;
 $row = 0;
 foreach ($data as $key => $value) {
     $row = (int) $key + 5;

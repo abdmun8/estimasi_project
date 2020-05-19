@@ -13,7 +13,7 @@ if ($param != null) {
 $satuan = $this->db->get_where('tblsatuan')->result();
 
 
-$id_user = $this->session->userdata['id_karyawan']; 
+$id_user = $this->session->userdata['id_karyawan'];
 
 
 
@@ -150,7 +150,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                             <div class="form-group">
                                 <label for="customer" class="col-sm-3 control-label">Date</label>
                                 <div class="col-sm-9">
-                                    <input disabled type="text" class="form-control" name="date" id="date" placeholder="Date">  
+                                    <input disabled type="text" class="form-control" name="date" id="date" placeholder="Date">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -159,7 +159,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                                     <input disabled type="text" class="form-control" name="efDate" id="efDate" placeholder="E.Finish Date">
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="col-md-6">
                             <!-- Right Form -->
@@ -178,7 +178,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                             <div class="form-group">
                                 <label for="finish_date" class="col-sm-3 control-label">Marketing</label>
                                 <div class="col-sm-9">
-                                    <input disabled type="text" class="form-control"  name="marketing" id="marketing" placeholder="Marketing">
+                                    <input disabled type="text" class="form-control" name="marketing" id="marketing" placeholder="Marketing">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -245,9 +245,9 @@ $id_user = $this->session->userdata['id_karyawan'];
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Manage <span class="modal-title-input"></span></h4>
-                    <?php 
-                        // echo($_SESSION);
-                        // die;
+                    <?php
+                    // echo($_SESSION);
+                    // die;
                     ?>
                 </div>
                 <div class="modal-body">
@@ -286,7 +286,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                                             <div class="form-group only_item">
                                                 <label for="satuan-item">Satuan</label>
                                                 <select class="form-control select2 input-sm" style="width:100%;" name="satuan-item" id="satuan-item">
-                                                <option value="" selected="">Pilih Satuan</option>
+                                                    <option value="" selected="">Pilih Satuan</option>
                                                 </select>
                                                 <!-- <input type="text" class="form-control input-sm" id="satuan-item" name="satuan-item" placeholder="Satuan"> -->
                                             </div>
@@ -300,7 +300,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                                             <input type="hidden" id="id_header-item" name="id_header-item" value="0" />
                                             <input type="hidden" id="action-item" name="action-item" value="1" />
                                             <input type="hidden" id="id-item" name="id-item" value="1" />
-                                            <input type="hidden" id="users" name="users" value=<?= $id_user?> />
+                                            <input type="hidden" id="users" name="users" value=<?= $id_user ?> />
                                         </div>
 
                                         <div class="col-md-6">
@@ -421,7 +421,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                                 <input type="hidden" id="id_header-material" name="id_header-material" />
                                 <input type="hidden" id="item_code-save-material" name="item_code-save-material" />
                                 <input type="hidden" id="action-material" name="action-material" value="1" />
-                                <input type="hidden" id="users" name="users" value=<?= $id_user?> />
+                                <input type="hidden" id="users" name="users" value=<?= $id_user ?> />
 
                                 <div class="form-group">
                                     <label>Item Code</label>
@@ -618,7 +618,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                     format: 'DD-MM-YYYY'
                 }
             });
-            $.get(base_url + "bmaterial/get_satuan", function(data){
+            $.get(base_url + "bmaterial/get_satuan", function(data) {
                 $('#satuan-item').select2({
                     placeholder: 'Pilih Satuan',
                     data: data
@@ -813,12 +813,12 @@ $id_user = $this->session->userdata['id_karyawan'];
                         },
                         {
                             'data': 'stock',
-                        //     // 'render': function(data, type, row) {
-                        //     //     // let stock1 = row.harga;
-                        //     //     // return stock1
-                        //     //     let number1x = parseFloat(data)
-                        //     //     return number1x
-                        //     // }
+                            //     // 'render': function(data, type, row) {
+                            //     //     // let stock1 = row.harga;
+                            //     //     // return stock1
+                            //     //     let number1x = parseFloat(data)
+                            //     //     return number1x
+                            //     // }
 
                         },
                         {
@@ -846,7 +846,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                         [0, "asc"]
                     ],
                     //autoWidth: false,
-                    autoWidth:true,
+                    autoWidth: true,
                     deferRender: true,
                     bAutoWidth: false,
                     //responsive: true,
@@ -926,7 +926,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                         rows.every(function(rowIdx, tableLoop, rowLoop) {
                             var data = this.data();
                             let oldQty = data.qty;
-                            oldHarga = data.harga.replace(/,/g, '');
+                            oldHarga = data.harga;
                             data.no = true;
                             let btnEdit = `<button class="btn btn-success btn-xs" onclick="editQtyItemExists(this)"><i class="fa fa-edit"></i> Edit</button>`;
                             tableDataItemExist.cell(rowIdx, 1).data(btnEdit);
@@ -952,7 +952,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                             data.no = false;
                             tableDataItemExist.cell(rowIdx, 1).data('');
                             tableDataItemExist.cell(rowIdx, 2).data('');
-                            tableDataItemExist.cell(rowIdx, 3).data(oldHarga);
+                            // tableDataItemExist.cell(rowIdx, 3).data(oldHarga);
                             this.data(data);
                         });
                     }
@@ -961,34 +961,37 @@ $id_user = $this->session->userdata['id_karyawan'];
         }
 
         // Edit item Qty Exists
-        // function editQtyItemExists(o) {
-        //     let old = $(o).parent().siblings()[1].innerHTML
-        //     let oldHarga = $(o).parent().siblings()[2].innerHTML.replace(/,/g, '')
-        //     let btn = `<button class="btn btn-primary btn-xs" onclick="saveQtyItemExists(this)"><i class="fa fa-save"></i> Save</button>`;
-        //     option = `<input class="force-select-all" style="width:auto;color:#000000;" type="number" min="0" value="${old}" />`;
-        //     optionHarga = `<input class="force-select-all" style="width:auto;color:#000000;" type="text" min="0" value="${oldHarga}" />`;
-        //     $(o).parent().siblings()[1].innerHTML = option
-        //     $(o).parent().siblings()[2].innerHTML = optionHarga
-        //     $(o).parent().html(btn)
-        // }
+        function editQtyItemExists(o) {
+            let old = $(o).parent().siblings()[1].innerHTML
+            // let oldHarga = $(o).parent().siblings()[2].innerHTML.replace(/,/g, '')
+            let btn = `<button class="btn btn-primary btn-xs" onclick="saveQtyItemExists(this)"><i class="fa fa-save"></i> Save</button>`;
+            option = `<input class="force-select-all" style="width:auto;color:#000000;" type="number" min="0" value="${old}" />`;
+            // optionHarga = `<input class="force-select-all" style="width:auto;color:#000000;" type="text" min="0" value="${oldHarga}" />`;
+            $(o).parent().siblings()[1].innerHTML = option
+            // $(o).parent().siblings()[2].innerHTML = optionHarga
+            $(o).parent().html(btn)
+        }
 
         // Save item Qty
         function saveQtyItemExists(o) {
             let input = $(o).parent().siblings()[1]
-            let inputHarga = $(o).parent().siblings()[2]
+            // let inputHarga = $(o).parent().siblings()[2]
+            let oldHarga = $(o).parent().siblings()[2].innerHTML.replace(/,/g, '')
             let item = $(o).parent().siblings()[9].innerHTML
             let newValue = $(input).children()[0].value
-            let newHarga = $(inputHarga).children()[0].value
+            // let newHarga = $(inputHarga).children()[0].value
             let btn = `<button class="btn btn-success btn-xs" onclick="editQtyItemExists(this)"><i class="fa fa-edit"></i> Edit</button>`;
             $(o).parent().siblings()[1].innerHTML = newValue
-            $(o).parent().siblings()[2].innerHTML = new Intl.NumberFormat().format(newHarga)
+            // $(o).parent().siblings()[2].innerHTML = new Intl.NumberFormat().format(newHarga)
             $(o).parent().html(btn)
-
+            // console.log(newValue);
+            // console.log(oldHarga);
             if (editedCellValueQty.length == 0) {
                 editedCellValueQty.push({
                     item_code: item,
                     qty: newValue,
-                    harga: newHarga
+                    harga: oldHarga
+
                 })
             } else {
 
@@ -1000,7 +1003,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                     editedCellValueQty.push({
                         item_code: item,
                         qty: newValue,
-                        harga: newHarga
+                        harga: oldHarga
                     })
                 }
             }
@@ -1032,21 +1035,21 @@ $id_user = $this->session->userdata['id_karyawan'];
                     delete element.stock;
                     for (let idx = 0; idx < editedCellValueQty.length; idx++) {
                         const elm = editedCellValueQty[idx];
-                        console.log(element);
-                        console.log(elm);
+                        // console.log(element);
+                        // console.log(elm);
 
-                            if (element.stcd == elm.item_code) {
-                                if (elm.qty == 0 || elm.harga.replace(/,/g, '') == 0) {
-                                    alert(`Qty dan Harga item ${element.stcd} - ${element.item_name} tidak boleh 0!`)
-                                    return;
-                                }
-                                element.category = switchCodeToCategory(elm.item_code.substr(0, 3))
-                                element.qty = elm.qty
-                                element.harga = elm.harga.replace(/,/g, '');
-                                // element.stock = element.stock;
-                                selected.push(element)
+                        if (element.stcd == elm.item_code) {
+                            if (elm.qty == 0) {
+                                alert(`Qty ${element.stcd} - ${element.item_name} tidak boleh 0!`)
+                                return;
                             }
-                        console.log('cccc');
+                            element.category = switchCodeToCategory(elm.item_code.substr(0, 3))
+                            element.qty = elm.qty
+                            element.harga = elm.harga.replace(/,/g, '');
+                            // element.stock = element.stock;
+                            selected.push(element)
+                        }
+                        // console.log('cccc');
                         // console.log(selected);
                         //return;
                         // delete selected.stock;
@@ -1062,7 +1065,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                     id_parent: id_parent_item,
                     id_header: id_header_item,
                     data: JSON.stringify(selected)
-                  
+
                 }, res => {
                     if (res.msg_exists != '') {
                         alert(res.message + res.msg_exists)
@@ -1126,7 +1129,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                 toolbar: "#demo-toolbar", //顶部工具条
                 expandColumn: 1,
                 expandAll: true,
-                height: 480,
+                height: 750,
                 type: 'get',
                 parentId: 'id_parent',
                 url: base_url + 'bmaterial/get_data_part/' + id_header_tree + '?show-deleted=' + show_deleted,
@@ -1545,7 +1548,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                 expandColumn: 1,
                 expandAll: false,
                 // height: 480,
-                height:750,
+                height: 750,
                 type: 'get',
                 parentId: 'id_parent',
                 url: base_url + 'bmaterial/get_data_material/' + id_header_tree + '?show-deleted=' + show_deleted,
@@ -1863,7 +1866,7 @@ $id_user = $this->session->userdata['id_karyawan'];
         }
 
         function getDataHeader(idx) {
-            console.log('xxxx');
+            // console.log('xxxx');
 
             $.ajax({
                 url: base_url + 'bmaterial/get_data_header/' + idx,
@@ -1871,7 +1874,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                 type: 'POST',
                 cache: false,
                 success: function(json) {
-                    console.log(json.data.object[0].wono)
+                    // console.log(json.data.object[0].wono)
                     if (json.data.code === 0) {
                         notify('danger', 'Terjadi kesalahan!');
 
@@ -1917,7 +1920,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                                 loading('loading', false);
                                 if (json.data.code === 1) {
                                     notify('success', 'Hapus data berhasil');
-                                    if (table == 'bom_part_jasa' ) {
+                                    if (table == 'bom_part_jasa') {
                                         $('#demo').bootstrapTreeTable('refresh');
                                     } else if (table == 'bom_rawmaterial') {
                                         $('#material_table').bootstrapTreeTable('refresh');
@@ -2110,16 +2113,16 @@ $id_user = $this->session->userdata['id_karyawan'];
                         $("#tipe_item-item").val(json.tipe_item);
                         $("#id-item").val(json.id);
                         $("#remark-harga").text(json.remark_harga);
-                        if(itcode){
+                        if (itcode) {
                             $("#harga-item").css('pointer-events', 'none');
-                            $("#item_code-item").attr("disabled",true);
+                            $("#item_code-item").attr("disabled", true);
                             $("#item_name-item").css('pointer-events', 'none');
                             $("#merk-item").css('pointer-events', 'none');
-                            $("#satuan-item").attr("disabled",true);
+                            $("#satuan-item").attr("disabled", true);
                             $("#spec-item").css('pointer-events', 'none');
                             $("#tipe_name-item").css('pointer-events', 'none');
                             $("#tipe_item-item").css('pointer-events', 'none');
-                        }else{
+                        } else {
                             $("#harga-item").css('pointer-events', '');
                             // $("#item_code-item").removeAttr('disabled'); 
                             $("#item_name-item").css('pointer-events', '');
@@ -2217,10 +2220,10 @@ $id_user = $this->session->userdata['id_karyawan'];
         // function count
 
         function saveItem() {
-            
+
             loading('loading', true);
-            $("#item_code-item").removeAttr('disabled'); 
-            $("#satuan-item").removeAttr("disabled",true);
+            $("#item_code-item").removeAttr('disabled');
+            $("#satuan-item").removeAttr("disabled", true);
             var harga = ($("#harga-item").cleanVal() * 1);
             var qty = $("#qty-item").val();
             var tipe_id = $("#tipe_id-item").val();
@@ -2244,6 +2247,10 @@ $id_user = $this->session->userdata['id_karyawan'];
                 } else {
                     $("#qty-item").parent().removeClass('has-error');
                 }
+
+            } else if ($("#tipe_item-item").val() == 'section') {
+
+                $("#qty-item").val('1');
 
             } else {
 
@@ -2532,14 +2539,14 @@ $id_user = $this->session->userdata['id_karyawan'];
                     value: '10003'
                 },
                 {
-                    code: ['PNU', 'PNE','PPG'],
+                    code: ['PNU', 'PNE', 'PPG'],
                     value: '10004'
                 },
                 {
                     code: ['SNS'],
                     value: '20001'
                 },
-               
+
             ];
             let val = '';
             codes.forEach(element => {
