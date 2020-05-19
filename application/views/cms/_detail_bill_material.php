@@ -2219,7 +2219,7 @@ $id_user = $this->session->userdata['id_karyawan'];
         function saveItem() {
             
             loading('loading', true);
-            // $("#item_code-item").removeAttr('disabled'); 
+            $("#item_code-item").removeAttr('disabled'); 
             $("#satuan-item").removeAttr("disabled",true);
             var harga = ($("#harga-item").cleanVal() * 1);
             var qty = $("#qty-item").val();

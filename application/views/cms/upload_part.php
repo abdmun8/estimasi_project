@@ -19,21 +19,29 @@ if(isset($_FILES['FilePart']['name']) && in_array($_FILES['FilePart']['type'], $
     }
     
     $spreadsheet = $reader->load($_FILES['FilePart']['tmp_name']);
-    
-    $sheetData = $spreadsheet->getActiveSheet()->toArray();
+    $spreadCount = $spreadsheet->getSheetCount();
+    // for($x = 0; $x < $spreadCount; $x++){
+    //     $dataCount = $spreadsheet->getSheet($x)->toArray();
+    // }
+    // $sheetData = $spreadsheet->getActiveSheet()->toArray();
+    // var_dump($dataCount);
+    // die;
     $message = "";
     // var_dump($sheetData);
     // die;
-	for($i = 3;$i < count($sheetData);$i++)
-	{
-        $no = $sheetData[$i]['0'];
-        $tipe_id = $sheetData[$i]['1'];
-        $item_code = $sheetData[$i]['2'];
-        $item_name = $sheetData[$i]['3'];
-        $spec = $sheetData[$i]['4'];
-        $sql = "insert into bom_part_jasa (id_header,id_parent,tipe_item,tipe_id,tipe_name,item_code,item_name,spec) values 
-        ('$idHeader','167','item','$no','$tipe_id','$item_code','$item_name','$spec')";
-        $insert = $this->db->query($sql);
+    for($x = 0; $x < $spreadCount; $x++){
+        $sheetData = $spreadsheet->getSheet($x)->toArray();
+        for($i = 3;$i < count($sheetData);$i++)
+        {
+            $no = $sheetData[$i]['0'];
+            $tipe_id = $sheetData[$i]['1'];
+            $item_code = $sheetData[$i]['2'];
+            $item_name = $sheetData[$i]['3'];
+            $spec = $sheetData[$i]['4'];
+            $sql = "insert into bom_part_jasa (id_header,id_parent,tipe_item,tipe_id,tipe_name,item_code,item_name,spec) values 
+            ('$idHeader','167','item','$no','$tipe_id','$item_code','$item_name','$spec')";
+            $insert = $this->db->query($sql);
+        }
     }
     if($insert){
         $message = "DATA BERHASIL DISIMPAN";

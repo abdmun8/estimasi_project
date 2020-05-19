@@ -221,7 +221,9 @@ if ($param != null) {
         // fileUpload = $('#FilePart').val();
         var FilePart = $('#FilePart').val();
         var extendsType = FilePart.split(".");
-        if($('#FilePart').val() == '' || extendsType != 'xlsx'){
+        // console.log(extendsType[1]);
+        // return;
+        if(FilePart == '' && (extendsType[1] == 'xlsx' || extendsType[1] == 'xls')){
             alert('File masih kososng');
             $('#FilePart').val('');
             return;
