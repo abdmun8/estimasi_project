@@ -1,6 +1,10 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Reader\Csv;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+
 class Bmaterial extends CI_Controller
 {
     private $identity; // store session
@@ -22,10 +26,10 @@ class Bmaterial extends CI_Controller
         if (!$this->ion_auth->logged_in()) {
             redirect('auth/login', 'refresh');
         }
-        
+
         $data['param'] = $id;
         // $has_item = $this->checkHasItem($id, FALSE);
-        
+
         /* Insert default section */
         // if (!$has_item)
         //     $this->saveDefaultSection($id);
@@ -39,13 +43,13 @@ class Bmaterial extends CI_Controller
         $object = [];
         $message = '';
         if ($id != NULL) {
-            $object = $this->db->get_where('v_wo_bom',array('id' => $id))->result();
+            $object = $this->db->get_where('v_wo_bom', array('id' => $id))->result();
             // $object = $this->model->getRecord(['table'=>'header','where'=>['id'=>$id]]);
             // $object = $this->db->select('*');
             // $object = $this->db->from('v_wo_bom');
             // $object = $this->db->where('id', $id);
-                // ->get("{$this->db->database}.v_wo_bom")
-                //->row();
+            // ->get("{$this->db->database}.v_wo_bom")
+            //->row();
         } else {
             // // $object = $this->model->getList(['table'=>'v_header']);
             // $object = $this->db->select("{$this->db->database}.v_header.*, sgedb.personal.nama as pic_name, sgedb.customer.nama as customer_name", false)
@@ -129,7 +133,7 @@ class Bmaterial extends CI_Controller
                         FROM
                             `labour` `l`
                         WHERE
-                            l.id_header ="' . $id_header . '" '.$sql_deleted)->result_array();
+                            l.id_header ="' . $id_header . '" ' . $sql_deleted)->result_array();
 
                 // $data = $this->countTotal($object, 'labour');
                 $temp = $this->countTotal($object, 'labour');
@@ -160,8 +164,8 @@ class Bmaterial extends CI_Controller
         $object = [];
         $data = [];
         if ($id_header != NULL) {
-            if(isset($_GET['show-deleted']) && $_GET['show-deleted'] == 0){
-                $this->db->having('deleted',0);
+            if (isset($_GET['show-deleted']) && $_GET['show-deleted'] == 0) {
+                $this->db->having('deleted', 0);
             }
             if ($id_material == NULL) {
                 $query = $this->db->get_where('v_bom_rawmaterial', ['id_header' => $id_header]);
@@ -213,7 +217,7 @@ class Bmaterial extends CI_Controller
                     /* Cek deleted */
                     $item['total'] = 0;
                     if (!$item['deleted'])
-                        $item['total'] = ($item[$col[0]] * $item[$col[1]]);
+                        $item['total'] = round($item[$col[0]] * $item[$col[1]]);
 
                     $item[$col[0]] = floatval($item[$col[0]]);
                     $item[$col[1]] = floatval($item[$col[1]]);
@@ -350,8 +354,8 @@ class Bmaterial extends CI_Controller
 
     public function saveDefaultSection($id_header)
     {
-       
-        
+
+
         $arr = [
             ['tipe_name-item' => 'ONSITE', 'tipe_id-item' => '1', 'id_header-item' => $id_header, 'group-item' => 0],
             ['tipe_name-item' => 'INSTALLATION', 'tipe_id-item' => '2', 'id_header-item' => $id_header, 'group-item' => 1]
@@ -450,7 +454,6 @@ class Bmaterial extends CI_Controller
                 $msg = 'Input Data Gagal';
                 $this->db->trans_rollback();
             }
-            
         }
         // die;
         $this->db->trans_commit();
@@ -506,49 +509,49 @@ class Bmaterial extends CI_Controller
                     //         'id_part_jasa' => $last_id
                     //     ]
                     //     );
-                        
-                        // print_r($tes);
-                        // die;
-                        $last_id_labour = $this->db->insert_id();
-                        
-                        
-                        $this->db->insert(
-                            'bom_rawmaterial',
-                            [
-                                'id_header' => $this->input->post('id_header-item'),
-                                'tipe_item' => $tipe_item,
-                                'tipe_id' => $this->input->post('tipe_id-item'),
-                                'tipe_name' => $this->input->post('tipe_name-item'),
-                                'id_parent' => $id_parent_rm,
-                                'id_part_jasa' => $last_id,
-                                'users' => $this->input->post('users')
-                                ]
-                            );
-                            // print_r($this->db->last_query());
+
+                    // print_r($tes);
+                    // die;
+                    $last_id_labour = $this->db->insert_id();
+
+
+                    $this->db->insert(
+                        'bom_rawmaterial',
+                        [
+                            'id_header' => $this->input->post('id_header-item'),
+                            'tipe_item' => $tipe_item,
+                            'tipe_id' => $this->input->post('tipe_id-item'),
+                            'tipe_name' => $this->input->post('tipe_name-item'),
+                            'id_parent' => $id_parent_rm,
+                            'id_part_jasa' => $last_id,
+                            'users' => $this->input->post('users')
+                        ]
+                    );
+                    // print_r($this->db->last_query());
 
                     $last_id_material = $this->db->insert_id();
 
                     // $this->db->trans_rollback();
                     //$default = $this->db->get('default_labour')->result_array();
                     //for ($i = 0; $i < count($default_dept_labour); $i++) {
-                        // foreach ($default as $key => $value) {
-                        //     if ($value['name'] == $default_dept_labour[$i]) {
-                        //         $field = [
-                        //             'id_header' => $this->input->post('id_header-item'),
-                        //             'tipe_item' => 'item',
-                        //             'id_parent' => $last_id_labour,
-                        //             'id_part_jasa' => $last_id,
-                        //             'tipe_id' => $this->input->post('tipe_id-item'),
-                        //             'tipe_name' => $default_dept_labour[$i],
-                        //             'id_labour' => $value['budget_id'],
-                        //             'rate' => $value['rate'],
-                        //             'aktivitas' => $value['aktivitas'],
-                        //             'sub_aktivitas' => $value['sub_aktivitas']
-                        //         ];
+                    // foreach ($default as $key => $value) {
+                    //     if ($value['name'] == $default_dept_labour[$i]) {
+                    //         $field = [
+                    //             'id_header' => $this->input->post('id_header-item'),
+                    //             'tipe_item' => 'item',
+                    //             'id_parent' => $last_id_labour,
+                    //             'id_part_jasa' => $last_id,
+                    //             'tipe_id' => $this->input->post('tipe_id-item'),
+                    //             'tipe_name' => $default_dept_labour[$i],
+                    //             'id_labour' => $value['budget_id'],
+                    //             'rate' => $value['rate'],
+                    //             'aktivitas' => $value['aktivitas'],
+                    //             'sub_aktivitas' => $value['sub_aktivitas']
+                    //         ];
 
-                        //         $this->db->insert('bom_labour', $field);
-                        //     }
-                        // }
+                    //         $this->db->insert('bom_labour', $field);
+                    //     }
+                    // }
                     // }
                 }
             }
@@ -588,9 +591,10 @@ class Bmaterial extends CI_Controller
             'message' => $message
         )));
     }
-    function getSatuan(){
+    function getSatuan()
+    {
         $data = [];
-        $sql = $this->sgedb->select('kode as id, name as text')-> get('tblsatuan');
+        $sql = $this->sgedb->select('kode as id, name as text')->get('tblsatuan');
         $sqlData = $sql->result();
         //$data[] = $sqlData;
         echo json_encode($sqlData);
@@ -624,8 +628,8 @@ class Bmaterial extends CI_Controller
             CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," - ",lp.mkt," - "," [",mstchd.stcd,"]" ) as text, 
             (lp.mkt) as harga, lp.remark,ifnull(stock.balance,0) as stock', false)
             ->from('sgedb.mstchd')
-            ->join('sgedb.msprice lp', 'mstchd.stcd = lp.stcd' , 'left')
-            ->join('sgedb.v_stock stock', 'mstchd.stcd = stock.stcd' ,'left')
+            ->join('sgedb.msprice lp', 'mstchd.stcd = lp.stcd', 'left')
+            ->join('sgedb.v_stock stock', 'mstchd.stcd = stock.stcd', 'left')
             ->get()->result_array();
         if ($set_null) {
             array_unshift($obj, [
@@ -647,7 +651,7 @@ class Bmaterial extends CI_Controller
                 $no++;
                 $row['qty'] = '';
                 $row['no'] = '';
-                $row['action'] ='';
+                $row['action'] = '';
                 $row['harga'] =  number_format($row['harga']);
                 $data['data'][] = $row;
             }
@@ -660,7 +664,7 @@ class Bmaterial extends CI_Controller
     {
         $obj = $this->sgedb->select('accno as id, TRIM(`desc`) as text', false)
             ->where_in('header', ['10000', '20000'])
-            ->or_where('accno','40006')
+            ->or_where('accno', '40006')
             // ->having('accno <>', '10001')
             ->having('accno <>', '10006')
             ->get('akunbg')
@@ -1063,5 +1067,199 @@ class Bmaterial extends CI_Controller
         if (!$json)
             return $has_item;
         echo json_encode(['has_item' => $has_item]);
+    }
+
+    public function saveUpload()
+    {
+
+        $file_mimes = array('application/octet-stream', 'application/vnd.ms-excel', 'application/x-csv', 'text/x-csv', 'text/csv', 'application/csv', 'application/excel', 'application/vnd.msexcel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        if (isset($_FILES['FilePart']['name']) && in_array($_FILES['FilePart']['type'], $file_mimes)) {
+
+            $arr_file = explode('.', $_FILES['FilePart']['name']);
+            $extension = end($arr_file);
+
+            if ('csv' == $extension) {
+                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
+            } else {
+                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+            }
+
+            $spreadsheet = $reader->load($_FILES['FilePart']['tmp_name']);
+
+            $numberSheet = $spreadsheet->getSheetCount(); // Get Total of Worksheet
+            $listWorkSheet = $spreadsheet->getSheetNames(); // Get list Name of Worksheet
+            $message = "";
+            for ($i = 0; $i < $numberSheet; $i++) {
+
+                // var_dump('Sheet ke' . $i . ' adalah ' . $listWorkSheet[$i]);
+                $spreadsheet->setActiveSheetIndexByName($listWorkSheet[$i]);
+
+                $sheetData = $spreadsheet->getActiveSheet()->toArray();
+                $idHeader = $_POST['idHeader'];
+                $idParent = $_POST['idParent'];
+                $tipeId = $_POST['tipeId'];
+                $dwgNumber = substr($listWorkSheet[$i], 0, 12);
+                $dwgName = trim(substr($listWorkSheet[$i], 13, 100));
+                $idUser = $_POST['idUser'];
+                $idParentItem = [];
+
+                if ($dwgNumber == '00-00-00-000') {
+
+                    $idRM = $this->db->get_where('bom_rawmaterial', array('id_header' => $idHeader, 'id_part_jasa' => $idParent, 'tipe_item' => 'section', 'tipe_id' => $tipeId))->row()->id;
+                    $idParentItem = ['idRM' => $idRM, 'idPJ' => $idParent];
+
+                    $this->uploadItem($sheetData, $idHeader, $idParentItem, $idUser);
+                } else {
+
+                    //------- Insert Object / Sub Section -------
+                    $tipeId = $tipeId . "." . $i;
+                    $sql = "INSERT INTO bom_part_jasa (id_header,id_parent,tipe_item,tipe_id,tipe_name,qty,users) values 
+                                       ({$idHeader},{$idParent},'object','{$tipeId}','{$listWorkSheet[$i]}','0','{$idUser}') ";
+                    $insert = $this->db->query($sql);
+
+                    //Get id For Parent Object on BOM_Rawmterial
+                    $idParentRM = $this->db->get_where('bom_rawmaterial', array('id_header' => $idHeader, 'id_part_jasa' => $idParent, 'tipe_item' => 'section'))->row()->id;
+
+                    //Get id part jasa For column id_part_jasa on BOM_Rawmterial
+                    $idPartJasa = $this->db->get_where('bom_part_jasa', array('id_header' => $idHeader, 'id_parent' => $idParent, 'tipe_item' => 'object', 'tipe_id' => $tipeId))->row()->id;
+
+                    $sql = "INSERT INTO bom_rawmaterial (id_header,id_parent,id_part_jasa,tipe_item,tipe_id,tipe_name,qty,users) values 
+                    ({$idHeader},{$idParentRM},{$idPartJasa},'object','{$tipeId}','{$listWorkSheet[$i]}','0','{$idUser}') ";
+                    $insert = $this->db->query($sql);
+
+                    //------- END Insert Object / Sub Section -------
+
+
+                    //------- Insert Item -------
+                    $idRM = $this->db->get_where('bom_rawmaterial', array('id_header' => $idHeader, 'id_part_jasa' => $idPartJasa, 'tipe_item' => 'object', 'tipe_id' => $tipeId))->row()->id;
+                    $idParentItem = ['idRM' => $idRM, 'idPJ' => $idPartJasa];
+                    // var_dump($idParentItem);
+                    // echo $this->db->last_query();
+                    $this->uploadItem($sheetData, $idHeader, $idParentItem, $idUser);
+                    //------- END Insert Item -------
+                }
+            }
+
+            // echo json_encode(['message' => $message]);
+        }
+    }
+
+    function uploadItem($data = [], $idHeader, $idParentItem = [], $idUser)
+    {
+
+        $matlType = $this->db->get_where('config', array('key' => 'MATL_TYPE'))->row()->value;
+        $matlType = explode(",", $matlType);
+
+        for ($j = 10; $j < count($data); $j++) {
+            $desc = $data[$j]['3'];
+            $matlName = strtoupper($data[$j]['4']);
+            $matlSize = strtoupper($data[$j]['5']);
+            $matlOrBrand =  trim(strtoupper($data[$j]['6']));
+            $qty =  $data[$j]['7'];
+            $unit =  strtoupper($data[$j]['8']);
+            $mass =  $data[$j]['9'];
+            $firstMatlName = explode('_', $matlName);
+            $firstMatlName = $firstMatlName[0];
+            $itemName = $matlName . " " . $matlOrBrand;
+            $object = [];
+            $emptyItem = [];
+
+            if ($desc == '' && $matlName != '') {
+                if (in_array($matlOrBrand, $matlType)) {
+                    $matlSize = str_replace(' ', '', $matlSize);
+                    $object = $this->getItemCodenSpec($firstMatlName, $matlSize, $matlOrBrand);
+                    $str = ['T', 't', 'Dia', 'DIA'];
+                    $rplc = ['', '', '', ''];
+                    $tb = str_replace($str, $rplc, $object['t']);
+                    $sql = "INSERT INTO bom_rawmaterial
+                            (id_header,id_parent,id_part_jasa,tipe_item,item_code,qty,users,`weight`,item_name,l,w,h,t) values 
+                            ({$idHeader},{$idParentItem['idRM']},'0','item','{$object['item_code']}','{$qty}','{$idUser}','{$mass}','{$itemName}','{$object['L']}','{$object['W']}','{$object['H']}','{$tb}')";
+                    $insert = $this->db->query($sql);
+                } else {
+
+                    $object = $this->getItemCodenSpec($matlName, $matlSize, $matlOrBrand, FALSE);
+                    $msItem = $this->getMasterItem($object['item_code']);
+
+                    $sql = "INSERT INTO bom_part_jasa 
+                            (id_header,id_parent,tipe_item,tipe_id,tipe_name,item_code,item_name,spec,satuan,merk,qty,users,`weight`,harga,kategori) values 
+                            ({$idHeader},{$idParentItem['idPJ']},'item','','','{$object['item_code']}','{$msItem['nama']}','{$msItem['spek']}','{$msItem['uom']}','{$msItem['maker']}','{$qty}','{$idUser}','{$mass}','{$msItem['price']}','{$msItem['kategori']}')";
+                    $insert = $this->db->query($sql);
+                }
+            }
+        }
+    }
+
+    function getItemCodenSpec($matlName, $matlSize, $matlOrBrand, $rm = TRUE)
+    {
+        $dt = ['H' => 0, 'W' => 0, 't' => 0, 'L' => 0, 'item_code' => ''];
+        $data = [];
+        $spec = '';
+        if ($rm) {
+
+            $matlSize = str_replace('-', 'X', $matlSize);
+            $matlSize = explode('X', $matlSize);
+
+            $numChar = $this->db->get_where('config', array('key' => $matlName))->row()->value;
+            if ($numChar > 0) {
+                $temp = [];
+                for ($i = 0; $i <= $numChar; $i++) {
+                    array_push($temp, $matlSize[$i]);
+                }
+                $spec = implode("X", $temp);
+            } else {
+                $spec = $matlSize[0];
+            }
+
+            $dimension = $this->db->get_where('config', array('key' => $matlName))->row()->optional;
+            $dimension = explode('x', $dimension);
+            $data = array_combine($dimension, $matlSize);
+        } else {
+            $spec =  $matlSize;
+            $data = [];
+        }
+
+        $item = $this->db->get_where('mrawmaterial', array('part_name' => $matlName, 'spec' => $spec, 'maker' => $matlOrBrand))->row_array();
+        $data = array_merge($data, ['item_code' => $item['item_code']]);
+        $data = array_replace($dt, $data);
+
+        return $data;
+    }
+
+    function getMasterItem($itemCode)
+    {
+        if (isset($itemCode)) {
+
+            $dataItem = [];
+            $kategori = [];
+            // Get Kategori from item code
+            $codes = [
+                0 => ['code' => ['ATK', 'CNS', 'RMT', 'PPG', 'OFF', 'INV'], 'value' => '10001'],
+                1 => ['code' => ['ELC'], 'value' => '10002'],
+                2 => ['code' => ['MCL'], 'value' => '10003'],
+                3 => ['code' => ['PNU', 'PNE', 'PPG'], 'value' => '10004'],
+                4 => ['code' => ['SNS'], 'value' => '20001']
+            ];
+
+            for ($i = 0; $i < count($codes); $i++) {
+                if (in_array(substr($itemCode, 0, 3), $codes[$i]['code'])) {
+                    $kategori = ['kategori' => $codes[$i]['value']];
+                }
+            }
+
+            // Get Master Item Name,Spek,Maker & Unit
+            $sql = "SELECT 
+                                    item.nama, item.spek, item.maker, item.uom, mpc.mkt as price
+                                FROM
+                                    sgedb.mstchd item
+                                        LEFT JOIN
+                                    sgedb.msprice mpc ON item.stcd = mpc.stcd
+                                WHERE
+                                    item.stcd = '{$itemCode}';";
+
+            $dataItem = $this->db->query($sql)->row_array();
+            return array_merge($dataItem, $kategori);
+        } else {
+            return ['nama' => '', 'spek' => '', 'maker' => '', 'uom' => '', 'price' => '', 'kategori' => ''];
+        }
     }
 }

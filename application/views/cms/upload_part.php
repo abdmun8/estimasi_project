@@ -1,8 +1,9 @@
 <?php
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Reader\Csv;
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
-require_once 'vendor/autoload.php';
+
+// use PhpOffice\PhpSpreadsheet\Spreadsheet;
+// use PhpOffice\PhpSpreadsheet\Reader\Csv;
+// use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+// // require_once 'vendor/autoload.php';
  
 $idHeader = $_POST['idFiles'];
 
@@ -22,8 +23,8 @@ if(isset($_FILES['FilePart']['name']) && in_array($_FILES['FilePart']['type'], $
     
     $sheetData = $spreadsheet->getActiveSheet()->toArray();
     $message = "";
-    // var_dump($sheetData);
-    // die;
+    var_dump($sheetData);
+    die;
 	for($i = 3;$i < count($sheetData);$i++)
 	{
         $no = $sheetData[$i]['0'];
