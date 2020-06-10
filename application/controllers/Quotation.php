@@ -652,10 +652,10 @@ class Quotation extends CI_Controller
             $no = 0;
             foreach ($obj as $key => $row) {
                 $no++;
+                $row['no'] = $no;
                 $row['qty'] = '';
-                $row['no'] = '';
                 $row['action'] = '';
-                $row['harga'] =  number_format($row['harga']);
+                // $row['harga'] =  number_format($row['harga']);
                 $data['data'][] = $row;
             }
         }

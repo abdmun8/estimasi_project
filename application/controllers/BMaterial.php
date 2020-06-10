@@ -1160,9 +1160,9 @@ class Bmaterial extends CI_Controller
             $mass =  $data[$j]['9'];
             $firstMatlName = explode('_', $matlName);
             $firstMatlName = $firstMatlName[0];
-            $itemName = $matlName . " " . $matlOrBrand;
+            $itemPJ = $matlName . " " . $matlSize . " " . $matlOrBrand;
+            $itemRM = $matlName . " " . $matlOrBrand;
             $object = [];
-            $emptyItem = [];
 
             if ($desc == '' && $matlName != '') {
                 if (in_array($matlOrBrand, $matlType)) {
@@ -1173,16 +1173,21 @@ class Bmaterial extends CI_Controller
                     $tb = str_replace($str, $rplc, $object['t']);
                     $sql = "INSERT INTO bom_rawmaterial
                             (id_header,id_parent,id_part_jasa,tipe_item,item_code,qty,users,`weight`,item_name,l,w,h,t) values 
-                            ({$idHeader},{$idParentItem['idRM']},'0','item','{$object['item_code']}','{$qty}','{$idUser}','{$mass}','{$itemName}','{$object['L']}','{$object['W']}','{$object['H']}','{$tb}')";
+                            ({$idHeader},{$idParentItem['idRM']},'0','item','{$object['item_code']}','{$qty}','{$idUser}','{$mass}','{$itemRM}','{$object['L']}','{$object['W']}','{$object['H']}','{$tb}')";
                     $insert = $this->db->query($sql);
                 } else {
 
                     $object = $this->getItemCodenSpec($matlName, $matlSize, $matlOrBrand, FALSE);
-                    $msItem = $this->getMasterItem($object['item_code']);
+
+                    if ($object['item_code'] != '') {
+                        $msItem = $this->getMasterItem($object['item_code']);
+                    } else {
+                        $msItem = ['nama' => $matlName, 'spek' => $matlSize, 'oum' => $unit, 'maker' => $matlOrBrand, 'price' => '0', 'kategori' => ''];
+                    }
 
                     $sql = "INSERT INTO bom_part_jasa 
-                            (id_header,id_parent,tipe_item,tipe_id,tipe_name,item_code,item_name,spec,satuan,merk,qty,users,`weight`,harga,kategori) values 
-                            ({$idHeader},{$idParentItem['idPJ']},'item','','','{$object['item_code']}','{$msItem['nama']}','{$msItem['spek']}','{$msItem['uom']}','{$msItem['maker']}','{$qty}','{$idUser}','{$mass}','{$msItem['price']}','{$msItem['kategori']}')";
+                            (id_header,id_parent,tipe_item,tipe_id,tipe_name,item_code,item_name,spec,satuan,merk,qty,users,`weight`,harga,kategori,item_name_ori) values 
+                            ({$idHeader},{$idParentItem['idPJ']},'item','','','{$object['item_code']}','{$msItem['nama']}','{$msItem['spek']}','{$msItem['uom']}','{$msItem['maker']}','{$qty}','{$idUser}','{$mass}','{$msItem['price']}','{$msItem['kategori']}','{$itemPJ}')";
                     $insert = $this->db->query($sql);
                 }
             }
