@@ -269,15 +269,10 @@ $id_user = $this->session->userdata['id_karyawan'];
                                                 <select class="form-control select2 input-sm" name="tipe_item-item" id="tipe_item-item">
                                                 </select>
                                             </div>
-                                            <!-- <div class="form-group only_item">
-                                                <label>Item Code</label>
-                                                <select class="form-control select2 input-sm" style="width:100%;" name="item_code-item" id="item_code-item">
-                                                <option value="" selected="">Pilih Item Code</option>
-                                                </select>
-                                            </div> -->
                                             <div class="form-group only_item">
                                                 <label for="item_code-item">Item Code</label>
                                                 <input type="text" class="form-control input-sm" id="item_code-item" name="item_code-item" placeholder="Item Code" data-provide="typeahead" disabled>
+                                                <button type="button" onclick="showUpdItemCode()" class="btn btn-default pull-right"> Cari Item Code </button>
                                             </div>
                                             <div class="form-group only_item">
                                                 <label for="spec-item">Spec</label>
@@ -564,6 +559,55 @@ $id_user = $this->session->userdata['id_karyawan'];
         <!-- /.modal-dialog -->
     </div>
 
+    <!-- Modal Update Item Code -->
+    <div class="modal fade" id="modal-update-item" role="dialog" aria-labelledby="modal-add-vendor" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Update Item Code <span class="modal-title-update"></span></h4>
+                </div>
+                <div class="modal-body">
+                    <!-- Custom Tabs (Pulled to the right) -->
+                    <div id="table-data-item-container">
+                        <table id="table-data-itemcode" class="table table-bordered table-striped table-hover table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Item Code</th>
+                                    <th>Item Name</th>
+                                    <th>Spek</th>
+                                    <th>Maker</th>
+                                    <th>Unit</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Item Code</th>
+                                    <th>Item Name</th>
+                                    <th>Spek</th>
+                                    <th>Maker</th>
+                                    <th>Unit</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+            <!-- ./End modal content -->
+        </div>
+        <!-- <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-success" onclick="saveItem()">Save</button>
+        </div> -->
+    </div>
+    <!-- ./End Modal Update Item Code -->
+
     <!-- 全局js -->
     <script type="text/javascript" src="<?php echo base_url(); ?>assets/cms/bootstrap-treetable/libs/jquery.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url(); ?>assets/cms/bootstrap-treetable/libs/v3/bootstrap.min.js"></script>
@@ -599,6 +643,7 @@ $id_user = $this->session->userdata['id_karyawan'];
         var data_select = [];
         var tableDetailLabour;
         var tableDataItemExist;
+        var tableDataItemCode;
         var editedCellValueQty = [];
 
         // set show deleted part
@@ -609,6 +654,11 @@ $id_user = $this->session->userdata['id_karyawan'];
         $(document).ready(function() {
             // generate table
             $("#table-data-item tfoot th").each(function() {
+                var title = $(this).text();
+                $(this).html('<input style="width:auto;" type="text" placeholder="Search ' + title + '" />');
+            });
+
+            $("#table-data-itemcode tfoot th").each(function() {
                 var title = $(this).text();
                 $(this).html('<input style="width:auto;" type="text" placeholder="Search ' + title + '" />');
             });
@@ -794,6 +844,9 @@ $id_user = $this->session->userdata['id_karyawan'];
             // generate datatable item
             getDatatableItem();
 
+            // generate datatable item code
+            getDatatableItemCode();
+
             /* Generate Bootstrap treetable */
             generatePartTable()
             generateMaterialTable()
@@ -894,14 +947,6 @@ $id_user = $this->session->userdata['id_karyawan'];
                         style: 'multi',
                         selector: 'td:first-child'
                     },
-                    // columnDefs: [{
-                    //     orderable: true,
-                    //     className: 'select-checkbox',
-                    //     targets: 0,
-                    // }],
-                    // select: {
-                    //     style: 'multi',
-                    // },
                     dom: 'Bfrtip',
                     buttons: [{
                             text: '<i class="fa fa-check-square-o"></i> Select all',
@@ -942,7 +987,6 @@ $id_user = $this->session->userdata['id_karyawan'];
 
                 tableDataItemExist.columns().every(function() {
                     var that = this;
-
                     $("input", this.footer()).on("keyup change", function() {
                         if (that.search() !== this.value) {
                             that.search(this.value).draw();
@@ -2013,6 +2057,7 @@ $id_user = $this->session->userdata['id_karyawan'];
          */
         // function showModalInput(title, id = '', id_parent = '', sub = false, action = 'add') {
         function showModalInput(title, tipe_name, id = '', id_parent = '', sub = false, action = 'add') {
+            $('#modal-update-item').modal('hide');
             refreshTableDataItem();
             editedCellValueQty = [];
             $("#remark-harga").text('');
@@ -2689,7 +2734,8 @@ $id_user = $this->session->userdata['id_karyawan'];
 
         //------ Function Upload File on Section -------------------
 
-        function uploadItem(idParent,idHeader,tipeId,idUser) {
+        function uploadItem(idParent, idHeader, tipeId, idUser) {
+            $('#FilePart').val('');
             $('#modal-upload-item').modal('show');
             $('#idParent').val(idParent);
             $('#idHeader').val(idHeader);
@@ -2697,7 +2743,6 @@ $id_user = $this->session->userdata['id_karyawan'];
         }
 
         function saveUploadItem() {
-            // fileUpload = $('#FilePart').val();
             var FilePart = $('#FilePart').val();
             var fileLength = FilePart.length - 4;
             var extendsType = FilePart.substr(fileLength, 4);
@@ -2739,6 +2784,84 @@ $id_user = $this->session->userdata['id_karyawan'];
 
                 }
             })
+        }
+
+        function showUpdItemCode() {
+            let title_text = $('#item_name-item').val() + " " + $('#spec-item').val() + " " + $('#merk-item').val() + " " + $('#satuan-item').val();
+            $(".modal-title-update").text(ucFirst(title_text));
+            $('#modal-update-item').modal('show');
+            refreshTableDataItemCode();
+        }
+
+        /* Generate datatable Item Code */
+        function getDatatableItemCode() {
+            if ($.fn.dataTable.isDataTable('#table-data-itemcode')) {
+                tableDataItemCode = $('#table-data-itemcode').DataTable();
+            } else {
+                tableDataItemCode = $('#table-data-itemcode').DataTable({
+                    "ajax": base_url + 'bmaterial/get_item_code/0',
+                    "columns": [{
+                            'data': 'action',
+                            "className": 'text-center',
+                            "render": function(data, type, row) {
+                                var actions = [];
+                                actions.push('<button id="btnUpdItem' + row.stcd + '"class="btn btn-success btn-xs btnEdit" title="Select Item" onclick="saveUpdItem(\''+ row.stcd + '\')"><span id="iconHour' + row.stcd + '">Select Item</span></button>');
+                                return actions;
+                            }
+                        },
+                        {
+                            'data': 'stcd'
+                        },
+                        {
+                            'data': 'item_name'
+                        },
+                        {
+                            'data': 'spek'
+                        },
+                        {
+                            'data': 'maker'
+                        },
+                        {
+                            'data': 'uom'
+                        },
+                    ],
+                    "ordering": true,
+                    "order": [
+                        [0, "asc"]
+                    ],
+                    //autoWidth: false,
+                    autoWidth: true,
+                    deferRender: true,
+                    bAutoWidth: false,
+                    //responsive: true,
+                    responsive: false,
+                    scrollX: true,
+                    "fnDrawCallback": function(oSettings) {
+                        if (tableDataItemCode) {
+
+                            adjustDatatable()
+                        }
+                    }
+                });
+
+                tableDataItemCode.columns().every(function() {
+                    var that = this;
+                    $("input", this.footer()).on("keyup change", function() {
+                        if (that.search() !== this.value) {
+                            that.search(this.value).draw();
+                        }
+                    });
+                });
+            }
+        }
+
+        // refresh table add item
+        function refreshTableDataItemCode() {
+            tableDataItemCode.ajax.url(base_url + 'bmaterial/get_item_code/0').load();
+        }
+
+        function saveUpdItem(itemCode) {
+            alert(itemCode);
         }
     </script>
 </body>
