@@ -117,14 +117,14 @@ if ($param != null) {
                     <span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title">Input Overrage</h4>
             </div>
-            <form id="form_upload_file"  method="post" enctype="multipart/form-data">    
+            <form id="form_upload_file" method="post" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="allowance-input" class="col-md-4 control-label">Allowance</label>
                         <div class="col-md-8">
                             <input type="number" min="0" class="form-control" id="allowance-input" name="allowance-input" placeholder="Allowance" />
                         </div>
-                            <input type="text" id="id_header-allowance" hidden>
+                        <input type="text" id="id_header-allowance" hidden>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -154,7 +154,7 @@ if ($param != null) {
                     <div class="col-md-8">
                         <input type="file" min="0" class="form-control" id="FilePart" name="FilePart" placeholder="File" />
                     </div>
-                    <input type="hidden" id="idEdit" value="" >
+                    <input type="hidden" id="idEdit" value="">
                 </div>
             </div>
             <div class="modal-footer">
@@ -212,18 +212,21 @@ if ($param != null) {
             }
         }, 'json')
     }
-    function uploadPart(id_records){
+
+    function uploadPart(id_records) {
         //console.log(id_records);
-        $('#modal-upload-part').modal('show'); 
+        $('#modal-upload-part').modal('show');
         $('#idEdit').val(id_records);
     }
-    function saveBomPart(){
+
+    function saveBomPart() {
         // fileUpload = $('#FilePart').val();
         var FilePart = $('#FilePart').val();
-        var extendsType = FilePart.split(".");
-        // console.log(extendsType[1]);
+        var fileLength = FilePart.length - 4;
+        var extendsType = FilePart.substr(fileLength, 4);
+        // alert(extendsType);
         // return;
-        if(FilePart == '' && (extendsType[1] == 'xlsx' || extendsType[1] == 'xls')){
+        if ($('#FilePart').val() == '' || extendsType != 'xlsx') {
             alert('File masih kososng');
             $('#FilePart').val('');
             return;
@@ -231,26 +234,26 @@ if ($param != null) {
         var idPart = $('#idEdit').val();
         var fd = new FormData();
         var files = $('#FilePart')[0].files[0];
-        fd.append('FilePart',files);
-        fd.append('idFiles',idPart);
-        var dd = base_url + 'view/upload_part';
+        fd.append('FilePart', files);
+        fd.append('idFiles', idPart);
+        var upload_url = base_url + 'view/upload_part';
         // console.log(idPart);
 
         $.ajax({
-            url: dd,
+            url: upload_url,
             type: 'POST',
-            data:fd,
+            data: fd,
             dataType: 'json',
             type: 'POST',
-            processData:false,
-            contentType:false,
-            cache:false,
-            async:false,
+            processData: false,
+            contentType: false,
+            cache: false,
+            async: false,
             success: function(json) {
                 $('#modal-upload-part').modal('hide')
                 alert(json.message)
                 $('#FilePart').val('');
-                
+
             }
         })
     }
@@ -299,11 +302,11 @@ if ($param != null) {
                         "data": "no"
                     },
                     {
-                        "data" : "wono"
+                        "data": "wono"
                     },
                     {
                         "data": "desc",
-                        "width" : "40%",
+                        "width": "40%",
                     },
                     {
                         "data": "date",

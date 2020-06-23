@@ -1,7 +1,5 @@
 <?php
-// $filename = 'report_part_jasa'.date('d-m-Y');
-// header('Content-Disposition: attachment;filename="'. $filename .'.xls"'); 
-// header('Content-Type: application/vnd.ms-excel');
+
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -27,11 +25,7 @@ $arrHeaderPart = [
 ];
 
 $dataPart = $this->reporter->getStructure($part, 'findChildPart');
-// var_dump($dataPart);
-// die;
 
-// print_r($dataPart);die;
-// Create new Spreadsheet object
 $spreadsheet = new Spreadsheet();
 $activeSheet = $spreadsheet->getActiveSheet();
 $activeSheet->setTitle('Part & Jasa');

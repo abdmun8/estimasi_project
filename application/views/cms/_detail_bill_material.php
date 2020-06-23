@@ -532,6 +532,38 @@ $id_user = $this->session->userdata['id_karyawan'];
     </div>
     <!-- /End modal Detail Labour -->
 
+
+    <!-- Modal Upload Part -->
+    <div class="modal fade" id="modal-upload-item" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div id="loading1"></div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Upload Item</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="inputPart" class="col-md-4 control-label">File</label>
+                        <div class="col-md-8">
+                            <input type="file" min="0" class="form-control" id="FilePart" name="FilePart" placeholder="File" />
+                        </div>
+                        <input type="hidden" id="idParent" value="">
+                        <input type="hidden" id="idHeader" value="">
+                        <input type="hidden" id="tipeId" value="">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-success pull-right" data-dismiss="modal" onclick="saveUploadItem()">Save</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+
     <!-- 全局js -->
     <script type="text/javascript" src="<?php echo base_url(); ?>assets/cms/bootstrap-treetable/libs/jquery.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url(); ?>assets/cms/bootstrap-treetable/libs/v3/bootstrap.min.js"></script>
@@ -1152,13 +1184,16 @@ $id_user = $this->session->userdata['id_karyawan'];
                             // actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="showModalInput(\'' + row.tipe_item + '\',' + row.id + ',' + row.id_parent + ',' + false + ',\'edit\')"><i class="fa fa-edit"></i></a> ');
                             actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="showModalInput(\'' + row.tipe_item + '\',\'' + row.tipe_name + '\',' + row.id + ',' + row.id_parent + ',' + false + ',\'edit\')"><i class="fa fa-edit"></i></a> ');
                             actions.push('<a class="btn btn-danger btn-xs " title="Hapus" onclick="confirmDelete(' + row.id + ',\'bom_part_jasa\',\'' + row.tipe_item + '\')"><i class="fa fa-remove"></i></a>');
-                            return actions.join('');
+                            if (row.tipe_item == 'section') {
+                                actions.push('<a class="btn btn-info btn-xs " title="Upload Item" onclick="uploadItem(' + row.id + ',' + row.id_header + ',' + row.tipe_id + ')" href="#"><i class="fa fa-upload"></i></a> ');
+                            }
+                            return actions.join(' ');
                         }
                     },
                     {
-                        title: 'Section & Object',
+                        title: 'Section',
                         field: 'tipe_id',
-                        width: '200',
+                        width: '90',
                         formatter: function(value, row, index) {
                             if (row.tipe_item == 'section') {
                                 if (row.deleted == 1)
@@ -1254,8 +1289,8 @@ $id_user = $this->session->userdata['id_karyawan'];
                     },
                     {
                         field: 'satuan',
-                        title: 'Satuan',
-                        width: '100',
+                        title: 'Units',
+                        width: '65',
                         align: "left",
                         visible: true,
                         formatter: function(value, row, index) {
@@ -1265,8 +1300,23 @@ $id_user = $this->session->userdata['id_karyawan'];
                         }
                     },
                     {
+                        field: 'qty',
+                        title: 'Qty',
+                        width: '50',
+                        align: "right",
+                        formatter: function(value, row, index) {
+                            if (row.tipe_item != 'item') {
+                                return '';
+                            } else {
+                                if (row.deleted == 1)
+                                    return `<strike>${value}</strike>`;
+                                return value;
+                            }
+                        }
+                    },
+                    {
                         field: 'harga',
-                        title: 'Harga',
+                        title: 'Price',
                         width: '120',
                         align: "right",
                         visible: true,
@@ -1277,21 +1327,6 @@ $id_user = $this->session->userdata['id_karyawan'];
                                 if (row.deleted == 1)
                                     return `<strike class="total_harga">${value}</strike>`;
                                 return '<span class="total_harga">' + value + '</span>';
-                            }
-                        }
-                    },
-                    {
-                        field: 'qty',
-                        title: 'Qty',
-                        width: '100',
-                        align: "right",
-                        formatter: function(value, row, index) {
-                            if (row.tipe_item != 'item') {
-                                return '';
-                            } else {
-                                if (row.deleted == 1)
-                                    return `<strike>${value}</strike>`;
-                                return value;
                             }
                         }
                     },
@@ -1405,9 +1440,9 @@ $id_user = $this->session->userdata['id_karyawan'];
                         checkbox: true
                     },
                     {
-                        title: 'Section & Object',
+                        title: 'Section',
                         field: 'tipe_id',
-                        width: '150',
+                        width: '90',
                         fixed: true,
                         formatter: function(value, row, index) {
                             if (row.tipe_item == 'section') {
@@ -1574,9 +1609,9 @@ $id_user = $this->session->userdata['id_karyawan'];
                         }
                     },
                     {
-                        title: 'Section & Object',
+                        title: 'Section',
                         field: 'tipe_id',
-                        width: '150',
+                        width: '90',
                         fixed: true,
                         formatter: function(value, row, index) {
                             if (row.tipe_item == 'section') {
@@ -1625,7 +1660,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                     {
                         field: 'item_code',
                         title: 'Item Code',
-                        width: '150',
+                        width: '100',
                         align: "left",
                         visible: true,
                         formatter: function(value, row, index) {
@@ -1640,7 +1675,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                     {
                         field: 'part_name',
                         title: 'Part Name',
-                        width: '150',
+                        width: '450',
                         align: "left",
                         visible: true,
                         formatter: function(value, row, index) {
@@ -1655,7 +1690,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                     {
                         field: 'units',
                         title: 'Units',
-                        width: '150',
+                        width: '65',
                         align: "left",
                         visible: true,
                         formatter: function(value, row, index) {
@@ -1670,7 +1705,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                     {
                         field: 'qty',
                         title: 'Qty',
-                        width: '150',
+                        width: '50',
                         align: "right",
                         visible: true,
                         formatter: function(value, row, index) {
@@ -1685,7 +1720,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                     {
                         field: 'materials',
                         title: 'Materials',
-                        width: '150',
+                        width: '90',
                         align: "left",
                         visible: true,
                         formatter: function(value, row, index) {
@@ -1698,24 +1733,9 @@ $id_user = $this->session->userdata['id_karyawan'];
                         }
                     },
                     {
-                        field: 'l',
-                        title: 'Length',
-                        width: '150',
-                        align: "right",
-                        visible: true,
-                        formatter: function(value, row, index) {
-                            if (row.tipe_item != 'item') {
-                                return '';
-                            }
-                            if (row.deleted == 1)
-                                return `<strike>${value}</strike>`;
-                            return value;
-                        }
-                    },
-                    {
-                        field: 'w',
-                        title: 'Weight',
-                        width: '150',
+                        field: 't',
+                        title: 'Tb/Dia',
+                        width: '80',
                         align: "right",
                         visible: true,
                         formatter: function(value, row, index) {
@@ -1730,7 +1750,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                     {
                         field: 'h',
                         title: 'Height',
-                        width: '150',
+                        width: '80',
                         align: "right",
                         visible: true,
                         formatter: function(value, row, index) {
@@ -1743,9 +1763,9 @@ $id_user = $this->session->userdata['id_karyawan'];
                         }
                     },
                     {
-                        field: 't',
-                        title: 'Diameter',
-                        width: '150',
+                        field: 'w',
+                        title: 'Width',
+                        width: '80',
                         align: "right",
                         visible: true,
                         formatter: function(value, row, index) {
@@ -1758,9 +1778,9 @@ $id_user = $this->session->userdata['id_karyawan'];
                         }
                     },
                     {
-                        field: 'density',
-                        title: 'Density',
-                        width: '150',
+                        field: 'l',
+                        title: 'Length',
+                        width: '80',
                         align: "right",
                         visible: true,
                         formatter: function(value, row, index) {
@@ -1772,10 +1792,25 @@ $id_user = $this->session->userdata['id_karyawan'];
                             return value;
                         }
                     },
+                    // {
+                    //     field: 'density',
+                    //     title: 'Density',
+                    //     width: '150',
+                    //     align: "right",
+                    //     visible: true,
+                    //     formatter: function(value, row, index) {
+                    //         if (row.tipe_item != 'item') {
+                    //             return '';
+                    //         }
+                    //         if (row.deleted == 1)
+                    //             return `<strike>${value}</strike>`;
+                    //         return value;
+                    //     }
+                    // },
                     {
                         field: 'weight',
                         title: 'Weight',
-                        width: '150',
+                        width: '100',
                         align: "right",
                         visible: true,
                         formatter: function(value, row, index) {
@@ -1790,7 +1825,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                     {
                         field: 'total',
                         title: 'Total',
-                        width: '200',
+                        width: '150',
                         align: "right",
                         formatter: function(value, row, index) {
                             if (row.tipe_item != 'item') {
@@ -2650,6 +2685,60 @@ $id_user = $this->session->userdata['id_karyawan'];
             $.get(base_url + "bmaterial/get_item_code/1", function(data) {
                 return data;
             }, 'json')
+        }
+
+        //------ Function Upload File on Section -------------------
+
+        function uploadItem(idParent,idHeader,tipeId,idUser) {
+            $('#modal-upload-item').modal('show');
+            $('#idParent').val(idParent);
+            $('#idHeader').val(idHeader);
+            $('#tipeId').val(tipeId);
+        }
+
+        function saveUploadItem() {
+            // fileUpload = $('#FilePart').val();
+            var FilePart = $('#FilePart').val();
+            var fileLength = FilePart.length - 4;
+            var extendsType = FilePart.substr(fileLength, 4);
+            // alert(extendsType);
+            // return;
+            if ($('#FilePart').val() == '' || extendsType != 'xlsx') {
+                alert('File masih kososng');
+                $('#FilePart').val('');
+                return;
+            }
+            var idParent = $('#idParent').val();
+            var idHeader = $('#idHeader').val();
+            var idUser = $('#users').val();
+            var tipeId = $('#tipeId').val();
+            var fd = new FormData();
+            var files = $('#FilePart')[0].files[0];
+            fd.append('FilePart', files);
+            fd.append('idParent', idParent);
+            fd.append('idHeader', idHeader);
+            fd.append('idUser', idUser);
+            fd.append('tipeId', tipeId);
+            var upload_url = base_url + 'bmaterial/save_upload';
+            // console.log(idPart);
+
+            $.ajax({
+                url: upload_url,
+                type: 'POST',
+                data: fd,
+                dataType: 'json',
+                type: 'POST',
+                processData: false,
+                contentType: false,
+                cache: false,
+                async: false,
+                success: function(json) {
+                    $('#modal-upload-part').modal('hide')
+                    alert(json.message)
+                    $('#FilePart').val('');
+
+                }
+            })
         }
     </script>
 </body>

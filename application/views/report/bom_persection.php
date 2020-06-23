@@ -31,6 +31,7 @@ function addSpaceName($tipe_item)
     return '';
 }
 
+
 $arrHeaderPart = [
     'No',
     'Item Code',
@@ -66,22 +67,7 @@ $arrHeaderMaterial = [
     'Total',
 ];
 
-// $arrHeaderLabour = [
-//     'Id',
-//     'Name',
-//     '',
-//     'Labour',
-//     'Id labour',
-//     '',
-//     '',
-//     'Aktifitas',
-//     '',
-//     '',
-//     '',
-//     'Hour',
-//     'Rate',
-//     'Total',
-// ];
+
 
 $sectionStyle = [
     'font'  => [
@@ -118,9 +104,21 @@ $headerStyle = [
 // $itemPart = $this->reporter->getItemOnly();
 // print_r($dataPart);
 // die;
-$spreadsheet = new Spreadsheet();
+
+
+
 $n = 0;
+$spreadsheet = new Spreadsheet();
 foreach ($sectionPart as $key => $section) {
+    $protection = $spreadsheet->getActiveSheet()->getProtection();
+    $protection->setPassword('Sge321');
+    $protection->setSheet(true);
+    $protection->setSort(true);
+    $protection->setInsertRows(true);
+    $protection->setFormatCells(true);
+    // $protection = $spreadsheet->getActiveSheet()->getProtection();
+    
+    
     // create new sheet
     $myWorkSheet = new Worksheet($spreadsheet, $section['tipe_name']);
     // Attach the "My Data" worksheet as the first worksheet in the Spreadsheet object
@@ -206,10 +204,7 @@ foreach ($sectionPart as $key => $section) {
         /* Number format */
         numberFormat($activeSheet, "M$row");
         numberFormat($activeSheet, "O$row");
-        // $activeSheet->getStyle("H$row")->getNumberFormat()
-        //     ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
-        // $activeSheet->getStyle("J$row")->getNumberFormat()
-        //     ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+        
 
         /* Merge */
         cellMerge($activeSheet, "E$row:F$row");
@@ -221,7 +216,6 @@ foreach ($sectionPart as $key => $section) {
                 'borders' => [
                     'allBorders' => [
                         'borderStyle' => Border::BORDER_THIN,
-                        // 'startColor' => ['argb' => '00000000'],
                     ],
                 ],
                 'font'  => [
@@ -294,6 +288,12 @@ foreach ($sectionPart as $key => $section) {
     $noitem = 0;
     $sub_total = 0;
     foreach ($itemMaterial as $key => $material) {
+        $protection = $spreadsheet->getActiveSheet()->getProtection();
+        $protection->setPassword('Sge321');
+        $protection->setSheet(true);
+        $protection->setSort(true);
+        $protection->setInsertRows(true);
+        $protection->setFormatCells(true);
         $noitem++;
         $weight = isset($material['weight']) ? $material['weight'] : 0;
         $price = isset($material['price']) ? $material['price'] : 0;
@@ -368,78 +368,7 @@ foreach ($sectionPart as $key => $section) {
     $activeSheet->getStyle("M$row:O$row")->getFont()->setSize(9);
     $activeSheet->getStyle("M$row:O$row")->getFont()->setBold(true);
 
-    // // query labour
-    // $this->db->select('l.*,a.desc as nama_kategori', false);
-    // $this->db->where(['l.deleted <>' => 1]);
-    // $this->db->where_in('l.id_parent', $parentLabour[$n]);
-    // $this->db->or_where_in('l.id', $parentLabour[$n]);
-    // $this->db->join('sgedb.akunbg a', 'l.id_labour = a.accno');
-    // $itemLabour = $this->db->get("{$this->db->database}.v_labour l")->result_array();
-
-    // $row += 2;
-    // $activeSheet->setCellValue("B$row", "Labour");
-    // $activeSheet->getStyle("B$row")->getFont()->setSize(11);
-    // $activeSheet->getStyle("B$row")->getFont()->setBold(true);
-
-    // $row += 1;
-    // $activeSheet->fromArray($arrHeaderLabour, NULL, "B$row");
-    // $activeSheet->getStyle("B$row:O$row")->applyFromArray($headerStyle);
-    // cellMerge($activeSheet, "C$row:D$row");
-    // cellMerge($activeSheet, "F$row:H$row");
-    // cellMerge($activeSheet, "I$row:L$row");
-
-    // // var_dump($itemLabour);
-    // // die;
-    // $row += 1;
-    // $noitem = 0;
-    // $sub_total = 0;
-    // foreach ($itemLabour as $key => $labour) {
-    //     if ($labour['hour'] > 0) {
-    //         $noitem++;
-    //         $qty_section = $labour['qty_section'] == 0 ? 1 : $labour['qty_section'];
-    //         $hour = $labour['group'] == 1 ? $labour['hour'] * $qty_section : $labour['hour'];
-    //         $total = $labour['hour'] * $labour['rate'];
-    //         $sub_total += $total;
-    //         // var_dump($labour);
-    //         // die;
-    //         $activeSheet->getCell('B' . $row)->setValueExplicit(strval($labour['tipe_id']), \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
-    //         $activeSheet->setCellValue('C' . $row, $labour['tipe_name']);
-    //         $activeSheet->setCellValue('E' . $row, $labour['tipe_name_view']);
-    //         $activeSheet->setCellValue('F' . $row, $labour['nama_kategori']);
-    //         $activeSheet->setCellValue('I' . $row, $labour['aktivitas']);
-    //         $activeSheet->setCellValue('M' . $row, $hour);
-    //         $activeSheet->setCellValue('N' . $row, $labour['rate']);
-    //         $activeSheet->setCellValue('O' . $row, $total);
-
-    //         /* Number format */
-    //         numberFormat($activeSheet, "O$row");
-
-    //         /* Merge Cells */
-    //         cellMerge($activeSheet, "C$row:D$row");
-    //         cellMerge($activeSheet, "F$row:H$row");
-    //         cellMerge($activeSheet, "I$row:L$row");
-    //         $activeSheet->getStyle("B$row:O$row")->applyFromArray(
-    //             [
-    //                 'borders' => [
-    //                     'allBorders' => [
-    //                         'borderStyle' => Border::BORDER_THIN,
-    //                         // 'startColor' => ['argb' => '00000000'],
-    //                     ],
-    //                 ],
-    //                 'font'  => [
-    //                     'size' => 9,
-    //                     'name' => 'Calibri',
-    //                 ]
-    //             ]
-    //         );
-
-    //         $row++;
-    //     }
-    // }
-
-    // sub total material
-    // $sub = $sub_total;
-    // $grand_total += $sub;
+    
 
     $activeSheet->setCellValue("M$row", "Sub Total");
     $activeSheet->setCellValue("O$row", $sub);
@@ -456,6 +385,7 @@ foreach ($sectionPart as $key => $section) {
     $activeSheet->getStyle("M$row:O$row")->getFont()->setSize(9);
     $activeSheet->getStyle("M$row:O$row")->getFont()->setBold(true);
 
+    
 
     // no section
     $n++;
@@ -463,22 +393,12 @@ foreach ($sectionPart as $key => $section) {
 
 $spreadsheet->setActiveSheetIndex(0);
 
-// var_dump($spreadsheet);die;
-// Create new Spreadsheet object
 
 
-// Redirect output to a client's web browser (Xlsx)
-// header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-// header('Content-Disposition: attachment;filename="' . $title . '.xlsx"');
-// header("Access-Control-Allow-Origin: *");
-// header('Cache-Control: max-age=0');
-
-// $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-// $writer->save('php://output');
-// exit;
 $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
 $file = 'temp/' . $title . '.xlsx';
 $writer->save($file);
 $base_url = base_url();
+
 
 header("location:$base_url$file");

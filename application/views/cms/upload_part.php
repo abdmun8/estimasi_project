@@ -1,8 +1,9 @@
 <?php
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Reader\Csv;
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
-require_once 'vendor/autoload.php';
+
+// use PhpOffice\PhpSpreadsheet\Spreadsheet;
+// use PhpOffice\PhpSpreadsheet\Reader\Csv;
+// use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+// // require_once 'vendor/autoload.php';
  
 $idHeader = $_POST['idFiles'];
 
@@ -27,21 +28,17 @@ if(isset($_FILES['FilePart']['name']) && in_array($_FILES['FilePart']['type'], $
     // var_dump($dataCount);
     // die;
     $message = "";
-    // var_dump($sheetData);
-    // die;
-    for($x = 0; $x < $spreadCount; $x++){
-        $sheetData = $spreadsheet->getSheet($x)->toArray();
-        for($i = 3;$i < count($sheetData);$i++)
-        {
-            $no = $sheetData[$i]['0'];
-            $tipe_id = $sheetData[$i]['1'];
-            $item_code = $sheetData[$i]['2'];
-            $item_name = $sheetData[$i]['3'];
-            $spec = $sheetData[$i]['4'];
-            $sql = "insert into bom_part_jasa (id_header,id_parent,tipe_item,tipe_id,tipe_name,item_code,item_name,spec) values 
-            ('$idHeader','167','item','$no','$tipe_id','$item_code','$item_name','$spec')";
-            $insert = $this->db->query($sql);
-        }
+   
+	for($i = 3;$i < count($sheetData);$i++)
+	{
+        $no = $sheetData[$i]['0'];
+        $tipe_id = $sheetData[$i]['1'];
+        $item_code = $sheetData[$i]['2'];
+        $item_name = $sheetData[$i]['3'];
+        $spec = $sheetData[$i]['4'];
+        $sql = "insert into bom_part_jasa (id_header,id_parent,tipe_item,tipe_id,tipe_name,item_code,item_name,spec) values 
+        ('$idHeader','167','item','$no','$tipe_id','$item_code','$item_name','$spec')";
+        $insert = $this->db->query($sql);
     }
     if($insert){
         $message = "DATA BERHASIL DISIMPAN";
