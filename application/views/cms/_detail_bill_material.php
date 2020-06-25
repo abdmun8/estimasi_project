@@ -272,7 +272,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                                             <div class="form-group only_item">
                                                 <label for="item_code-item">Item Code</label>
                                                 <input type="text" class="form-control input-sm" id="item_code-item" name="item_code-item" placeholder="Item Code" data-provide="typeahead" disabled>
-                                                <button type="button" onclick="showUpdItemCode()" class="btn btn-default pull-right"> Cari Item Code </button>
+                                                <!-- <button type="button" onclick="showUpdItemCode()" class="btn btn-default pull-right"> Cari Item Code </button> -->
                                             </div>
                                             <div class="form-group only_item">
                                                 <label for="spec-item">Spec</label>
@@ -569,6 +569,12 @@ $id_user = $this->session->userdata['id_karyawan'];
                     <h4 class="modal-title">Update Item Code <span class="modal-title-update"></span></h4>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" name="tipe_item1" id="tipe_item1">
+                    <input type="hidden" name="id1" id="id1">
+                    <input type="hidden" name="item_name1" id="item_name1">
+                    <input type="hidden" name="id_parent1" id="id_parent1">
+                    <input type="hidden" name="spec1" id="spec1">
+                    <input type="hidden" name="merk1" id="merk1"> 
                     <!-- Custom Tabs (Pulled to the right) -->
                     <div id="table-data-item-container">
                         <table id="table-data-itemcode" class="table table-bordered table-striped table-hover table-condensed">
@@ -637,6 +643,11 @@ $id_user = $this->session->userdata['id_karyawan'];
     <script type="text/javascript">
         /* Tree Table */
         var treeTable;
+        var itemName;
+        var idParent;
+        var itemSpec;
+        var itemMerk;
+        var itemSatuan;
 
         /* Global variable */
         <?php echo ($param != null) ? 'var id_header_tree = ' . $param . ';' : ''; ?>
@@ -1218,6 +1229,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                         align: "center",
                         fixed: true,
                         formatter: function(value, row, index) {
+                            // console.log(row);
                             var actions = [];
                             if (row.deleted == 1)
                                 return '';
@@ -1228,6 +1240,10 @@ $id_user = $this->session->userdata['id_karyawan'];
                             // actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="showModalInput(\'' + row.tipe_item + '\',' + row.id + ',' + row.id_parent + ',' + false + ',\'edit\')"><i class="fa fa-edit"></i></a> ');
                             actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="showModalInput(\'' + row.tipe_item + '\',\'' + row.tipe_name + '\',' + row.id + ',' + row.id_parent + ',' + false + ',\'edit\')"><i class="fa fa-edit"></i></a> ');
                             actions.push('<a class="btn btn-danger btn-xs " title="Hapus" onclick="confirmDelete(' + row.id + ',\'bom_part_jasa\',\'' + row.tipe_item + '\')"><i class="fa fa-remove"></i></a>');
+                            if(row.item_code == '' && row.tipe_item == 'item' ){
+                                actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" onclick="showUpdItemCode(\'' + row.tipe_item + '\',\'' + row.item_name + '\',\'' + row.id + '\',\'' + row.id_parent + '\',\'' + row.spec + '\',\'' + row.merk + '\',\'' + row.satuan + '\')"><i class="fa fa-expand"></i></a> ');
+
+                            }
                             if (row.tipe_item == 'section') {
                                 actions.push('<a class="btn btn-info btn-xs " title="Upload Item" onclick="uploadItem(' + row.id + ',' + row.id_header + ',' + row.tipe_id + ')" href="#"><i class="fa fa-upload"></i></a> ');
                             }
@@ -2056,7 +2072,11 @@ $id_user = $this->session->userdata['id_karyawan'];
          * @action : add = 1 || edit = 2
          */
         // function showModalInput(title, id = '', id_parent = '', sub = false, action = 'add') {
+        function showModalItemCode(title, tipe_name, id = '', id_parent = '', sub = false, action = 'add') {
+            console.log(title, tipe_name, id, id_parent, sub, action)
+        }
         function showModalInput(title, tipe_name, id = '', id_parent = '', sub = false, action = 'add') {
+            console.log('ssss');
             $('#modal-update-item').modal('hide');
             refreshTableDataItem();
             editedCellValueQty = [];
@@ -2786,10 +2806,18 @@ $id_user = $this->session->userdata['id_karyawan'];
             })
         }
 
-        function showUpdItemCode() {
-            let title_text = $('#item_name-item').val() + " " + $('#spec-item').val() + " " + $('#merk-item').val() + " " + $('#satuan-item').val();
-            $(".modal-title-update").text(ucFirst(title_text));
+        function showUpdItemCode(tipe_item,item_name,id,id_parent,spec,merk,satuan) {
+            
+            let title_text = item_name + " " + spec + " " +" "+ merk;
             $('#modal-update-item').modal('show');
+            $(".modal-title-update").text(ucFirst(title_text));
+            $('#tipe_item1').val(tipe_item);
+            $('#item_name1').val(item_name);
+            itemName = item_name;
+            idParent = id_parent;
+            itemSpec = spec;
+            itemMerk = merk;
+            itemSatuan = satuan;
             refreshTableDataItemCode();
         }
 
@@ -2798,6 +2826,8 @@ $id_user = $this->session->userdata['id_karyawan'];
             if ($.fn.dataTable.isDataTable('#table-data-itemcode')) {
                 tableDataItemCode = $('#table-data-itemcode').DataTable();
             } else {
+            var item_namexx = $('#item_name1').val();
+            console.log(item_namexx);
                 tableDataItemCode = $('#table-data-itemcode').DataTable({
                     "ajax": base_url + 'bmaterial/get_item_code/0',
                     "columns": [{
@@ -2805,7 +2835,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                             "className": 'text-center',
                             "render": function(data, type, row) {
                                 var actions = [];
-                                actions.push('<button id="btnUpdItem' + row.stcd + '"class="btn btn-success btn-xs btnEdit" title="Select Item" onclick="saveUpdItem(\''+ row.stcd + '\')"><span id="iconHour' + row.stcd + '">Select Item</span></button>');
+                                actions.push('<button id="btnUpdItem' + row.stcd + '"class="btn btn-success btn-xs btnEdit" title="Select Item" onclick="saveUpdItem(\''+ row.stcd + '\',\'' + itemName + '\',\'' + idParent + '\',\'' + itemSpec + '\',\'' + itemMerk + '\',\'' + row.harga + '\',\'' + row.uom + '\')"><span id="iconHour' + row.stcd + '">Select Item</span></button>');
                                 return actions;
                             }
                         },
@@ -2860,8 +2890,32 @@ $id_user = $this->session->userdata['id_karyawan'];
             tableDataItemCode.ajax.url(base_url + 'bmaterial/get_item_code/0').load();
         }
 
-        function saveUpdItem(itemCode) {
-            alert(itemCode);
+        function saveUpdItem(itemC,itemName,idParent,itemSpec,itemMerk,harga,uom) {
+            var itemCode = itemC
+            var nik = <?= $id_user ?>; 
+            $.ajax({
+                url : base_url + 'bmaterial/save_item_code',
+                type: 'POST',
+                dataType: 'json',
+                data :
+                {
+                    itemCode: itemCode,
+                    nik : nik,
+                    itemName: itemName,
+                    itemSpec : itemSpec,
+                    idParent : idParent,
+                    itemMerk : itemMerk,
+                    harga : harga,
+                    unit : uom
+                },
+                success : function(json){
+                    alert(json.message);
+                    $('#demo').bootstrapTreeTable('refresh');
+                    $('#modal-update-item').modal('hide');
+
+                }
+
+            })
         }
     </script>
 </body>

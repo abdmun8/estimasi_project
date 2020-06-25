@@ -1068,6 +1068,88 @@ class Bmaterial extends CI_Controller
             return $has_item;
         echo json_encode(['has_item' => $has_item]);
     }
+    public function saveItemCode()
+    {
+        // var_dump($_POST);
+        // die;
+       $item_code = $_POST['itemCode'];
+       $nik = $_POST['nik'];
+       $itemName = $_POST['itemName'];
+       $itemSpec = $_POST['itemSpec'];
+       $idParent = $_POST['idParent'];
+       $itemMerk = $_POST['itemMerk'];
+       $harga = $_POST['harga'];
+       $satuan = $_POST['unit'];
+       $sqlCek = "Select * from quotation.mrawmaterial where item_code = '$item_code'";
+       $query = $this->db->query($sqlCek);
+       $queryNum = $query->num_rows();
+       $dataQuery = $query->row();
+       $kategori = [];
+    // Get Kategori from item code
+        $codes = [
+            0 => ['code' => ['ATK', 'CNS', 'RMT', 'PPG', 'OFF', 'INV'], 'value' => '10001'],
+            1 => ['code' => ['ELC'], 'value' => '10002'],
+            2 => ['code' => ['MCL'], 'value' => '10003'],
+            3 => ['code' => ['PNU', 'PNE', 'PPG'], 'value' => '10004'],
+            4 => ['code' => ['SNS'], 'value' => '20001']
+        ];
+    
+        for ($i = 0; $i < count($codes); $i++) {
+            if (in_array(substr($item_code, 0, 3), $codes[$i]['code'])) {
+                $kategori = ['kategori' => $codes[$i]['value']];
+            }
+        }
+        $codeKategori = $kategori['kategori'];
+    
+    if($queryNum){
+        $partName1 = $dataQuery->part_name;
+        $maker1 = $dataQuery->maker;
+        $spek1 = $dataQuery->spec;
+           $message = "ITEM CODE SUDAH DI GUNAKAN UNTUK $partName1 $maker1 $spek1";
+       }else{
+           $insert = "INSERT INTO quotation.mrawmaterial (item_code,part_name,spec,maker,units,materials,price) values 
+                ('$item_code','$itemName','$itemSpec','$itemMerk','$satuan','$itemMerk','$harga')";
+            $queryInsert = $this->db->query($insert);
+            if($queryInsert){
+                $sqlMstchd = "SELECT * FROM sgedb.mstchd where stcd = '$item_code'";
+                $queryMstchd = $this->db->query($sqlMstchd);
+                $dataMstchd = $queryMstchd->row();
+                $itemNamehd = $dataMstchd->nama;
+                $itemSpechd = $dataMstchd->spek;
+                $itemUnithd = $dataMstchd->uom;
+                $itemMakerhd = $dataMstchd->maker;
+
+                // var_dump($sqlMstchd);
+
+                $update = "UPDATE quotation.bom_part_jasa 
+                SET 
+                    item_code = '$item_code',
+                    item_name = '$itemNamehd',
+                    spec = '$itemSpechd',
+                    merk = '$itemMakerhd',
+                    satuan = '$itemUnithd',
+                    harga = '$harga',
+                    kategori = '$codeKategori',
+                    users ='$nik'
+                WHERE
+                    tipe_item = 'item' AND item_code = ''
+                        AND item_name = '$itemName'
+                        AND spec = '$itemSpec'
+                        AND merk = '$itemMerk'";
+                $queryUpdate = $this->db->query($update);
+               
+                if($queryUpdate){
+                    $message = "DATA BERHASIL DISIMPAN";
+                }else{
+                    $message ="DATA GAGAL DI SIMPAN";
+                }
+            }else{
+                $message = "SIMPAN DATA GAGAL";
+            };
+       };
+       echo json_encode(['message'=> $message]);
+       
+    }
 
     public function saveUpload()
     {
