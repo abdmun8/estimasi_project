@@ -1665,6 +1665,9 @@ $id_user = $this->session->userdata['id_karyawan'];
                             } else {
                                 actions.push('<a class="btn btn-info btn-xs " title="Tambah Sub" onclick="addItemMaterial(' + row.id + ',' + row.id_parent + ')" href="#"><i class="fa fa-plus"></i></a> ');
                             }
+                            if(row.item_code == '' && row.tipe_item == 'item' ){
+                                actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" style="margin-left:5px;" onclick="showUpdItemCode(\'' + row.tipe_item + '\',\'' + row.item_name + '\',\'' + row.id + '\',\'' + row.id_parent + '\',\'' + row.spec + '\',\'' + row.merk + '\',\'' + row.satuan + '\')"><i class="fa fa-expand"></i></a> ');
+                            }
                             return actions.join('');
                         }
                     },

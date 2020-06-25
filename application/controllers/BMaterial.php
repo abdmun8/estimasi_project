@@ -1078,7 +1078,8 @@ class Bmaterial extends CI_Controller
        $itemSpec = $_POST['itemSpec'];
        $idParent = $_POST['idParent'];
        $itemMerk = $_POST['itemMerk'];
-       $harga = $_POST['harga'];
+       $harga1 = $_POST['harga'];
+       $harga = str_replace( ',', '', $harga1);
        $satuan = $_POST['unit'];
        $sqlCek = "Select * from quotation.mrawmaterial where item_code = '$item_code'";
        $query = $this->db->query($sqlCek);
