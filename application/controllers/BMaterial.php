@@ -1255,8 +1255,8 @@ class Bmaterial extends CI_Controller
                     $rplc = ['', '', '', ''];
                     $tb = str_replace($str, $rplc, $object['t']);
                     $sql = "INSERT INTO bom_rawmaterial
-                            (id_header,id_parent,id_part_jasa,tipe_item,item_code,qty,users,`weight`,item_name,l,w,h,t) values 
-                            ({$idHeader},{$idParentItem['idRM']},'0','item','{$object['item_code']}','{$qty}','{$idUser}','{$mass}','{$itemRM}','{$object['L']}','{$object['W']}','{$object['H']}','{$tb}')";
+                            (id_header,id_parent,id_part_jasa,tipe_item,item_code,qty,users,`weight`,item_name,l,w,h,t,matl_size_ori) values 
+                            ({$idHeader},{$idParentItem['idRM']},'0','item','{$object['item_code']}','{$qty}','{$idUser}','{$mass}','{$itemRM}','{$object['L']}','{$object['W']}','{$object['H']}','{$tb}','{$matlSize}')";
                     $insert = $this->db->query($sql);
                 } else {
 
