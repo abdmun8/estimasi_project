@@ -1151,6 +1151,64 @@ class Bmaterial extends CI_Controller
        echo json_encode(['message'=> $message]);
        
     }
+    public function saveItemMaterial()
+    {
+        $itemCodeSelect = $_POST['itemCodeSelect'];
+        $nik = $_POST['nik'];
+        $configPartName = $_POST['configPartName'];
+        $itemCode = $_POST['itemCode'];
+        $tipe_item = $_POST['tipe_item'];
+        $id = $_POST['id'];
+        $idParent = $_POST['idParent'];
+        $materials = $_POST['materials'];
+        $unit = $_POST['unit'];
+        $harga = $_POST['harga'];
+
+        $sqlCek = "Select * from quotation.mrawmaterial where item_code = '$itemCodeSelect'";
+        $query = $this->db->query($sqlCek);
+        $queryNum = $query->num_rows();
+        $dataQuery = $query->row();
+        if($queryNum)
+        {
+            $partName1 = $dataQuery->part_name;
+            $maker1 = $dataQuery->maker;
+            $spek1 = $dataQuery->spec;
+            $message = "ITEM CODE SUDAH DI GUNAKAN UNTUK $partName1 $maker1 $spek1";
+        }else{
+            $sqlConfig = "SELECT value FROM quotation.config where `key` = '$configPartName'";
+            $queryConfig = $this->db->query($sqlConfig);
+            $dataValue = $queryConfig->row()->value;
+            $sqlBomMaterial = "SELECT matl_size_ori from quotation.bom_rawmaterial where `id` = '$id'";
+            $queryBomMaterial = $this->db->query($sqlBomMaterial);
+            $dataMtl1 = $queryBomMaterial->row();
+            $dataMtl = $dataMtl1->matl_size_ori;
+            $dataMtlRpt = str_replace("-","X",$dataMtl);
+            $dataSpec = explode("X",$dataMtlRpt);
+            if($dataValue != 0){
+                $spec =$dataSpec[0].'X'.$dataSpec[1].'X'.$dataSpec[2];
+            }else{
+                $spec = $dataSpec[0];
+            }
+            $sqlInsert =  "INSERT INTO quotation.mrawmaterial (item_code,part_name,spec,maker,units,materials,price) values 
+            ('$itemCodeSelect','$configPartName','$spec','$materials','$unit','$materials','$harga')";
+            $queryInsert = $this->db->query($sqlInsert);
+            if($queryInsert){
+                $sqlUpdate = "UPDATE quotation.bom_rawmaterial SET item_code = '$itemCodeSelect', users = '$nik', item_name = '$configPartName' 
+                where id = '$id'";
+                $queryUpdate = $this->db->query($sqlUpdate);
+                if($queryUpdate){
+                    $message = "DATA BERHASIL DISIMPAN";
+                }else{
+                    $message =" DATA GAGAL DISIMPAN";
+                }
+            }
+
+        }
+        echo json_encode(['message' => $message]);
+        
+
+
+    }
 
     public function saveUpload()
     {

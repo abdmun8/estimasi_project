@@ -141,7 +141,7 @@ $route['bmaterial/print_detail_summary/(:num)'] = 'BMaterial/printDetailSummary/
 $route['bmaterial/get_satuan'] = 'BMaterial/getSatuan';
 $route['bmaterial/save_upload'] = 'BMaterial/saveUpload';
 $route['bmaterial/save_item_code'] = 'BMaterial/saveItemCode';
-
+$route['bmaterial/save_item_material'] = 'BMaterial/saveItemMaterial';
 
 /* labour bill material */
 $route['bmaterial/get_data_labour/(:num)'] = 'BMaterial/getDataLabour/$1';

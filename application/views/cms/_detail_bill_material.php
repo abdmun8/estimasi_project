@@ -614,6 +614,55 @@ $id_user = $this->session->userdata['id_karyawan'];
     </div>
     <!-- ./End Modal Update Item Code -->
 
+    <!-- Modal Update Item Code -->
+    <div class="modal fade" id="modal-update-material" role="dialog" aria-labelledby="modal-add-vendor" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Update Item Code <span class="modal-title-update"></span></h4>
+                </div>
+                <div class="modal-body">
+                    <!-- Custom Tabs (Pulled to the right) -->
+                    <div id="table-data-item-container">
+                        <table id="table-data-material-code" class="table table-bordered table-striped table-hover table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Item Code</th>
+                                    <th>Item Name</th>
+                                    <th>Spek</th>
+                                    <th>Maker</th>
+                                    <th>Unit</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Item Code</th>
+                                    <th>Item Name</th>
+                                    <th>Spek</th>
+                                    <th>Maker</th>
+                                    <th>Unit</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+            <!-- ./End modal content -->
+        </div>
+        <!-- <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-success" onclick="saveItem()">Save</button>
+        </div> -->
+    </div>
+    <!-- ./End Modal Update Item Code -->
+
     <!-- 全局js -->
     <script type="text/javascript" src="<?php echo base_url(); ?>assets/cms/bootstrap-treetable/libs/jquery.min.js"></script>
     <script type="text/javascript" src="<?php echo base_url(); ?>assets/cms/bootstrap-treetable/libs/v3/bootstrap.min.js"></script>
@@ -648,6 +697,8 @@ $id_user = $this->session->userdata['id_karyawan'];
         var itemSpec;
         var itemMerk;
         var itemSatuan;
+        var configPartName;
+        var dataMaterialUpdate = [] ;
 
         /* Global variable */
         <?php echo ($param != null) ? 'var id_header_tree = ' . $param . ';' : ''; ?>
@@ -655,7 +706,9 @@ $id_user = $this->session->userdata['id_karyawan'];
         var tableDetailLabour;
         var tableDataItemExist;
         var tableDataItemCode;
+        var tableDataMaterialCode;
         var editedCellValueQty = [];
+        
 
         // set show deleted part
         localStorage.setItem('showDeletedPart', 0)
@@ -673,6 +726,17 @@ $id_user = $this->session->userdata['id_karyawan'];
                 var title = $(this).text();
                 $(this).html('<input style="width:auto;" type="text" placeholder="Search ' + title + '" />');
             });
+            // generate table material
+            $("#table-data-material-code tfoot th").each(function() {
+                var title = $(this).text();
+                $(this).html('<input style="width:auto;" type="text" placeholder="Search ' + title + '" />');
+            });
+
+            $("#table-data-material-code tfoot th").each(function() {
+                var title = $(this).text();
+                $(this).html('<input style="width:auto;" type="text" placeholder="Search ' + title + '" />');
+            });
+
 
             /* Event change select */
             $("#tipe_item-item").change(function(e) {
@@ -857,6 +921,9 @@ $id_user = $this->session->userdata['id_karyawan'];
 
             // generate datatable item code
             getDatatableItemCode();
+
+            // generate datatable meterial code
+            getDatatableMaterialCode();
 
             /* Generate Bootstrap treetable */
             generatePartTable()
@@ -1652,7 +1719,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                     },
                     {
                         title: 'Opsi',
-                        width: '140',
+                        width: '150',
                         align: "center",
                         fixed: true,
                         formatter: function(value, row, index) {
@@ -1666,7 +1733,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                                 actions.push('<a class="btn btn-info btn-xs " title="Tambah Sub" onclick="addItemMaterial(' + row.id + ',' + row.id_parent + ')" href="#"><i class="fa fa-plus"></i></a> ');
                             }
                             if(row.item_code == '' && row.tipe_item == 'item' ){
-                                actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" style="margin-left:5px;" onclick="showUpdItemCode(\'' + row.tipe_item + '\',\'' + row.item_name + '\',\'' + row.id + '\',\'' + row.id_parent + '\',\'' + row.spec + '\',\'' + row.merk + '\',\'' + row.satuan + '\')"><i class="fa fa-expand"></i></a> ');
+                                actions.push('<a class="btn btn-success btn-xs btnEdit" title="Edit" style="margin-left:5px;"  onclick="showUpdeMaterialCode(\'' + row.item_code + '\',\'' + row.tipe_item + '\',\'' + row.part_name + '\',\'' + row.id + '\',\'' + row.id_parent + '\',\'' + row.materials  + '\',\'' + row.t + '\',\'' + row.h + '\',\'' + row.w + '\',\'' + row.l + '\',\'' + row.materials + '\')"><i class="fa fa-expand"></i></a> ');
                             }
                             return actions.join('');
                         }
@@ -2823,6 +2890,24 @@ $id_user = $this->session->userdata['id_karyawan'];
             itemSatuan = satuan;
             refreshTableDataItemCode();
         }
+        function showUpdeMaterialCode(item_code,tipe_item,part_name,id,id_parent,materials,tch,h,w,l) {
+            if(materials === null){
+                var materialxx = materials;
+            }else{
+                materialxx = "";
+            }
+            let title_text = part_name + " " + materialxx + " " + tch +" X "+ h + " X "+ w + " X " + l;
+            $('#modal-update-material').modal('show');
+            $(".modal-title-update").text(ucFirst(title_text));
+            $('#tipe_item1').val(tipe_item);
+            var partName = part_name;
+            var dataPartName = partName.split("_");
+            var dataConfig = dataPartName[0];
+            configPartName = dataConfig;
+            dataMaterialUpdate  =[configPartName,item_code,tipe_item,id,id_parent,materials];
+            console.log(configPartName)
+            refreshTableDataMaterialCode();
+        }
 
         /* Generate datatable Item Code */
         function getDatatableItemCode() {
@@ -2888,9 +2973,76 @@ $id_user = $this->session->userdata['id_karyawan'];
             }
         }
 
+        function getDatatableMaterialCode() {
+            
+            if ($.fn.dataTable.isDataTable('#table-data-material-code')) {
+                tableDataMaterialCode = $('#table-data-material-code').DataTable();
+            } else {
+            var item_namexx = $('#item_name1').val();
+            console.log(item_namexx);
+                tableDataMaterialCode = $('#table-data-material-code').DataTable({
+                    "ajax": base_url + 'bmaterial/get_item_code/0',
+                    "columns": [{
+                            'data': 'action',
+                            "className": 'text-center',
+                            "render": function(data, type, row) {
+                                var actions = [];
+                                actions.push('<button id="btnUpdItem' + row.stcd + '"class="btn btn-success btn-xs btnEdit" title="Select Item" onclick="saveUpdMaterial(\''+ row.stcd + '\',\'' + dataMaterialUpdate[0] + '\',\'' + dataMaterialUpdate[1] + '\',\'' + dataMaterialUpdate[2] + '\',\'' + dataMaterialUpdate[3]+ '\',\'' + dataMaterialUpdate[4]+ '\',\'' + dataMaterialUpdate[5]+ '\',\'' + row.uom + '\',\'' + row.harga + '\')"><span id="iconHour' + row.stcd + '">Select Item</span></button>');
+                                return actions;
+                            }
+                        },
+                        {
+                            'data': 'stcd'
+                        },
+                        {
+                            'data': 'item_name'
+                        },
+                        {
+                            'data': 'spek'
+                        },
+                        {
+                            'data': 'maker'
+                        },
+                        {
+                            'data': 'uom'
+                        },
+                    ],
+                    "ordering": true,
+                    "order": [
+                        [0, "asc"]
+                    ],
+                    //autoWidth: false,
+                    autoWidth: true,
+                    deferRender: true,
+                    bAutoWidth: false,
+                    //responsive: true,
+                    responsive: false,
+                    scrollX: true,
+                    "fnDrawCallback": function(oSettings) {
+                        if (tableDataMaterialCode) {
+
+                            adjustDatatable()
+                        }
+                    }
+                });
+
+                tableDataMaterialCode.columns().every(function() {
+                    var that = this;
+                    $("input", this.footer()).on("keyup change", function() {
+                        if (that.search() !== this.value) {
+                            that.search(this.value).draw();
+                        }
+                    });
+                });
+            }
+        }
+
         // refresh table add item
         function refreshTableDataItemCode() {
             tableDataItemCode.ajax.url(base_url + 'bmaterial/get_item_code/0').load();
+        }
+        function refreshTableDataMaterialCode() {
+            tableDataMaterialCode.ajax.url(base_url + 'bmaterial/get_item_code/0').load();
         }
 
         function saveUpdItem(itemC,itemName,idParent,itemSpec,itemMerk,harga,uom) {
@@ -2915,6 +3067,35 @@ $id_user = $this->session->userdata['id_karyawan'];
                     alert(json.message);
                     $('#demo').bootstrapTreeTable('refresh');
                     $('#modal-update-item').modal('hide');
+
+                }
+
+            })
+        }
+        function saveUpdMaterial(item_codeSelect,configPartName,item_code,tipe_item,id,id_parent,materials,unit,harga) {
+            var item_codeSelect = item_codeSelect;
+            var nik = <?= $id_user ?>; 
+            $.ajax({
+                url : base_url + 'bmaterial/save_item_material',
+                type: 'POST',
+                dataType: 'json',
+                data :
+                {
+                    itemCodeSelect: item_codeSelect,
+                    nik : nik,
+                    configPartName: configPartName,
+                    itemCode : item_code,
+                    tipe_item :tipe_item,
+                    id : id,
+                    idParent : id_parent,
+                    materials : materials,
+                    unit : unit,
+                    harga : harga
+                },
+                success : function(json){
+                    alert(json.message);
+                    $('#material_table').bootstrapTreeTable('refresh');
+                    $('#modal-update-material').modal('hide');
 
                 }
 
