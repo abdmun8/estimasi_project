@@ -619,7 +619,7 @@ class Bmaterial extends CI_Controller
         //     ->not_like('mstchd.stcd', 'SNS', 'after')
         //     ->not_like('mstchd.stcd', 'ATK', 'after')
         //     ->not_like('mstchd.stcd', 'INV', 'after')
-        $obj = $this->sgedb->select('lp.stcd, lp.stcd as id , TRIM(mstchd.nama) as item_name,
+        $obj = $this->sgedb->select('mstchd.stcd, mstchd.stcd as id , TRIM(mstchd.nama) as item_name,
             CONCAT( TRIM(mstchd.nama)," - ",TRIM(mstchd.spek)," - ",TRIM(mstchd.maker)," - ",lp.mkt," - "," [",mstchd.stcd,"]" ) as name, 
             TRIM(mstchd.nama) as nama,
             TRIM(mstchd.spek) as spek, 
@@ -631,6 +631,8 @@ class Bmaterial extends CI_Controller
             ->join('sgedb.msprice lp', 'mstchd.stcd = lp.stcd', 'left')
             ->join('sgedb.v_stock stock', 'mstchd.stcd = stock.stcd', 'left')
             ->get()->result_array();
+            // echo($this->sgedb->last_query());
+
         if ($set_null) {
             array_unshift($obj, [
                 'harga' => "",
@@ -1313,8 +1315,8 @@ class Bmaterial extends CI_Controller
                     $rplc = ['', '', '', ''];
                     $tb = str_replace($str, $rplc, $object['t']);
                     $sql = "INSERT INTO bom_rawmaterial
-                            (id_header,id_parent,id_part_jasa,tipe_item,item_code,qty,users,`weight`,item_name,l,w,h,t,matl_size_ori) values 
-                            ({$idHeader},{$idParentItem['idRM']},'0','item','{$object['item_code']}','{$qty}','{$idUser}','{$mass}','{$itemRM}','{$object['L']}','{$object['W']}','{$object['H']}','{$tb}','{$matlSize}')";
+                            (id_header,id_parent,id_part_jasa,tipe_item,item_code,qty,users,`weight`,item_name,l,w,h,t,matl_size_ori,materials) values 
+                            ({$idHeader},{$idParentItem['idRM']},'0','item','{$object['item_code']}','{$qty}','{$idUser}','{$mass}','{$itemRM}','{$object['L']}','{$object['W']}','{$object['H']}','{$tb}','{$matlSize}','{$matlOrBrand}')";
                     $insert = $this->db->query($sql);
                 } else {
 
