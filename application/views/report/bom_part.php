@@ -119,11 +119,11 @@ $arrHeaderMaterial = [
     'Units',
     'Qty',
     'Materials',
-    'Length',
-    'Weight',
-    'Height',
     'Diameter',
-    'Density',
+    'Height',
+    'Width',
+    'Length',
+    'Densitys',
     'Weight Total',
     'Total',
 ];
@@ -149,10 +149,10 @@ foreach ($dataMaterial as $key => $part) {
     $activeSheet->setCellValue('E' . $row, $part['units']);
     $activeSheet->setCellValue('F' . $row, $part['qty']);
     $activeSheet->setCellValue('G' . $row, $part['materials']);
-    $activeSheet->setCellValue('H' . $row, $part['l']);
-    $activeSheet->setCellValue('I' . $row, $part['w']);
-    $activeSheet->setCellValue('J' . $row, $part['h']);
-    $activeSheet->setCellValue('K' . $row, $part['t']);
+    $activeSheet->setCellValue('H' . $row, $part['t']);
+    $activeSheet->setCellValue('I' . $row, $part['h']);
+    $activeSheet->setCellValue('K' . $row, $part['l']);
+    $activeSheet->setCellValue('J' . $row, $part['w']);
     $activeSheet->setCellValue('L' . $row, $part['density']);
     $activeSheet->setCellValue('M' . $row, $part['weight']);
     $activeSheet->setCellValue('N' . $row, $part['total']);
