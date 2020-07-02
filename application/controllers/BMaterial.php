@@ -1253,37 +1253,44 @@ class Bmaterial extends CI_Controller
 
                     $this->uploadItem($sheetData, $idHeader, $idParentItem, $idUser);
                 } else {
-
                     //------- Insert Object / Sub Section -------
                     $tipeId = $tipeId . "." . $i;
                     $sql = "INSERT INTO bom_part_jasa (id_header,id_parent,tipe_item,tipe_id,tipe_name,qty,users) values 
                                        ({$idHeader},{$idParent},'object','{$tipeId}','{$listWorkSheet[$i]}','0','{$idUser}') ";
-                    $insert = $this->db->query($sql);
+                    $insertBpj = $this->db->query($sql);
+                    if($insertBpj){
+                        //Get id For Parent Object on BOM_Rawmterial
+                        $idParentRM = $this->db->get_where('bom_rawmaterial', array('id_header' => $idHeader, 'id_part_jasa' => $idParent, 'tipe_item' => 'section'))->row()->id;
+    
+                        //Get id part jasa For column id_part_jasa on BOM_Rawmterial
+                        $idPartJasa = $this->db->get_where('bom_part_jasa', array('id_header' => $idHeader, 'id_parent' => $idParent, 'tipe_item' => 'object', 'tipe_id' => $tipeId))->row()->id;
+    
+                        $sql = "INSERT INTO bom_rawmaterial (id_header,id_parent,id_part_jasa,tipe_item,tipe_id,tipe_name,qty,users) values 
+                        ({$idHeader},{$idParentRM},{$idPartJasa},'object','{$tipeId}','{$listWorkSheet[$i]}','0','{$idUser}') ";
+                        $insertBm = $this->db->query($sql);
+                        //------- END Insert Object / Sub Section -------
+                        if($insertBm){
+                            //------- Insert Item -------
+                            $idRM = $this->db->get_where('bom_rawmaterial', array('id_header' => $idHeader, 'id_part_jasa' => $idPartJasa, 'tipe_item' => 'object', 'tipe_id' => $tipeId))->row()->id;
+                            $idParentItem = ['idRM' => $idRM, 'idPJ' => $idPartJasa];
+                            // var_dump($idParentItem);
+                            // echo $this->db->last_query();
+                            $this->uploadItem($sheetData, $idHeader, $idParentItem, $idUser);
+                            //------- END Insert Item -------
+                            $message ="DATA BERHASIL DI SIMPAN";
+                        }else{
+                            $message ="DATA GAGAL DI UPLOAD";
+                        }
+                    }else{
+                        $message ="DATA GAGAL DI UPLOAD";
+                    }
 
-                    //Get id For Parent Object on BOM_Rawmterial
-                    $idParentRM = $this->db->get_where('bom_rawmaterial', array('id_header' => $idHeader, 'id_part_jasa' => $idParent, 'tipe_item' => 'section'))->row()->id;
-
-                    //Get id part jasa For column id_part_jasa on BOM_Rawmterial
-                    $idPartJasa = $this->db->get_where('bom_part_jasa', array('id_header' => $idHeader, 'id_parent' => $idParent, 'tipe_item' => 'object', 'tipe_id' => $tipeId))->row()->id;
-
-                    $sql = "INSERT INTO bom_rawmaterial (id_header,id_parent,id_part_jasa,tipe_item,tipe_id,tipe_name,qty,users) values 
-                    ({$idHeader},{$idParentRM},{$idPartJasa},'object','{$tipeId}','{$listWorkSheet[$i]}','0','{$idUser}') ";
-                    $insert = $this->db->query($sql);
-
-                    //------- END Insert Object / Sub Section -------
 
 
-                    //------- Insert Item -------
-                    $idRM = $this->db->get_where('bom_rawmaterial', array('id_header' => $idHeader, 'id_part_jasa' => $idPartJasa, 'tipe_item' => 'object', 'tipe_id' => $tipeId))->row()->id;
-                    $idParentItem = ['idRM' => $idRM, 'idPJ' => $idPartJasa];
-                    // var_dump($idParentItem);
-                    // echo $this->db->last_query();
-                    $this->uploadItem($sheetData, $idHeader, $idParentItem, $idUser);
-                    //------- END Insert Item -------
                 }
             }
 
-            // echo json_encode(['message' => $message]);
+            echo json_encode(['message' => $message]);
         }
     }
 

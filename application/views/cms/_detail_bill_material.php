@@ -2870,6 +2870,7 @@ $id_user = $this->session->userdata['id_karyawan'];
                 success: function(json) {
                     $('#modal-upload-part').modal('hide')
                     alert(json.message)
+                    $('#demo').bootstrapTreeTable('refresh');
                     $('#FilePart').val('');
 
                 }
