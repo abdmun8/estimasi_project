@@ -216,7 +216,7 @@ $id_user = $this->session->userdata['id_karyawan'];
             <section class="">
                 <div id="material-toolbar" class="btn-group" role="group" aria-label="...">
                     <button id="expandAllBtnMaterial" type="button" class="btn btn-default">Expand/Collapse All</button>
-                    <button title="Export Part, jasa & Raw Material" onclick="exportExcel('part','<?= $param ?>')" id="btn-print-labour" type="button" class="btn btn-default"><i class="fa fa-file-excel-o"></i> Export</button>
+                    <button title="Export Part, jasa & Raw Material" onclick="exportExcel('material','<?= $param ?>')" id="btn-print-labour" type="button" class="btn btn-default"><i class="fa fa-file-excel-o"></i> Export</button>
                     <label style="margin-left:1rem;">Show Deleted Item <input onchange="showDeletedMaterialChange(event)" style="margin-top:1rem;margin-left:1rem;transform: scale(1.5);" type="checkbox" id="hide-deleted-material" /></label>
                 </div>
                 <table id="material_table"></table>
@@ -2815,6 +2815,9 @@ $id_user = $this->session->userdata['id_karyawan'];
         function exportExcel(report = 'summary', id_header) {
             window.open(base_url + `bmaterial/print_${report}/` + id_header);
         }
+        // function exportExcel1(report = 'summary', id_header) {
+        //     window.open(base_url + `quotation/print_${report}/` + id_header);
+        // }
 
         function mockData() {
             $.get(base_url + "bmaterial/get_item_code/1", function(data) {

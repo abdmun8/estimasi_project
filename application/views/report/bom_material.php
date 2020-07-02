@@ -1,11 +1,16 @@
 <?php
-
+// $filename = 'report_part_jasa'.date('d-m-Y');
+// header('Content-Disposition: attachment;filename="'. $filename .'.xls"'); 
+// header('Content-Type: application/vnd.ms-excel');
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
+
+// var_dump($datamaterial);
+// die;
 
 require_once 'vendor/autoload.php';
 
@@ -24,14 +29,15 @@ $arrHeaderPart = [
     'Remark'
 ];
 
-
 $dataPart = $this->breporter->getStructure($part, 'findChildPart');
 
+// print_r($dataPart);die;
+// Create new Spreadsheet object
 $spreadsheet = new Spreadsheet();
 $activeSheet = $spreadsheet->getActiveSheet();
 $activeSheet->setTitle('Part & Jasa');
 $spreadsheet->getDefaultStyle()->getFont()->setName('Calibri');
-$activeSheet->setCellValue('A1', 'Detail Stabdart Part & Jasa');
+$activeSheet->setCellValue('A1', 'Detail Part & Jasa');
 $activeSheet->getStyle("A1")->getFont()->setSize(16);
 
 //output headers

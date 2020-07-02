@@ -909,6 +909,20 @@ class Bmaterial extends CI_Controller
         });
         $this->load->view('report/bom_part', ['part' => $dataPart, 'material' => $dataMaterial, 'title' => $title]);
     }
+    public function printMaterial($id_header)
+    {
+        $rowTitle = $this->db->get_where('v_wo_bom', ['id' => $id_header])->row();
+        $title = "BOM-Material-" . $rowTitle->wono . "-" . $rowTitle->desc . "-" . $rowTitle->customer . "-" . date('dmY');
+        $part = $this->getDataPart($id_header, NULL, false);
+        $dataPart = array_filter($part, function ($item) {
+            return $item['deleted'] == 0;
+        });
+        $material = $this->getDataMaterial($id_header, NULL, false);
+        $dataMaterial = array_filter($material, function ($item) {
+            return $item['deleted'] == 0;
+        });
+        $this->load->view('report/bom_material', ['part' => $dataPart, 'material' => $dataMaterial, 'title' => $title]);
+    }
 
     public function printLabour($id_header)
     {

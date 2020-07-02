@@ -118,6 +118,7 @@ $route['quotation/get_data_material/(:num)/(:num)'] = 'Quotation/getDataMaterial
 $route['quotation/save_material'] = 'Quotation/saveMaterial';
 $route['quotation/get_material_code'] = 'Quotation/getMaterialCode';
 
+
 /* header bill material */
 $route['bmaterial'] = 'BMaterial/index';
 $route['bmaterial/(:num)'] = 'BMaterial/index/$1';
@@ -161,6 +162,7 @@ $route['bmaterial/get_data_material/(:num)'] = 'BMaterial/getDataMaterial/$1';
 $route['bmaterial/get_data_material/(:num)/(:num)'] = 'BMaterial/getDataMaterial/$1/$2';
 $route['bmaterial/save_material'] = 'BMaterial/saveMaterial';
 $route['bmaterial/get_material_code'] = 'BMaterial/getMaterialCode';
+$route['bmaterial/print_material/(:num)'] = 'BMaterial/printMaterial/$1';
 
 // Report
 
