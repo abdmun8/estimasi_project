@@ -1265,7 +1265,7 @@ class Bmaterial extends CI_Controller
                     $idRM = $this->db->get_where('bom_rawmaterial', array('id_header' => $idHeader, 'id_part_jasa' => $idParent, 'tipe_item' => 'section', 'tipe_id' => $tipeId))->row()->id;
                     $idParentItem = ['idRM' => $idRM, 'idPJ' => $idParent];
 
-                    $this->uploadItem($sheetData, $idHeader, $idParentItem, $idUser);
+                    $this->uploadItem($sheetData, $idHeader, $idParentItem, $idUser, $tipeId);
                 } else {
                     //------- Insert Object / Sub Section -------
                     $tipeId = $tipeId . "." . $i;
@@ -1289,7 +1289,7 @@ class Bmaterial extends CI_Controller
                             $idParentItem = ['idRM' => $idRM, 'idPJ' => $idPartJasa];
                             // var_dump($idParentItem);
                             // echo $this->db->last_query();
-                            $this->uploadItem($sheetData, $idHeader, $idParentItem, $idUser);
+                            $this->uploadItem($sheetData, $idHeader, $idParentItem, $idUser, $tipeId);
                             //------- END Insert Item -------
                             $message ="DATA BERHASIL DI SIMPAN";
                         }else{
@@ -1308,7 +1308,7 @@ class Bmaterial extends CI_Controller
         }
     }
 
-    function uploadItem($data = [], $idHeader, $idParentItem = [], $idUser)
+    function uploadItem($data = [], $idHeader, $idParentItem = [], $idUser, $tipeId)
     {
 
         $matlType = $this->db->get_where('config', array('key' => 'MATL_TYPE'))->row()->value;
@@ -1336,8 +1336,8 @@ class Bmaterial extends CI_Controller
                     $rplc = ['', '', '', ''];
                     $tb = str_replace($str, $rplc, $object['t']);
                     $sql = "INSERT INTO bom_rawmaterial
-                            (id_header,id_parent,id_part_jasa,tipe_item,item_code,qty,users,`weight`,item_name,l,w,h,t,matl_size_ori,materials) values 
-                            ({$idHeader},{$idParentItem['idRM']},'0','item','{$object['item_code']}','{$qty}','{$idUser}','{$mass}','{$itemRM}','{$object['L']}','{$object['W']}','{$object['H']}','{$tb}','{$matlSize}','{$matlOrBrand}')";
+                            (id_header,id_parent,id_part_jasa,tipe_item,item_code,qty,users,`weight`,item_name,l,w,h,t,matl_size_ori,materials,sectno,satuan) values 
+                            ({$idHeader},{$idParentItem['idRM']},'0','item','{$object['item_code']}','{$qty}','{$idUser}','{$mass}','{$itemRM}','{$object['L']}','{$object['W']}','{$object['H']}','{$tb}','{$matlSize}','{$matlOrBrand}','{$tipeId}','{$unit}')";
                     $insert = $this->db->query($sql);
                 } else {
 
@@ -1350,8 +1350,8 @@ class Bmaterial extends CI_Controller
                     }
 
                     $sql = "INSERT INTO bom_part_jasa 
-                            (id_header,id_parent,tipe_item,tipe_id,tipe_name,item_code,item_name,spec,satuan,merk,qty,users,`weight`,harga,kategori,item_name_ori) values 
-                            ({$idHeader},{$idParentItem['idPJ']},'item','','','{$object['item_code']}','{$msItem['nama']}','{$msItem['spek']}','{$msItem['uom']}','{$msItem['maker']}','{$qty}','{$idUser}','{$mass}','{$msItem['price']}','{$msItem['kategori']}','{$itemPJ}')";
+                            (id_header,id_parent,tipe_item,tipe_id,tipe_name,item_code,item_name,spec,satuan,merk,qty,users,`weight`,harga,kategori,item_name_ori,sectno) values 
+                            ({$idHeader},{$idParentItem['idPJ']},'item','','','{$object['item_code']}','{$msItem['nama']}','{$msItem['spek']}','{$msItem['uom']}','{$msItem['maker']}','{$qty}','{$idUser}','{$mass}','{$msItem['price']}','{$msItem['kategori']}','{$itemPJ}','{$tipeId}')";
                     $insert = $this->db->query($sql);
                 }
             }
