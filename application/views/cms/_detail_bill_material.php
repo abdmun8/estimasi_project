@@ -1533,7 +1533,7 @@ $id_user = $this->session->userdata['id_karyawan'];
             $("#selectBtn").click(function() {
                 var selecteds = $('#demo').bootstrapTreeTable('getSelections');
                 $.each(selecteds, function(_i, _item) {
-                    console.log(_item);
+                    // console.log(_item);
                 });
                 //alert("看console");
             });

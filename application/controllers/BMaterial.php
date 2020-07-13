@@ -631,7 +631,7 @@ class Bmaterial extends CI_Controller
             ->join('sgedb.msprice lp', 'mstchd.stcd = lp.stcd', 'left')
             ->join('sgedb.v_stock stock', 'mstchd.stcd = stock.stcd', 'left')
             ->get()->result_array();
-            // echo($this->sgedb->last_query());
+        // echo($this->sgedb->last_query());
 
         if ($set_null) {
             array_unshift($obj, [
@@ -1088,21 +1088,21 @@ class Bmaterial extends CI_Controller
     {
         // var_dump($_POST);
         // die;
-       $item_code = $_POST['itemCode'];
-       $nik = $_POST['nik'];
-       $itemName = $_POST['itemName'];
-       $itemSpec = $_POST['itemSpec'];
-       $idParent = $_POST['idParent'];
-       $itemMerk = $_POST['itemMerk'];
-       $harga1 = $_POST['harga'];
-       $harga = str_replace( ',', '', $harga1);
-       $satuan = $_POST['unit'];
-       $sqlCek = "Select * from quotation.mrawmaterial where item_code = '$item_code'";
-       $query = $this->db->query($sqlCek);
-       $queryNum = $query->num_rows();
-       $dataQuery = $query->row();
-       $kategori = [];
-    // Get Kategori from item code
+        $item_code = $_POST['itemCode'];
+        $nik = $_POST['nik'];
+        $itemName = $_POST['itemName'];
+        $itemSpec = $_POST['itemSpec'];
+        $idParent = $_POST['idParent'];
+        $itemMerk = $_POST['itemMerk'];
+        $harga1 = $_POST['harga'];
+        $harga = str_replace(',', '', $harga1);
+        $satuan = $_POST['unit'];
+        $sqlCek = "Select * from quotation.mrawmaterial where item_code = '$item_code'";
+        $query = $this->db->query($sqlCek);
+        $queryNum = $query->num_rows();
+        $dataQuery = $query->row();
+        $kategori = [];
+        // Get Kategori from item code
         $codes = [
             0 => ['code' => ['ATK', 'CNS', 'RMT', 'PPG', 'OFF', 'INV'], 'value' => '10001'],
             1 => ['code' => ['ELC'], 'value' => '10002'],
@@ -1110,24 +1110,24 @@ class Bmaterial extends CI_Controller
             3 => ['code' => ['PNU', 'PNE', 'PPG'], 'value' => '10004'],
             4 => ['code' => ['SNS'], 'value' => '20001']
         ];
-    
+
         for ($i = 0; $i < count($codes); $i++) {
             if (in_array(substr($item_code, 0, 3), $codes[$i]['code'])) {
                 $kategori = ['kategori' => $codes[$i]['value']];
             }
         }
         $codeKategori = $kategori['kategori'];
-    
-    if($queryNum){
-        $partName1 = $dataQuery->part_name;
-        $maker1 = $dataQuery->maker;
-        $spek1 = $dataQuery->spec;
-           $message = "ITEM CODE SUDAH DI GUNAKAN UNTUK $partName1 $maker1 $spek1";
-       }else{
-           $insert = "INSERT INTO quotation.mrawmaterial (item_code,part_name,spec,maker,units,materials,price) values 
+
+        if ($queryNum) {
+            $partName1 = $dataQuery->part_name;
+            $maker1 = $dataQuery->maker;
+            $spek1 = $dataQuery->spec;
+            $message = "ITEM CODE SUDAH DI GUNAKAN UNTUK $partName1 $maker1 $spek1";
+        } else {
+            $insert = "INSERT INTO quotation.mrawmaterial (item_code,part_name,spec,maker,units,materials,price) values 
                 ('$item_code','$itemName','$itemSpec','$itemMerk','$satuan','$itemMerk','$harga')";
             $queryInsert = $this->db->query($insert);
-            if($queryInsert){
+            if ($queryInsert) {
                 $sqlMstchd = "SELECT * FROM sgedb.mstchd where stcd = '$item_code'";
                 $queryMstchd = $this->db->query($sqlMstchd);
                 $dataMstchd = $queryMstchd->row();
@@ -1154,18 +1154,17 @@ class Bmaterial extends CI_Controller
                         AND spec = '$itemSpec'
                         AND merk = '$itemMerk'";
                 $queryUpdate = $this->db->query($update);
-               
-                if($queryUpdate){
+
+                if ($queryUpdate) {
                     $message = "DATA BERHASIL DISIMPAN";
-                }else{
-                    $message ="DATA GAGAL DI SIMPAN";
+                } else {
+                    $message = "DATA GAGAL DI SIMPAN";
                 }
-            }else{
+            } else {
                 $message = "SIMPAN DATA GAGAL";
             };
-       };
-       echo json_encode(['message'=> $message]);
-       
+        };
+        echo json_encode(['message' => $message]);
     }
     public function saveItemMaterial()
     {
@@ -1184,13 +1183,12 @@ class Bmaterial extends CI_Controller
         $query = $this->db->query($sqlCek);
         $queryNum = $query->num_rows();
         $dataQuery = $query->row();
-        if($queryNum)
-        {
+        if ($queryNum) {
             $partName1 = $dataQuery->part_name;
             $maker1 = $dataQuery->maker;
             $spek1 = $dataQuery->spec;
             $message = "ITEM CODE SUDAH DI GUNAKAN UNTUK $partName1 $maker1 $spek1";
-        }else{
+        } else {
             $sqlConfig = "SELECT value FROM quotation.config where `key` = '$configPartName'";
             $queryConfig = $this->db->query($sqlConfig);
             $dataValue = $queryConfig->row()->value;
@@ -1198,32 +1196,35 @@ class Bmaterial extends CI_Controller
             $queryBomMaterial = $this->db->query($sqlBomMaterial);
             $dataMtl1 = $queryBomMaterial->row();
             $dataMtl = $dataMtl1->matl_size_ori;
-            $dataMtlRpt = str_replace("-","X",$dataMtl);
-            $dataSpec = explode("X",$dataMtlRpt);
-            if($dataValue != 0){
-                $spec =$dataSpec[0].'X'.$dataSpec[1].'X'.$dataSpec[2];
-            }else{
+            $dataMtlRpt = str_replace("-", "X", $dataMtl);
+            $dataSpec = explode("X", $dataMtlRpt);
+            if ($dataValue != 0) {
+                $spec = $dataSpec[0] . 'X' . $dataSpec[1] . 'X' . $dataSpec[2];
+            } else {
                 $spec = $dataSpec[0];
             }
             $sqlInsert =  "INSERT INTO quotation.mrawmaterial (item_code,part_name,spec,maker,units,materials,price) values 
             ('$itemCodeSelect','$configPartName','$spec','$materials','$unit','$materials','$harga')";
             $queryInsert = $this->db->query($sqlInsert);
-            if($queryInsert){
+            if ($queryInsert) {
+                $countName =  strlen($configPartName);
+                $countSpec = strlen($spec);
+                // $sqlUpdate = "UPDATE quotation.bom_rawmaterial SET item_code = '$itemCodeSelect', users = '$nik', item_name = '$configPartName' 
+                // where id = '$id'";
                 $sqlUpdate = "UPDATE quotation.bom_rawmaterial SET item_code = '$itemCodeSelect', users = '$nik', item_name = '$configPartName' 
-                where id = '$id'";
+                WHERE
+                    LEFT(item_name, $countName) = '$configPartName'
+                        AND LEFT(matl_size_ori, $countSpec) = '$spec'
+                        AND materials = '$materials' AND item_code=''";
                 $queryUpdate = $this->db->query($sqlUpdate);
-                if($queryUpdate){
+                if ($queryUpdate) {
                     $message = "DATA BERHASIL DISIMPAN";
-                }else{
-                    $message =" DATA GAGAL DISIMPAN";
+                } else {
+                    $message = " DATA GAGAL DISIMPAN";
                 }
             }
-
         }
         echo json_encode(['message' => $message]);
-        
-
-
     }
 
     public function saveUpload()
@@ -1272,18 +1273,18 @@ class Bmaterial extends CI_Controller
                     $sql = "INSERT INTO bom_part_jasa (id_header,id_parent,tipe_item,tipe_id,tipe_name,qty,users) values 
                                        ({$idHeader},{$idParent},'object','{$tipeId}','{$listWorkSheet[$i]}','0','{$idUser}') ";
                     $insertBpj = $this->db->query($sql);
-                    if($insertBpj){
+                    if ($insertBpj) {
                         //Get id For Parent Object on BOM_Rawmterial
                         $idParentRM = $this->db->get_where('bom_rawmaterial', array('id_header' => $idHeader, 'id_part_jasa' => $idParent, 'tipe_item' => 'section'))->row()->id;
-    
+
                         //Get id part jasa For column id_part_jasa on BOM_Rawmterial
                         $idPartJasa = $this->db->get_where('bom_part_jasa', array('id_header' => $idHeader, 'id_parent' => $idParent, 'tipe_item' => 'object', 'tipe_id' => $tipeId))->row()->id;
-    
+
                         $sql = "INSERT INTO bom_rawmaterial (id_header,id_parent,id_part_jasa,tipe_item,tipe_id,tipe_name,qty,users) values 
                         ({$idHeader},{$idParentRM},{$idPartJasa},'object','{$tipeId}','{$listWorkSheet[$i]}','0','{$idUser}') ";
                         $insertBm = $this->db->query($sql);
                         //------- END Insert Object / Sub Section -------
-                        if($insertBm){
+                        if ($insertBm) {
                             //------- Insert Item -------
                             $idRM = $this->db->get_where('bom_rawmaterial', array('id_header' => $idHeader, 'id_part_jasa' => $idPartJasa, 'tipe_item' => 'object', 'tipe_id' => $tipeId))->row()->id;
                             $idParentItem = ['idRM' => $idRM, 'idPJ' => $idPartJasa];
@@ -1291,16 +1292,13 @@ class Bmaterial extends CI_Controller
                             // echo $this->db->last_query();
                             $this->uploadItem($sheetData, $idHeader, $idParentItem, $idUser, $tipeId);
                             //------- END Insert Item -------
-                            $message ="DATA BERHASIL DI SIMPAN";
-                        }else{
-                            $message ="DATA GAGAL DI UPLOAD";
+                            $message = "DATA BERHASIL DI SIMPAN";
+                        } else {
+                            $message = "DATA GAGAL DI UPLOAD";
                         }
-                    }else{
-                        $message ="DATA GAGAL DI UPLOAD";
+                    } else {
+                        $message = "DATA GAGAL DI UPLOAD";
                     }
-
-
-
                 }
             }
 
