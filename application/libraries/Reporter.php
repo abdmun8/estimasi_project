@@ -200,7 +200,7 @@ class Reporter
     public function getDataSummary($part, $material, $labour)
     {
 
-        var_dump($part);die;
+        // var_dump($part);die;
         $dataSectionPart = array_filter($part, function ($item) {
             return $item['tipe_item'] == 'section';
         });
