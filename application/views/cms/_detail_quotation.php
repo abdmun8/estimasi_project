@@ -293,19 +293,17 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                                 <label for="spec-item">Item Code</label>
                                                 <input type="text" class="form-control input-sm" id="item_code-item" name="item_code-item" placeholder="Item Code" disabled>
                                             </div>
-                                            <!-- <div class="form-group only_item">
-                                                <label>Item Code</label>
-                                                <select class="form-control select2 input-sm" style="width:100%;" name="item_code-item" id="item_code-item">
-                                                <option value="" selected="">Pilih Item Code</option>
-                                                </select>
-                                            </div> -->
-                                            <!-- <div class="form-group only_item">
-                                                <label for="item_code-item">Item Code</label>
-                                                <input type="text" class="form-control input-sm" id="item_code-item" name="item_code-item" placeholder="Item Code" data-provide="typeahead">
-                                            </div> -->
+                                            <div class="form-group only_item">
+                                                <label for="item_name-item">Item Name</label>
+                                                <input type="text" class="form-control input-sm" id="item_name-item" name="item_name-item" placeholder="Item Name">
+                                            </div>
                                             <div class="form-group only_item">
                                                 <label for="spec-item">Spec</label>
                                                 <input type="text" class="form-control input-sm" id="spec-item" name="spec-item" placeholder="Spec">
+                                            </div>
+                                            <div class="form-group only_item">
+                                                <label for="merk-item">Merk</label>
+                                                <input type="text" class="form-control input-sm" id="merk-item" name="merk-item" placeholder="Merk">
                                             </div>
                                             <div class="form-group only_item">
                                                 <label for="satuan-item">Satuan</label>
@@ -313,10 +311,6 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                                     <option value="" selected="">Pilih Satuan</option>
                                                 </select>
                                                 <!-- <input type="text" class="form-control input-sm" id="satuan-item" name="satuan-item" placeholder="Satuan"> -->
-                                            </div>
-                                            <div class="form-group only_item">
-                                                <label for="qty-item">Qty</label>
-                                                <input type="text" class="form-control input-sm" id="qty-item" name="qty-item" placeholder="Qty">
                                             </div>
 
                                             <input type="hidden" id="item_code" name="item_code" />
@@ -336,12 +330,8 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                                                 <input type="text" class="form-control input-sm" id="tipe_name-item" name="tipe_name-item" placeholder="Name">
                                             </div>
                                             <div class="form-group only_item">
-                                                <label for="item_name-item">Item Name</label>
-                                                <input type="text" class="form-control input-sm" id="item_name-item" name="item_name-item" placeholder="Item Name">
-                                            </div>
-                                            <div class="form-group only_item">
-                                                <label for="merk-item">Merk</label>
-                                                <input type="text" class="form-control input-sm" id="merk-item" name="merk-item" placeholder="Merk">
+                                                <label for="qty-item">Qty</label>
+                                                <input type="text" class="form-control input-sm" id="qty-item" name="qty-item" placeholder="Qty">
                                             </div>
                                             <div class="form-group only_item">
                                                 <label for="harga-item">Harga <span style="font-size:12px;font-style:italic;font-weight:normal; color:red;" class="blink-one" id="remark-harga"></span></label>
@@ -2275,6 +2265,7 @@ $satuan = $this->db->get_where('tblsatuan')->result();
                             notify('success', 'Penyimpanan data berhasil');
                             $('#modal-input-item').modal('hide');
                             $('#demo').bootstrapTreeTable('refresh');
+                            $("#item_code-item").attr('disabled', 'disabled');
 
                         }
                     },
