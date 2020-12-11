@@ -111,11 +111,7 @@ if ($param != null) {
                         'data': 'uom'
                     },
                     {
-                        'data': 'harga',
-                        'render': function(data){
-                            let number = parseFloat(data)
-                            return new Intl.NumberFormat().format(number)
-                        } 
+                        'data': 'harga'
                     },
                     {
                         'data': 'remark'
